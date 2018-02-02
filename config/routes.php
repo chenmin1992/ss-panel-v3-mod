@@ -20,6 +20,11 @@ $debug = false;
 if (defined("DEBUG")) {
     $debug = true;
 }
+
+// compatible with cloudflare for getting real client ip
+if (isset($_SERVER["HTTP_CF_CONNECTING_IP"]))
+	$_SERVER["REMOTE_ADDR"] = $_SERVER["HTTP_CF_CONNECTING_IP"];
+
 /***
  * $configuration = [
  * 'settings' => [
