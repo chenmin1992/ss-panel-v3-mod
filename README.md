@@ -14,17 +14,17 @@
 
 # 安装
 
-[https://github.com/esdeathlove/ss-panel-v3-mod/wiki/%E5%AE%89%E8%A3%85%E8%AF%B4%E6%98%8E](https://github.com/esdeathlove/ss-panel-v3-mod/wiki/%E5%AE%89%E8%A3%85%E8%AF%B4%E6%98%8E)
+[安装说明](https://github.com/chenmin1992/ss-panel-v3-mod/wiki/%E5%AE%89%E8%A3%85%E8%AF%B4%E6%98%8E)
 
 # FAQ
 
-[https://github.com/esdeathlove/ss-panel-v3-mod/wiki/FAQ](https://github.com/esdeathlove/ss-panel-v3-mod/wiki/FAQ)
+[FAQ](https://github.com/chenmin1992/ss-panel-v3-mod/wiki/FAQ)
 
 # 遇到问题？
 
 不好意思，使用上的，比如说你不会使用，请自行看现在已有的[说明](https://github.com/esdeathlove/ss-panel-v3-mod/wiki/)以及自行琢磨。
 
-如果你发现了你认为你实在无法解决的问题，请在 [https://github.com/esdeathlove/ss-panel-v3-mod/issues](https://github.com/esdeathlove/ss-panel-v3-mod/issues) 按照所提示的 issue 模板，进行反馈以及获得解决方案。发送 issue 之前请三思，不恰当的内容可能会造成你之后都无法获得回应。
+如果你发现了你认为你实在无法解决的问题，请不要发issue，我fork这个就是自己玩的。
 
 # 最新消息获取
 
