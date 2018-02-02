@@ -298,6 +298,8 @@ $System_Config['sendgrid_sender'] = '';
 
 #取值 paymentwall,zfbjk,spay,none
 $System_Config['payment_system']='none';
+#充值码购买链接
+$System_Config['cash_url']='';
 
 #PaymentWall
 $System_Config['pmw_publickey']='';
