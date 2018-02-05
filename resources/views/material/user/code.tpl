@@ -31,7 +31,7 @@
 									<div class="card-inner">
 										<p class="card-heading">充值码</p>
 										<p>当前余额：{$user->money} 元</p>
-										<p>没有充值码？<a target="_blank" href="{$cash_url}">点我购买</a></p>
+										{if $cash_url != ''}<p>没有充值码？<a target="_blank" href="{$cash_url}">点我购买</a></p>{/if}
 										<div class="form-group form-group-label">
 											<label class="floating-label" for="code">充值码</label>
 											<input class="form-control" id="code" type="text">
