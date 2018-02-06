@@ -625,7 +625,7 @@ class Job
                                 echo "Send warn mail to user: ".$user->id."-".iconv('gbk', 'utf-8//IGNORE', $Userlocation)."-".iconv('gbk', 'utf-8//IGNORE', $location['country']);
                                 $subject = Config::get('appName')."-系统警告";
                                 $to = $user->email;
-                                $text = "您好，系统发现您的账号在 ".iconv('gbk', 'utf-8//IGNORE', $Userlocation)."(".$userlog->ip.") 有异常登录，请您自己自行核实登录行为。有异常请及时修改密码。" ;
+                                $text = "您好，系统发现您的账号在 ".iconv('gbk', 'utf-8//IGNORE', $Userlocation)."(".$ip.") 有异常登录，请您自己自行核实登录行为。有异常请及时修改密码。" ;
                                 try {
                                     Mail::send($to, $subject, 'news/warn.tpl', [
                                         "user" => $user,"text" => $text
