@@ -1,0 +1,183 @@
+<h2>功能</h2>
+目前主要是支持了 VPN 自动开户，自动销毁，流量计入面板的总流量，以及弄了个公告系统，还有和 DirectAdmin 对接，还有可以支持 PAC 等方式的接入。
+
+<h1>请不要尝试修改底部的版权信息，这是最起码的尊重。世界本就如此艰难，何必还要让它更艰难呢。</h1>
+
+<h1>Ubuntu 下的安装可以看看<a href="https://github.com/ACBingo/ss-panel-v3-mod/wiki/ubuntu%E5%AE%89%E8%A3%85%E5%AE%9E%E4%BE%8B">这个</a> ，感谢 @ACBingo</h1>
+
+
+<h1>后端推荐使用 <a href="https://github.com/glzjin/shadowsocks/wiki/%E8%AF%B4%E6%98%8E%E4%BB%A5%E5%8F%8A%E5%AE%89%E8%A3%85%E6%96%B9%E6%B3%95">https://github.com/glzjin/shadowsocks/wiki/%E8%AF%B4%E6%98%8E%E4%BB%A5%E5%8F%8A%E5%AE%89%E8%A3%85%E6%96%B9%E6%B3%95</a></h1>
+
+<h2>安装</h2>
+下面我来写一写详细的安装教程，供大家参考。
+
+本篇主要介绍安装以及和 Radius 的对接，如有其它内容的需要请参考我前面发的东西。
+
+演示环境：CentOS 6 X64
+
+1.首先通过 SSH 连接到远程服务器，安装 lnmp 一键包。
+<pre>wget http://soft.vpser.net/lnmp/lnmp1.2-full.tar.gz
+tar xvzf lnmp1.2-full.tar.gz
+cd lnmp1.2-full
+./install.sh
+</pre>
+2.请根据你的需求选择好安装组件，推荐如下。
+
+<img src="https://www.zhaojin97.cn/wp-content/uploads/2016/03/484ddc2cabe41980be91f6f1a3805d162016032504561139316.png" alt="https://www.zhaojin97.cn/wp-content/uploads/2016/03/484ddc2cabe41980be91f6f1a3805d162016032504561139316.png" />
+
+记得自己设定的 Mysql 数据库 root 密码哦。
+
+3.喝杯茶，等安装好。
+
+4.然后可以看到，安装好了。
+
+<img src="https://www.zhaojin97.cn/wp-content/uploads/2016/03/6a891f1b3a4f319a8fa1a9a4747a39742016032505222552361.png" alt="https://www.zhaojin97.cn/wp-content/uploads/2016/03/6a891f1b3a4f319a8fa1a9a4747a39742016032505222552361.png" />
+
+5.添加一个虚拟主机，同时创建数据库。
+<pre>lnmp vhost add
+</pre>
+进行接下来的设置
+
+<img src="https://www.zhaojin97.cn/wp-content/uploads/2016/03/98a78e7c2b677a4fa2c9219b5713b5cc2016032505264820584.png" alt="https://www.zhaojin97.cn/wp-content/uploads/2016/03/98a78e7c2b677a4fa2c9219b5713b5cc2016032505264820584.png" />
+
+6.然后，来对 nginx 进行一些细节化配置。
+
+打开 /usr/local/nginx/conf/vhost/ss.panel.conf
+
+然后添加下面这一段到 server 
+<pre>
+location / {
+                        try_files $uri $uri/ /index.php$is_args$args;
+                }
+</pre>
+
+同时，root那一行改为
+<pre>
+root /home/wwwroot/ss.panel/public;
+</pre>
+
+然后就是下载程序代码。
+<pre>cd /home/wwwroot/ss.panel
+yum install git -y
+git clone https://github.com/glzjin/ss-panel-v3-mod.git tmp -b new_master && mv tmp/.git . && rm -rf tmp && git reset --hard
+chown -R root:root *
+chmod -R 777 *
+chown -R www:www storage
+</pre>
+修改完了之后，到网站目录下进行一些修改。
+<pre>[root@vultr vhost]# cd /home/wwwroot/ss.panel/
+[root@vultr ss.panel]# chattr -i .user.ini
+[root@vultr ss.panel]# mv .user.ini public
+[root@vultr ss.panel]# cd public
+</pre>
+然后就是重新添加回权限。
+<pre>chattr +i .user.ini
+</pre>
+OK，重启一下 nginx
+<pre>service nginx restart
+</pre>
+好，这个暂时到这里，我们待会再回来进行配置。
+
+7.这一步现在已经不需要。
+
+8.这一步现在已经不需要。
+
+9.安装 radius ，不使用VPN的话，可以不进行这一步了，此处参考了 http://www.zhukun.net/archives/7455 ，在此表示感谢，但你不用点进去看他的安装方法，看下面的就OK 。此处只介绍怎么进行安装和对接。
+<pre>yum install perl-DBI freeradius freeradius-mysql freeradius-utils
+cd
+</pre>
+
+
+10.然后我们打开 phpmyadmin ,来配置数据库了。
+
+不使用VPN的话，可以不添加 Radius 的数据库了。
+
+先添加，创建一个数据库，并且添加一个用户。
+
+<img src="https://www.zhaojin97.cn/wp-content/uploads/2016/03/51e325e67bc31bfe9d4f1dd679a4a530201603250606303073.png" alt="https://www.zhaojin97.cn/wp-content/uploads/2016/03/51e325e67bc31bfe9d4f1dd679a4a530201603250606303073.png" />
+
+然后解压，导入下面这个文件。
+
+<a href="https://github.com/glzjin/Radius-install/raw/master/all.sql">https://github.com/glzjin/Radius-install/raw/master/all.sql</a>
+
+<img src="https://www.zhaojin97.cn/wp-content/uploads/2016/03/aa0d5a26aaa8922ac8163b202733d5da2016032506114155635.png" alt="https://www.zhaojin97.cn/wp-content/uploads/2016/03/aa0d5a26aaa8922ac8163b202733d5da2016032506114155635.png" />
+
+OK，然后我们再对这个数据库创建一个用户，用于 ss-panel 通讯。
+
+<img src="https://www.zhaojin97.cn/wp-content/uploads/2016/03/5018e0a24698dccc255c54c46d16c1982016032506325926616.png" alt="https://www.zhaojin97.cn/wp-content/uploads/2016/03/5018e0a24698dccc255c54c46d16c1982016032506325926616.png" />
+
+这下面才是 ss-panel 的
+
+然后我们再给 ss-panel 整个用户和数据库。
+
+<img src="https://www.zhaojin97.cn/wp-content/uploads/2016/03/2c73d13118aa4264eef958fc892f9128201603250638472135.png" alt="https://www.zhaojin97.cn/wp-content/uploads/2016/03/2c73d13118aa4264eef958fc892f9128201603250638472135.png" />
+
+导入 sql 目录下的 glzjin_all.sql
+
+<img src="https://www.zhaojin97.cn/wp-content/uploads/2016/03/87196254217e6a2a1554957feaa4e5d02016032506480021897.png" alt="https://www.zhaojin97.cn/wp-content/uploads/2016/03/87196254217e6a2a1554957feaa4e5d02016032506480021897.png" />
+
+导入完成，数据库这里就差不多了。
+
+11.不使用VPN的话，可以不进行这一步了，回到 SSH，继续设置 Radius 。
+<pre>nano /etc/raddb/sql.conf
+</pre>
+配置login（用户名），password（密码），radius_db（数据库名）等字段
+
+找到readclients一行，设为yes并去掉注释符号#
+
+然后下面是几个文件的覆盖
+
+<pre>
+wget https://github.com/glzjin/Radius-install/raw/master/radiusd.conf -O /etc/raddb/radiusd.conf
+
+wget https://github.com/glzjin/Radius-install/raw/master/default -O /etc/raddb/sites-enabled/default
+
+wget https://github.com/glzjin/Radius-install/raw/master/dialup.conf -O /etc/raddb/sql/mysql/dialup.conf
+
+wget https://github.com/glzjin/Radius-install/raw/master/dictionary -O /etc/raddb/dictionary
+
+wget https://github.com/glzjin/Radius-install/raw/master/counter.conf -O /etc/raddb/sql/mysql/counter.conf
+</pre>
+
+Radius 配置完成，
+<pre>service radiusd start && chkconfig radiusd on
+</pre>
+12.然后让我们回到 ss-panel 的配置上来，
+<pre>
+cd /home/wwwroot/ss.panel
+
+php composer.phar install
+
+cp config/.config.php.example config/.config.php
+
+nano config/.config.php
+</pre>
+进行相应的配置
+
+都有中文，根据提示来就行了
+
+13.配置完了，就来创建管理员。不过这个管理的话，不会自动同步到 radius ，需要在网站上注册的才可以。
+<pre>php -n xcat createAdmin
+</pre>
+14.然后就是来同步一下用户。
+<pre>php xcat syncusers
+</pre>
+15.然后 crontab -e ，添加以下六段。
+<pre>30 22 * * * php /home/wwwroot/ss.panel/xcat sendDiaryMail
+*/1 * * * * php /home/wwwroot/ss.panel/xcat synclogin
+*/1 * * * * php /home/wwwroot/ss.panel/xcat syncvpn
+0 0 * * * php -n /home/wwwroot/ss.panel/xcat dailyjob
+*/1 * * * * php /home/wwwroot/ss.panel/xcat checkjob    
+*/1 * * * * php -n /home/wwwroot/ss.panel/xcat syncnas
+</pre>
+安装到此结束。P
+<h2>注意</h2>
+在使用中，有一些小注意，慢慢补充。
+
+1、添加节点时，请注意用 " - "来分割。
+
+前面为节点名，后面为方式。
+
+比如 “香港 1 - Shadowsocks”
+
+有问题还麻烦留言哈。

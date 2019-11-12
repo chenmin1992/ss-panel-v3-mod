@@ -1,0 +1,43 @@
+思来想去，还是来写写这个功能具体该怎么使用。
+<h3>一.什么是单端口多用户</h3>
+这个是很早之前就有人提出来的东西。基于不同历史时期的不同需求，再结合个人的一点小小的兴趣，就做了这么个功能。简单来说，就是能让你在单个端口上，承载你站点上所有用户的访问。也就是说原先是多端口，多用户，而现在所有用户就使用一个端口来进行通讯了。
+<h3>二.功能演进以及发展</h3>
+在今年八月份的时候，我个人的某个大事件之前，抽了一个晚上的时间，做了那么个功能。然后在之后很长的一段时间里，这个功能都长期处于残废状态，一来是没兴趣，二来是没需求。然后现在有点力气，就来搞搞。目前是可以稳定使用了，就打算写下此文来介绍一下。
+<h3>三.操作前准备</h3>
+请确认你已经安装好面板和后端，并且正确配置。
+<h3>四.操作步骤</h3>
+下面以添加一个 8080 端口号的单端口多用户承载端口为例。
+
+1.首先请您自己在您的站点上注册一个新用户。
+
+2.然后在管理员后台面板编辑一下用户。按照图上的指示编辑，然后保存。
+
+2016年11月3日更新：自定义混淆方式可以并且推荐使用 tls1.2_ticket_auth .
+
+<img class="alignnone size-large wp-image-3911" src="https://www.zhaoj.in/wp-content/uploads/2016/10/147790790713a90f7f8d8f15715e1b46d0dfe00dfe-1024x568.png" alt="qq%e6%88%aa%e5%9b%be20161031175714" width="1024" height="568" />
+
+3.然后添加一个节点。看图上的指示。
+
+<img class="alignnone size-large wp-image-3912" src="https://www.zhaoj.in/wp-content/uploads/2016/10/14779082911e0fadcac05f48109b6ce4f0b6cec626-1024x636.png" alt="qq%e6%88%aa%e5%9b%be20161031180223" width="1024" height="636" />
+
+4.然后修改面板的 config/.config.php ，确保里面如下两段 已经按照你的意愿设置并且和后端上 userapiconfig.py 里的对应配置项一致。
+<pre class="lang:default decode:true ">#多用户混淆参数后缀
+$System_Config['mu_suffix']='zhaoj.in';
+
+#多用户混淆参数表达式，%5m代表取用户特征 md5 的前五位，%id 代表用户id,%suffix 代表上面这个后缀。
+$System_Config['mu_regex']='%5m%id.%suffix';</pre>
+对应后端上的：
+<pre class="lang:default decode:true ">MU_SUFFIX = 'zhaoj.in'
+MU_REGEX = '%5m%id.%suffix'
+</pre>
+5.添加完毕。
+
+&nbsp;
+<h3>四.使用方法</h3>
+看到面板里你之前添加的节点的  tab ，每个选项卡你点开都会看到多出来一个你刚才添加的端口，点进去，扫码什么的连接就好。
+
+<img class="alignnone size-full wp-image-3913" src="https://www.zhaoj.in/wp-content/uploads/2016/10/147790860030a333faf38b28f1acef7c79bc033eb6.png" alt="qq%e6%88%aa%e5%9b%be20161031180927" width="558" height="66" />
+
+&nbsp;
+
+祝使用愉快。
