@@ -110,6 +110,7 @@
 													<option value="8">PAC PLUS PLUS(HTTPS 代理生成 PAC文件)</option>
 													<option value="9">Shadowsocks 单端口多用户</option>
 													<option value="10">Shadowsocks 中转</option>
+													<option value="1">V2Ray</option>
 												</select>
 											</div>
 									</div>
@@ -144,6 +145,80 @@
 									<div class="form-group form-group-label">
 										<label class="floating-label" for="node_speedlimit">节点限速(对于每个用户端口)（Mbps）</label>
 										<input class="form-control" id="node_speedlimit" type="text" value="0" name="node_speedlimit">
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="card">
+							<div class="card-main">
+								<div class="card-inner">
+									<div class="form-group form-group-label">
+										<label class="floating-label" for="listen">监听地址</label>
+										<input class="form-control" id="listen" type="text" name="listen">
+									</div>
+
+									<div class="form-group form-group-label">
+										<label class="floating-label" for="port">端口</label>
+										<input class="form-control" id="port" type="text" name="port">
+									</div>
+
+									<div class="form-group form-group-label">
+										<div class="form-group form-group-label">
+												<label class="floating-label" for="protocol">协议</label>
+												<select id="protocol" class="form-control" name="protocol">
+													<option value="0" selected>VMess</option>
+													<option value="1">Socks</option>
+													<option value="2">Shadowsocks</option>
+													<option value="3">MTProto</option>
+													<option value="4">HTTP</option>
+													<option value="5">Freedom</option>
+													<option value="6">Dokodemo-door</option>
+													<option value="7">Blackhole</option>
+												</select>
+											</div>
+									</div>
+
+									<div class="form-group form-group-label">
+										<div class="checkbox switch">
+											<label for="sniffing">
+												<input checked class="access-hide" id="sniffing" type="checkbox" name="sniffing"><span class="switch-toggle"></span>开启探测流量
+											</label>
+										</div>
+									</div>
+
+									<div class="form-group form-group-label">
+										<div class="form-group form-group-label">
+												<label class="floating-label" for="network">传输类型</label>
+												<select id="network" class="form-control" name="network">
+													<option value="0">TCP</option>
+													<option value="1">mKCP</option>
+													<option value="2" selected>WebSocket</option>
+													<option value="3">HTTP/2</option>
+													<option value="4">DomainSocket</option>
+													<option value="5">QUIC</option>
+												</select>
+											</div>
+									</div>
+
+									<div class="form-group form-group-label">
+										<div class="form-group form-group-label">
+												<label class="floating-label" for="security">TLS</label>
+												<select id="security" class="form-control" name="security">
+													<option value="0">none</option>
+													<option value="1" selected>tls</option>
+												</select>
+											</div>
+									</div>
+
+									<div class="form-group form-group-label">
+										<label class="floating-label" for="cert">证书/cert</label>
+										<textarea class="form-control" id="cert" rows="15"></textarea>
+									</div>
+
+									<div class="form-group form-group-label">
+										<label class="floating-label" for="key">私钥/key</label>
+										<textarea class="form-control" id="key" rows="15"></textarea>
 									</div>
 								</div>
 							</div>
