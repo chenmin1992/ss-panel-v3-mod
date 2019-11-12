@@ -153,73 +153,184 @@
 						<div class="card">
 							<div class="card-main">
 								<div class="card-inner">
-									<div class="form-group form-group-label">
-										<label class="floating-label" for="listen">监听地址</label>
-										<input class="form-control" id="listen" type="text" name="listen">
-									</div>
+                                        <div class="pull-right">
+                                            <button class="btn btn-flat waves-attach waves-effect" id="add-inbound"><span class="icon icon-lg">add</span>&nbsp;添加</button>
+                                        </div>
+                                    
+                                    <nav class="tab-nav margin-top-no">
+                                        <ul class="nav nav-list">
+                                            <li class="active">
+                                                <a class="waves-attach" data-toggle="tab" href="#inbound-1"><i class="icon icon-lg">vertical_align_bottom</i>&nbsp;inbound-1</a>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                    
+									<div class="card-inner">
+										<div class="tab-content" id="inbounds">
+											<div class="tab-pane fade active in" id="inbound-1">
+                                                <div class="form-group form-group-label">
+                                                    <label class="floating-label" for="listen">监听地址</label>
+                                                    <input class="form-control" id="listen" type="text" name="listen">
+                                                </div>
 
-									<div class="form-group form-group-label">
-										<label class="floating-label" for="port">端口</label>
-										<input class="form-control" id="port" type="text" name="port">
-									</div>
+                                                <div class="form-group form-group-label">
+                                                    <label class="floating-label" for="port">端口</label>
+                                                    <input class="form-control" id="port" type="number" name="port">
+                                                </div>
 
-									<div class="form-group form-group-label">
-										<div class="form-group form-group-label">
-												<label class="floating-label" for="protocol">协议</label>
-												<select id="protocol" class="form-control" name="protocol">
-													<option value="0" selected>VMess</option>
-													<option value="1">Socks</option>
-													<option value="2">Shadowsocks</option>
-													<option value="3">MTProto</option>
-													<option value="4">HTTP</option>
-													<option value="5">Freedom</option>
-													<option value="6">Dokodemo-door</option>
-													<option value="7">Blackhole</option>
-												</select>
-											</div>
-									</div>
+                                                <div class="form-group form-group-label">
+                                                    <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="protocol">协议</label>
+                                                            <select id="protocol" class="form-control" name="protocol">
+                                                                <option value="0" selected>VMess</option>
+                                                                <option value="1" disabled>Socks</option>
+                                                                <option value="2" disabled>Shadowsocks</option>
+                                                                <option value="3" disabled>MTProto</option>
+                                                                <option value="4" disabled>HTTP</option>
+                                                                <option value="5" disabled>Freedom</option>
+                                                                <option value="6" disabled>Dokodemo-door</option>
+                                                                <option value="7" disabled>Blackhole</option>
+                                                            </select>
+                                                        </div>
+                                                </div>
 
-									<div class="form-group form-group-label">
-										<div class="checkbox switch">
-											<label for="sniffing">
-												<input checked class="access-hide" id="sniffing" type="checkbox" name="sniffing"><span class="switch-toggle"></span>开启探测流量
-											</label>
-										</div>
-									</div>
+                                                <div class="form-group form-group-label">
+                                                    <div class="checkbox switch">
+                                                        <label for="disableinsecureencryption">
+                                                            <input checked class="access-hide" id="disableinsecureencryption" type="checkbox" name="disableinsecureencryption"><span class="switch-toggle"></span>禁用不安全的加密方式
+                                                        </label>
+                                                    </div>
+                                                </div>
 
-									<div class="form-group form-group-label">
-										<div class="form-group form-group-label">
-												<label class="floating-label" for="network">传输类型</label>
-												<select id="network" class="form-control" name="network">
-													<option value="0">TCP</option>
-													<option value="1">mKCP</option>
-													<option value="2" selected>WebSocket</option>
-													<option value="3">HTTP/2</option>
-													<option value="4">DomainSocket</option>
-													<option value="5">QUIC</option>
-												</select>
-											</div>
-									</div>
+                                                <div class="form-group form-group-label">
+                                                    <div class="checkbox switch">
+                                                        <label for="sniffing">
+                                                            <input checked class="access-hide" id="sniffing" type="checkbox" name="sniffing"><span class="switch-toggle"></span>开启探测流量
+                                                        </label>
+                                                    </div>
+                                                </div>
 
-									<div class="form-group form-group-label">
-										<div class="form-group form-group-label">
-												<label class="floating-label" for="security">TLS</label>
-												<select id="security" class="form-control" name="security">
-													<option value="0">none</option>
-													<option value="1" selected>tls</option>
-												</select>
-											</div>
-									</div>
+                                                <div class="form-group form-group-label">
+                                                    <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="network">传输类型</label>
+                                                            <select id="network" class="form-control" name="network">
+                                                                <option value="0">TCP</option>
+                                                                <option value="1">mKCP</option>
+                                                                <option value="2" selected>WebSocket</option>
+                                                                <option value="3">HTTP/2</option>
+                                                                <option value="4">DomainSocket</option>
+                                                                <option value="5">QUIC</option>
+                                                            </select>
+                                                        </div>
+                                                </div>
+                                                
+                                                <div class="tab-content" id="network_tabs">
+                                                    <div class="tab-pane fade" id="tcp">
+                                                        暂不支持此传输类型
+                                                    </div>
 
-									<div class="form-group form-group-label">
-										<label class="floating-label" for="cert">证书/cert</label>
-										<textarea class="form-control" id="cert" rows="15"></textarea>
-									</div>
+                                                    <div class="tab-pane fade" id="kcp">
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="kcp_mtu">MTU</label>
+                                                            <input class="form-control" id="kcp_mtu" type="number" name="kcp_mtu" value="1350">
+                                                        </div>
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="kcp_tti">TTI (ms)</label>
+                                                            <input class="form-control" id="kcp_tti" type="number" name="kcp_tti" value="20">
+                                                        </div>
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="kcp_uplinkcapacity">UplinkCapacity (MB/s)</label>
+                                                            <input class="form-control" id="kcp_uplinkcapacity" type="number" name="kcp_uplinkcapacity" value="5">
+                                                        </div>
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="kcp_downlinkcapacity">DownlinkCapacity (MB/s)</label>
+                                                            <input class="form-control" id="kcp_downlinkcapacity" type="number" name="kcp_downlinkcapacity" value="20">
+                                                        </div>
+                                                        <div class="form-group form-group-label">
+                                                            <div class="checkbox switch">
+                                                                <label for="kcp_congestion">
+                                                                    <input class="access-hide" id="kcp_congestion" type="checkbox" name="kcp_congestion"><span class="switch-toggle"></span>拥塞控制
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="kcp_readbuffersize">ReadBufferSize (MB)</label>
+                                                            <input class="form-control" id="kcp_readbuffersize" type="number" name="kcp_readbuffersize" value="2">
+                                                        </div>
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="kcp_writebuffersize">WriteBufferSize (MB)</label>
+                                                            <input class="form-control" id="kcp_writebuffersize" type="number" name="kcp_writebuffersize" value="2">
+                                                        </div>
+                                                        <div class="form-group form-group-label">
+                                                            <div class="form-group form-group-label">
+                                                                    <label class="floating-label" for="network">伪装类型</label>
+                                                                    <select id="network" class="form-control" name="network">
+                                                                        <option value="0">none</option>
+                                                                        <option value="1">srtp</option>
+                                                                        <option value="2">utp</option>
+                                                                        <option value="3" selected>wechat-video</option>
+                                                                        <option value="4">dtls</option>
+                                                                        <option value="5">wireguard</option>
+                                                                    </select>
+                                                                </div>
+                                                        </div>
+                                                    </div>
 
-									<div class="form-group form-group-label">
-										<label class="floating-label" for="key">私钥/key</label>
-										<textarea class="form-control" id="key" rows="15"></textarea>
-									</div>
+                                                    <div class="tab-pane fade active in" id="websocket">
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="ws_path">Path</label>
+                                                            <input class="form-control" id="ws_path" type="text" name="ws_path" value="/ws">
+                                                        </div>
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="ws_headers">Headers</label>
+                                                            <textarea class="form-control" id="ws_headers" rows="15">"Host": "v2ray.com","Host": "baidu.com"</textarea>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="tab-pane fade" id="http2">
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="h2_path">Path</label>
+                                                            <input class="form-control" id="h2_path" type="text" name="h2_path" value="/ws">
+                                                        </div>
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="h2_hosts">Host</label>
+                                                            <textarea class="form-control" id="h2_hosts" rows="15">"v2ray.com","baidu.com"</textarea>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="tab-pane fade" id="domainsocket">
+                                                        暂不支持此传输类型
+                                                    </div>
+
+                                                    <div class="tab-pane fade" id="quic">
+                                                        暂不支持此传输类型
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group form-group-label">
+                                                    <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="security">TLS</label>
+                                                            <select id="security" class="form-control" name="security">
+                                                                <option value="0">none</option>
+                                                                <option value="1" selected>tls</option>
+                                                            </select>
+                                                        </div>
+                                                </div>
+
+                                                <div class="form-group form-group-label">
+                                                    <label class="floating-label" for="cert">证书/cert</label>
+                                                    <textarea class="form-control" id="cert" rows="15"></textarea>
+                                                </div>
+
+                                                <div class="form-group form-group-label">
+                                                    <label class="floating-label" for="key">私钥/key</label>
+                                                    <textarea class="form-control" id="key" rows="15"></textarea>
+                                                </div>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                    
 								</div>
 							</div>
 						</div>
@@ -269,7 +380,32 @@
 
 {literal}
 <script>
-
+    $( "#network" ).change(function() {
+      $("#network_tabs").children(".tab-pane, .fade, div").removeClass("active in");
+      switch(this.value) {
+        case "0":
+           $("#tcp").addClass("active in");
+           break;
+        case "1":
+           $("#kcp").addClass("active in");
+           break;
+        case "2":
+           $("#websocket").addClass("active in");
+           break;
+        case "3":
+           $("#http2").addClass("active in");
+           break;
+        case "4":
+           $("#domainsocket").addClass("active in");
+           break;
+        case "5":
+           $("#quic").addClass("active in");
+           break;
+        default:
+           break;
+      }
+    });
+    
 	$('#main_form').validate({
 		rules: {
 		  name: {required: true},
