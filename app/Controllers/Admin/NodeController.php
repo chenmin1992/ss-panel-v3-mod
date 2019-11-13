@@ -61,6 +61,9 @@ class NodeController extends AdminController
         } else {
             $node->node_ip="";
         }
+        if ($node->sort == 11) {
+            $node->v2conf = $request->getParam('v2conf');
+        }
 
         if ($node->sort==1) {
             Radius::AddNas($node->node_ip, $request->getParam('server'));
