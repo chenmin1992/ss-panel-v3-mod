@@ -155,8 +155,8 @@
 								<div class="card-inner">
 									<p><h4>V2Ray设置</h4></p>
 
-                                    <button class="btn btn-flat waves-attach waves-effect" type="button" id="add-inbound"><span class="icon icon-lg">add</span>&nbsp;添加一个Inbound</button>
-                                    <button class="btn btn-flat waves-attach waves-effect" type="button" id="del-inbound"><span class="icon icon-lg">add</span>&nbsp;移除当前Inbound</button>
+                                    <button class="btn btn-flat waves-attach" type="button" id="add-inbound"><span class="icon icon-lg">add</span>&nbsp;添加一个Inbound</button>
+                                    <button class="btn btn-flat waves-attach" type="button" id="del-inbound"><span class="icon icon-lg">add</span>&nbsp;移除当前Inbound</button>
 
                                     <nav class="tab-nav margin-top-no">
                                         <ul class="nav nav-list" id="inbounds-nav">
@@ -193,6 +193,16 @@
                                                                 <option value="blackhole" disabled>Blackhole</option>
                                                             </select>
                                                         </div>
+                                                </div>
+
+                                                <div class="form-group form-group-label">
+                                                    <label class="floating-label" for="alterid">AlterId</label>
+                                                    <input class="form-control" id="alterid" type="number" name="alterid" value="32">
+                                                </div>
+
+                                                <div class="form-group form-group-label">
+                                                    <label class="floating-label" for="level">Level</label>
+                                                    <input class="form-control" id="level" type="number" name="level" value="0">
                                                 </div>
 
                                                 <div class="form-group form-group-label">
@@ -298,10 +308,11 @@
                                                     </div>
 
                                                     <div class="tab-pane fade" id="domainsocket">
-                                                        <div class="form-group form-group-label">
+                                                        <p>暂不支持此传输类型</p>
+                                                        <!-- <div class="form-group form-group-label">
                                                             <label class="floating-label" for="path">Path</label>
                                                             <input class="form-control" id="path" type="text" name="path" value="/ws">
-                                                        </div>
+                                                        </div> -->
                                                     </div>
 
                                                     <div class="tab-pane fade" id="quic">                                                    	
@@ -416,13 +427,21 @@
     $( "#add-inbound" ).click(function() {
         var newid = parseInt($( "#inbounds" ).children().last().attr( "id" ).split( "-" )[1]) + 1;
 
-        var inb = $( "#inbounds" ).children( ".active" ).clone();
-        inb.attr( "id", "in-" + newid);
-        inb.removeClass( "active in" );
-        $( "#inbounds" ).append(inb);
-
         var li = $( "<li><a class='waves-attach waves-effect' data-toggle='tab' href='#in-" + newid + "' aria-expanded='false'><i class='icon icon-lg'>vertical_align_bottom</i>&nbsp;in-" + newid + "</a></li>" );
         $( "#inbounds-nav" ).append(li);
+
+        var oinb = $( "#inbounds" ).children( "div.active.in" );
+        var inb = oinb.clone();
+        inb.attr( "id", "in-" + newid);
+        inb.removeClass( "active in" );
+        inb.find("select").each(function() { // bug fix https://bugs.jquery.com/ticket/1294
+            $(this).val(oinb.find("select#"+$(this).attr("id")).val());
+        });
+        inb.find("#network").change(function() {
+            $(this).parent().parent().siblings("#networks").children( "div.active.in" ).removeClass( "active in" );
+            $(this).parent().parent().siblings("#networks").children( "div#" + this.value ).addClass( "active in" );
+        });
+        $( "#inbounds" ).append(inb);
 
         $( "a[href='#in-" + newid + "']" ).click();
     });
@@ -435,10 +454,12 @@
         $( "#inbounds" ).children( ".active" ).remove();
         $( "#inbounds-nav a" ).first().click();
     });
-
-    $( "#network" ).change(function() {
-    	$(this).siblings("#networks").children( "div" ).removeClass( "active in" );
-      	$(this).siblings("#networks").children( "div #" + this.value ).addClass( "active in" );
+    
+    $( "#inbounds" ).children().each(function() {
+        $(this).find("#network").change(function() {
+            $(this).parent().parent().siblings("#networks").children( "div.active.in" ).removeClass( "active in" );
+            $(this).parent().parent().siblings("#networks").children( "div#" + this.value ).addClass( "active in" );
+        });
     });
 
 	$('#main_form').validate({
@@ -486,18 +507,21 @@
 
 			var inbs = [];
             $("#inbounds").children().each(function() {
-            	console.log(this);
              	var inb = {
-                  "listen": $(this).find("#listen").val(),
-                  "port": $(this).find("#port").val(),
-                  "protocol": $(this).find("#protocol").val(),
-                  "disableinsecureencryption": $(this).find("#disable_insecure_encryption").is(":checked"),
-                  "block_bt": $(this).find("#block_bt").is(":checked"),
-                  "security": $(this).find("#security").val(),
-                  "cert": $(this).find("#cert").val(),
-                  "key": $(this).find("#key").val(),
-                  "network": $(this).find("#network").val()
+                    "listen": $(this).find("#listen").val(),
+                    "port": $(this).find("#port").val(),
+                    "protocol": $(this).find("#protocol").val(),
+                    "alterid": $(this).find("#alterid").val(),
+                    "level": $(this).find("#level").val(),
+                    "disableinsecureencryption": $(this).find("#disable_insecure_encryption").is(":checked"),
+                    "block_bt": $(this).find("#block_bt").is(":checked"),
+                    "network": $(this).find("#network").val(),
+                    "security": $(this).find("#security").val()
                 };
+                if(inb["security"] == "tls") {
+                    inb["cert"] = $(this).find("#cert").val();
+                    inb["key"] = $(this).find("#key").val();                    
+                }
                 if(inb["network"] == "kcp") {
                 	inb["mtu"] = $(this).find("#kcp #mtu").val();
                 	inb["tti"] = $(this).find("#kcp #tti").val();
@@ -506,24 +530,21 @@
                 	inb["congestion"] = $(this).find("#kcp #congestion").is(":checked");
                 	inb["readbuffersize"] = $(this).find("#kcp #readbuffersize").val();
                 	inb["writebuffersize"] = $(this).find("#kcp #writebuffersize").val();
+                	inb["obfs"] = $(this).find("#kcp #obfs").val();
                 }
-                if($(this).find("#"+inb["network"]+" #path").val() != null) {
-                	inb["path"] = $(this).find("#"+inb["network"]+" #path").val();
-                }
-                if($(this).find("#"+inb["network"]+" #headers").val() != null) {
+                if(inb["network"] == "ws") {
+                	inb["path"] = $(this).find("#ws #path").val();
                 	try {
-                		inb["headers"] = JSON.parse("{"+$(this).find("#"+inb["network"]+" #headers").val()+"}");
+                		inb["headers"] = JSON.parse("{"+$(this).find("#ws #headers").val()+"}");
 					}
-					catch(err) {}
+					catch(err) { }
                 }
-                if($(this).find("#"+inb["network"]+" #host").val() != null) {
+                if(inb["network"] == "http") {
+                	inb["path"] = $(this).find("#http #path").val();
                 	try {
-                		inb["host"] = JSON.parse("["+$(this).find("#"+inb["network"]+" #host").val()+"]");
+                		inb["headers"] = JSON.parse("{"+$(this).find("#http #host").val()+"}");
 					}
-					catch(err) {}
-                }
-                if($(this).find("#"+inb["network"]+" #obfs").val() != null) {
-                	inb["obfs"] = $(this).find("#"+inb["network"]+" #obfs").val();
+					catch(err) { }
                 }
                 inbs.push(inb);
             });
@@ -557,7 +578,7 @@
                     if (data.ret) {
                         $("#result").modal();
                         $("#msg").html(data.msg);
-                        window.setTimeout("location.href=top.document.referrer", {$config['jump_delay']});
+                        window.setTimeout("location.href='/admin/node'", {$config['jump_delay']});
                     } else {
                         $("#result").modal();
                         $("#msg").html(data.msg);
