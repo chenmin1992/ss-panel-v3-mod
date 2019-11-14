@@ -201,11 +201,6 @@
                                                 </div>
 
                                                 <div class="form-group form-group-label">
-                                                    <label class="floating-label" for="level">Level</label>
-                                                    <input class="form-control" id="level" type="number" name="level" value="0">
-                                                </div>
-
-                                                <div class="form-group form-group-label">
                                                     <div class="checkbox switch">
                                                         <label for="disable_insecure_encryption">
                                                             <input checked class="access-hide" id="disable_insecure_encryption" type="checkbox" name="disable_insecure_encryption"><span class="switch-toggle"></span>禁用不安全的加密方式
@@ -299,7 +294,7 @@
                                                     <div class="tab-pane fade" id="http">
                                                         <div class="form-group form-group-label">
                                                             <label class="floating-label" for="path">Path</label>
-                                                            <input class="form-control" id="path" type="text" name="path" value="/ws">
+                                                            <input class="form-control" id="path" type="text" name="path" value="/h2">
                                                         </div>
                                                         <div class="form-group form-group-label">
                                                             <label class="floating-label" for="host">Host</label>
@@ -450,9 +445,9 @@
         if($( "#inbounds" ).children().length == 1) {
             return
         }
+        $( "#inbounds-nav a" ).first().click();
         $( "#inbounds-nav" ).children( ".active" ).remove();
         $( "#inbounds" ).children( ".active" ).remove();
-        $( "#inbounds-nav a" ).first().click();
     });
     
     $( "#inbounds" ).children().each(function() {
@@ -509,21 +504,20 @@
             $("#inbounds").children().each(function() {
              	var inb = {
                     "listen": $(this).find("#listen").val(),
-                    "port": $(this).find("#port").val(),
+                    "port": parseInt($(this).find("#port").val()),
                     "protocol": $(this).find("#protocol").val(),
-                    "alterid": $(this).find("#alterid").val(),
-                    "level": $(this).find("#level").val(),
+                    "alterid": parseInt($(this).find("#alterid").val()),
                     "disableinsecureencryption": $(this).find("#disable_insecure_encryption").is(":checked"),
                     "blockbt": $(this).find("#block_bt").is(":checked"),
                     "network": $(this).find("#network").val(),
                     // kcp
-                    "mtu": $(this).find("#kcp #mtu").val(),
-                    "tti": $(this).find("#kcp #tti").val(),
-                    "uplinkcapacity": $(this).find("#kcp #uplinkcapacity").val(),
-                    "downlinkcapacity": $(this).find("#kcp #downlinkcapacity").val(),
+                    "mtu": parseInt($(this).find("#kcp #mtu").val()),
+                    "tti": parseInt($(this).find("#kcp #tti").val()),
+                    "uplinkcapacity": parseInt($(this).find("#kcp #uplinkcapacity").val()),
+                    "downlinkcapacity": parseInt($(this).find("#kcp #downlinkcapacity").val()),
                     "congestion": $(this).find("#kcp #congestion").is(":checked"),
-                    "readbuffersize": $(this).find("#kcp #readbuffersize").val(),
-                    "writebuffersize": $(this).find("#kcp #writebuffersize").val(),
+                    "readbuffersize": parseInt($(this).find("#kcp #readbuffersize").val()),
+                    "writebuffersize": parseInt($(this).find("#kcp #writebuffersize").val()),
                     "obfs": $(this).find("#kcp #obfs").val(),
                     //ws
                     "path": $(this).find("#ws #path").val(),

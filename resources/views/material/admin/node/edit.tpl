@@ -162,7 +162,7 @@
                                     <nav class="tab-nav margin-top-no">
                                         <ul class="nav nav-list" id="inbounds-nav">
 											{foreach from=$node->v2conf|json_decode key=index item=inbound}
-                                            <li>
+                                            <li {if $index==0}class="active"{/if}>
                                                 <a class="waves-attach waves-effect" data-toggle="tab" href="#in-{$index}"><i class="icon icon-lg">vertical_align_bottom</i>&nbsp;in-{$index}</a>
                                             </li>
                                             {/foreach}
@@ -172,7 +172,7 @@
 									<div class="card-inner">
 										<div class="tab-content" id="inbounds">
 											{foreach from=$node->v2conf|json_decode key=index item=inbound}
-											<div class="tab-pane fade" id="in-{$index}">
+											<div class="tab-pane fade {if $index==0}active in{/if}" id="in-{$index}">
                                                 <div class="form-group form-group-label">
                                                     <label class="floating-label" for="listen">监听地址</label>
                                                     <input class="form-control" id="listen" type="text" name="listen" value="{$inbound->listen}">
@@ -202,11 +202,6 @@
                                                 <div class="form-group form-group-label">
                                                     <label class="floating-label" for="alterid">AlterId</label>
                                                     <input class="form-control" id="alterid" type="number" name="alterid" value="{$inbound->alterid}">
-                                                </div>
-
-                                                <div class="form-group form-group-label">
-                                                    <label class="floating-label" for="level">Level</label>
-                                                    <input class="form-control" id="level" type="number" name="level" value="{$inbound->level}">
                                                 </div>
 
                                                 <div class="form-group form-group-label">
@@ -351,8 +346,8 @@
                                                     <div class="form-group form-group-label">
                                                             <label class="floating-label" for="security">TLS</label>
                                                             <select id="security" class="form-control" name="security">
-                                                                <option value="none" {if $inbound->network=='none'}selected{/if}>none</option>
-                                                                <option value="tls" {if $inbound->network=='tls'}selected{/if}>tls</option>
+                                                                <option value="none" {if $inbound->security=='none'}selected{/if}>none</option>
+                                                                <option value="tls" {if $inbound->security=='tls'}selected{/if}>tls</option>
                                                             </select>
                                                         </div>
                                                 </div>
@@ -450,9 +445,9 @@
         if($( "#inbounds" ).children().length == 1) {
             return
         }
+        $( "#inbounds-nav a" ).first().click();
         $( "#inbounds-nav" ).children( ".active" ).remove();
         $( "#inbounds" ).children( ".active" ).remove();
-        $( "#inbounds-nav a" ).first().click();
     });
 
     $( "#inbounds" ).children().each(function() {
@@ -461,9 +456,7 @@
             $(this).parent().parent().siblings("#networks").children( "div#" + this.value ).addClass( "active in" );
         });
     });
-
-    $( "#inbounds-nav a" ).first().click();
-
+    
 	$('#main_form').validate({
 		rules: {
 		  name: {required: true},
@@ -512,21 +505,20 @@
             $("#inbounds").children().each(function() {
              	var inb = {
                     "listen": $(this).find("#listen").val(),
-                    "port": $(this).find("#port").val(),
+                    "port": parseInt($(this).find("#port").val()),
                     "protocol": $(this).find("#protocol").val(),
-                    "alterid": $(this).find("#alterid").val(),
-                    "level": $(this).find("#level").val(),
+                    "alterid": parseInt($(this).find("#alterid").val()),
                     "disableinsecureencryption": $(this).find("#disable_insecure_encryption").is(":checked"),
                     "blockbt": $(this).find("#block_bt").is(":checked"),
                     "network": $(this).find("#network").val(),
                     // kcp
-                    "mtu": $(this).find("#kcp #mtu").val(),
-                    "tti": $(this).find("#kcp #tti").val(),
-                    "uplinkcapacity": $(this).find("#kcp #uplinkcapacity").val(),
-                    "downlinkcapacity": $(this).find("#kcp #downlinkcapacity").val(),
+                    "mtu": parseInt($(this).find("#kcp #mtu").val()),
+                    "tti": parseInt($(this).find("#kcp #tti").val()),
+                    "uplinkcapacity": parseInt($(this).find("#kcp #uplinkcapacity").val()),
+                    "downlinkcapacity": parseInt($(this).find("#kcp #downlinkcapacity").val()),
                     "congestion": $(this).find("#kcp #congestion").is(":checked"),
-                    "readbuffersize": $(this).find("#kcp #readbuffersize").val(),
-                    "writebuffersize": $(this).find("#kcp #writebuffersize").val(),
+                    "readbuffersize": parseInt($(this).find("#kcp #readbuffersize").val()),
+                    "writebuffersize": parseInt($(this).find("#kcp #writebuffersize").val()),
                     "obfs": $(this).find("#kcp #obfs").val(),
                     //ws
                     "path": $(this).find("#ws #path").val(),
