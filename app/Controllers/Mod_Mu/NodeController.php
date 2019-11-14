@@ -55,6 +55,9 @@ class NodeController extends BaseController
                 "sort" => $node->sort
             ],
         ];
+        if ($node->sort == 11) {
+            $res["data"]["v2conf"] = json_decode($node->v2conf);
+        }
         return $this->echoJson($response, $res);
     }
 

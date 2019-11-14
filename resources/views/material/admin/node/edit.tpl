@@ -151,6 +151,230 @@
 							</div>
 						</div>
 
+						<div class="card {if $node->sort!=11}access-hide{/if}" id="v2in">
+							<div class="card-main">
+								<div class="card-inner">
+									<p><h4>V2Ray设置</h4></p>
+
+                                    <button class="btn btn-flat waves-attach" type="button" id="add-inbound"><span class="icon icon-lg">add</span>&nbsp;添加一个Inbound</button>
+                                    <button class="btn btn-flat waves-attach" type="button" id="del-inbound"><span class="icon icon-lg">add</span>&nbsp;移除当前Inbound</button>
+
+                                    <nav class="tab-nav margin-top-no">
+                                        <ul class="nav nav-list" id="inbounds-nav">
+											{foreach from=$node->v2conf|json_decode key=index item=inbound}
+                                            <li>
+                                                <a class="waves-attach waves-effect" data-toggle="tab" href="#in-{$index}"><i class="icon icon-lg">vertical_align_bottom</i>&nbsp;in-{$index}</a>
+                                            </li>
+                                            {/foreach}
+                                        </ul>
+                                    </nav>
+
+									<div class="card-inner">
+										<div class="tab-content" id="inbounds">
+											{foreach from=$node->v2conf|json_decode key=index item=inbound}
+											<div class="tab-pane fade" id="in-{$index}">
+                                                <div class="form-group form-group-label">
+                                                    <label class="floating-label" for="listen">监听地址</label>
+                                                    <input class="form-control" id="listen" type="text" name="listen" value="{$inbound->listen}">
+                                                </div>
+
+                                                <div class="form-group form-group-label">
+                                                    <label class="floating-label" for="port">端口</label>
+                                                    <input class="form-control" id="port" type="number" name="port" value="{$inbound->port}">
+                                                </div>
+
+                                                <div class="form-group form-group-label">
+                                                    <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="protocol">协议</label>
+                                                            <select id="protocol" class="form-control" name="protocol">
+                                                                <option value="vmess" selected>VMess</option>
+                                                                <option value="socks" disabled>Socks</option>
+                                                                <option value="shadowsocks" disabled>Shadowsocks</option>
+                                                                <option value="mtproto" disabled>MTProto</option>
+                                                                <option value="http" disabled>HTTP</option>
+                                                                <option value="dokodemo-door" disabled>Dokodemo-door</option>
+                                                                <option value="dns" disabled>DNS</option>
+                                                                <option value="blackhole" disabled>Blackhole</option>
+                                                            </select>
+                                                        </div>
+                                                </div>
+
+                                                <div class="form-group form-group-label">
+                                                    <label class="floating-label" for="alterid">AlterId</label>
+                                                    <input class="form-control" id="alterid" type="number" name="alterid" value="{$inbound->alterid}">
+                                                </div>
+
+                                                <div class="form-group form-group-label">
+                                                    <label class="floating-label" for="level">Level</label>
+                                                    <input class="form-control" id="level" type="number" name="level" value="{$inbound->level}">
+                                                </div>
+
+                                                <div class="form-group form-group-label">
+                                                    <div class="checkbox switch">
+                                                        <label for="disable_insecure_encryption">
+                                                            <input {if $inbound->disableinsecureencryption}checked{/if} class="access-hide" id="disable_insecure_encryption" type="checkbox" name="disable_insecure_encryption"><span class="switch-toggle"></span>禁用不安全的加密方式
+                                                        </label>
+                                                    </div>
+                                                </div>
+
+			                                    <div class="form-group form-group-label">
+			                                        <div class="checkbox switch">
+			                                            <label for="block_bt">
+			                                                <input {if $inbound->blockbt}checked{/if} class="access-hide" id="block_bt" type="checkbox" name="block_bt"><span class="switch-toggle"></span>禁止BT下载
+			                                            </label>
+			                                        </div>
+			                                    </div>
+
+                                                <div class="form-group form-group-label">
+                                                    <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="network">传输类型</label>
+                                                            <select id="network" class="form-control" name="network">
+                                                                <option value="tcp" {if $inbound->network=='tcp'}selected{/if}>TCP</option>
+                                                                <option value="kcp" {if $inbound->network=='kcp'}selected{/if}>mKCP</option>
+                                                                <option value="ws" {if $inbound->network=='ws'}selected{/if}>WebSocket</option>
+                                                                <option value="http" {if $inbound->network=='http'}selected{/if}>HTTP/2</option>
+                                                                <option value="domainsocket" {if $inbound->network=='domainsocket'}selected{/if}>DomainSocket</option>
+                                                                <option value="quic" {if $inbound->network=='quic'}selected{/if}>QUIC</option>
+                                                            </select>
+                                                        </div>
+                                                </div>
+
+                                                <div class="tab-content" id="networks">
+                                                    <div class="tab-pane fade {if $inbound->network=='tcp'}active in{/if}" id="tcp">
+                                                        <p>暂不支持此传输类型</p>
+                                                    </div>
+
+                                                    <div class="tab-pane fade {if $inbound->network=='kcp'}active in{/if}" id="kcp">
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="mtu">MTU</label>
+                                                            <input class="form-control" id="mtu" type="number" name="mtu" value="{$inbound->mtu}">
+                                                        </div>
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="tti">TTI (ms)</label>
+                                                            <input class="form-control" id="tti" type="number" name="tti" value="{$inbound->tti}">
+                                                        </div>
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="uplinkcapacity">UplinkCapacity (MB/s)</label>
+                                                            <input class="form-control" id="uplinkcapacity" type="number" name="uplinkcapacity" value="{$inbound->uplinkcapacity}">
+                                                        </div>
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="downlinkcapacity">DownlinkCapacity (MB/s)</label>
+                                                            <input class="form-control" id="downlinkcapacity" type="number" name="downlinkcapacity" value="{$inbound->downlinkcapacity}">
+                                                        </div>
+                                                        <div class="form-group form-group-label">
+                                                            <div class="checkbox switch">
+                                                                <label for="congestion">
+                                                                    <input class="access-hide" id="congestion" type="checkbox" name="congestion"><span class="switch-toggle"></span>拥塞控制
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="readbuffersize">ReadBufferSize (MB)</label>
+                                                            <input class="form-control" id="readbuffersize" type="number" name="readbuffersize" value="2">
+                                                        </div>
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="writebuffersize">WriteBufferSize (MB)</label>
+                                                            <input class="form-control" id="writebuffersize" type="number" name="writebuffersize" value="2">
+                                                        </div>
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="obfs">伪装类型</label>
+                                                            <select id="obfs" class="form-control" name="obfs">
+                                                                <option value="none">none</option>
+                                                                <option value="srtp">srtp</option>
+                                                                <option value="utp">utp</option>
+                                                                <option value="wechat-video" selected>wechat-video</option>
+                                                                <option value="dtls">dtls</option>
+                                                                <option value="wireguard">wireguard</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="tab-pane fade {if $inbound->network=='ws'}active in{/if}" id="ws">
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="path">Path</label>
+                                                            <input class="form-control" id="path" type="text" name="path" value="{$inbound->path}">
+                                                        </div>
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="headers">Headers</label>
+                                                            <textarea class="form-control" id="headers" rows="10">{$inbound->headers|json_encode}</textarea>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="tab-pane fade {if $inbound->network=='http'}active in{/if}" id="http">
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="path">Path</label>
+                                                            <input class="form-control" id="path" type="text" name="path" value="{$inbound->path}">
+                                                        </div>
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="host">Host</label>
+                                                            <textarea class="form-control" id="host" rows="10">{$inbound->host|json_encode}</textarea>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="tab-pane fade {if $inbound->network=='domainsocket'}active in{/if}" id="domainsocket">
+                                                        <p>暂不支持此传输类型</p>
+                                                        <!-- <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="path">Path</label>
+                                                            <input class="form-control" id="path" type="text" name="path" value="/ws">
+                                                        </div> -->
+                                                    </div>
+
+                                                    <div class="tab-pane fade {if $inbound->network=='quic'}active in{/if}" id="quic">                                                    	
+                                                        <p>暂不支持此传输类型</p>
+                                                        <!-- <div class="form-group form-group-label">
+                                                                <label class="floating-label" for="encryption">加密方式</label>
+                                                                <select id="encryption" class="form-control" name="encryption">
+                                                                    <option value="none" selected>none</option>
+                                                                    <option value="aes-128-gcm">aes-128-gcm</option>
+                                                                    <option value="chacha20-poly1305">chacha20-poly1305</option>
+                                                                </select>
+                                                        </div>
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="quic_key">Key</label>
+                                                            <input class="form-control" id="quic_key" type="text" name="quic_key">
+                                                        </div>
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="obfs">伪装类型</label>
+                                                            <select id="obfs" class="form-control" name="obfs">
+                                                                <option value="none">none</option>
+                                                                <option value="srtp">srtp</option>
+                                                                <option value="utp">utp</option>
+                                                                <option value="wechat-video" selected>wechat-video</option>
+                                                                <option value="dtls">dtls</option>
+                                                                <option value="wireguard">wireguard</option>
+                                                            </select>
+                                                        </div> -->
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group form-group-label">
+                                                    <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="security">TLS</label>
+                                                            <select id="security" class="form-control" name="security">
+                                                                <option value="none" {if $inbound->network=='none'}selected{/if}>none</option>
+                                                                <option value="tls" {if $inbound->network=='tls'}selected{/if}>tls</option>
+                                                            </select>
+                                                        </div>
+                                                </div>
+
+                                                <div class="form-group form-group-label">
+                                                    <label class="floating-label" for="cert">证书/cert</label>
+                                                    <textarea class="form-control" id="cert" rows="10">{$inbound->cert}</textarea>
+                                                </div>
+
+                                                <div class="form-group form-group-label">
+                                                    <label class="floating-label" for="key">私钥/key</label>
+                                                    <textarea class="form-control" id="key" rows="10">{$inbound->key}</textarea>
+                                                </div>
+                                            </div>
+											{/foreach}
+                                        </div>
+                                    </div>
+
+								</div>
+							</div>
+						</div>
+
 
 
 						<div class="card">
@@ -192,6 +416,53 @@
 
 {literal}
 <script>
+    $( "#sort" ).change(function() {
+        if(this.value == "11" ) {
+            $( "#v2in" ).removeClass( "access-hide" );
+        } else {
+            $( "#v2in" ).addClass( "access-hide" );
+        }
+    });
+
+    $( "#add-inbound" ).click(function() {
+        var newid = parseInt($( "#inbounds" ).children().last().attr( "id" ).split( "-" )[1]) + 1;
+
+        var li = $( "<li><a class='waves-attach waves-effect' data-toggle='tab' href='#in-" + newid + "' aria-expanded='false'><i class='icon icon-lg'>vertical_align_bottom</i>&nbsp;in-" + newid + "</a></li>" );
+        $( "#inbounds-nav" ).append(li);
+
+        var oinb = $( "#inbounds" ).children( "div.active.in" );
+        var inb = oinb.clone();
+        inb.attr( "id", "in-" + newid);
+        inb.removeClass( "active in" );
+        inb.find("select").each(function() { // bug fix https://bugs.jquery.com/ticket/1294
+            $(this).val(oinb.find("select#"+$(this).attr("id")).val());
+        });
+        inb.find("#network").change(function() {
+            $(this).parent().parent().siblings("#networks").children( "div.active.in" ).removeClass( "active in" );
+            $(this).parent().parent().siblings("#networks").children( "div#" + this.value ).addClass( "active in" );
+        });
+        $( "#inbounds" ).append(inb);
+
+        $( "a[href='#in-" + newid + "']" ).click();
+    });
+
+    $( "#del-inbound" ).click(function() {
+        if($( "#inbounds" ).children().length == 1) {
+            return
+        }
+        $( "#inbounds-nav" ).children( ".active" ).remove();
+        $( "#inbounds" ).children( ".active" ).remove();
+        $( "#inbounds-nav a" ).first().click();
+    });
+
+    $( "#inbounds" ).children().each(function() {
+        $(this).find("#network").change(function() {
+            $(this).parent().parent().siblings("#networks").children( "div.active.in" ).removeClass( "active in" );
+            $(this).parent().parent().siblings("#networks").children( "div#" + this.value ).addClass( "active in" );
+        });
+    });
+
+    $( "#inbounds-nav a" ).first().click();
 
 	$('#main_form').validate({
 		rules: {
@@ -227,7 +498,7 @@
 			{
 				var type=0;
 			}
-			{/literal}
+
 			if(document.getElementById('custom_rss').checked)
 			{
 				var custom_rss=1;
@@ -237,41 +508,85 @@
 				var custom_rss=0;
 			}
 
+			var inbs = [];
+            $("#inbounds").children().each(function() {
+             	var inb = {
+                    "listen": $(this).find("#listen").val(),
+                    "port": $(this).find("#port").val(),
+                    "protocol": $(this).find("#protocol").val(),
+                    "alterid": $(this).find("#alterid").val(),
+                    "level": $(this).find("#level").val(),
+                    "disableinsecureencryption": $(this).find("#disable_insecure_encryption").is(":checked"),
+                    "blockbt": $(this).find("#block_bt").is(":checked"),
+                    "network": $(this).find("#network").val(),
+                    // kcp
+                    "mtu": $(this).find("#kcp #mtu").val(),
+                    "tti": $(this).find("#kcp #tti").val(),
+                    "uplinkcapacity": $(this).find("#kcp #uplinkcapacity").val(),
+                    "downlinkcapacity": $(this).find("#kcp #downlinkcapacity").val(),
+                    "congestion": $(this).find("#kcp #congestion").is(":checked"),
+                    "readbuffersize": $(this).find("#kcp #readbuffersize").val(),
+                    "writebuffersize": $(this).find("#kcp #writebuffersize").val(),
+                    "obfs": $(this).find("#kcp #obfs").val(),
+                    //ws
+                    "path": $(this).find("#ws #path").val(),
+                    "headers": {},
+                    // http2
+                    "path": $(this).find("#http #path").val(),
+                    "host": [],
+                    // tls
+                    "security": $(this).find("#security").val(),
+                    "cert": $(this).find("#cert").val(),
+                    "key": $(this).find("#key").val(),
+                };
+                if($(this).find("#"+inb["network"]+" #path").val() == null) {
+                    inb["path"] = "";
+                } else {
+                    inb["path"] = $(this).find("#"+inb["network"]+" #path").val();
+                }
+            	try {
+            		inb["headers"] = JSON.parse($(this).find("#ws #headers").val());
+				}
+				catch(err) { }
+            	try {
+            		inb["host"] = JSON.parse($(this).find("#http #host").val());
+				}
+				catch(err) { }
+                inbs.push(inb);
+            });
 
-
+{/literal}
             $.ajax({
 
 				type: "PUT",
                 url: "/admin/node/{$node->id}",
                 dataType: "json",
-				{literal}
                 data: {
-                    name: $("#name").val(),
-                    server: $("#server").val(),
-										node_ip: $("#node_ip").val(),
-                    method: $("#method").val(),
-                    custom_method: custom_method,
-                    rate: $("#rate").val(),
-                    info: $("#info").val(),
-                    type: type,
-										group: $("#group").val(),
-                    status: $("#status").val(),
-                    sort: $("#sort").val(),
-										node_speedlimit: $("#node_speedlimit").val(),
-										class: $("#class").val(),
-										node_bandwidth_limit: $("#node_bandwidth_limit").val(),
-										bandwidthlimit_resetday: $("#bandwidthlimit_resetday").val(){/literal},
-										custom_rss: custom_rss,
-										mu_only: $("#mu_only").val()
-					{literal}
+					name: $("#name").val(),
+					server: $("#server").val(),
+					node_ip: $("#node_ip").val(),
+					method: $("#method").val(),
+					custom_method: custom_method,
+					rate: $("#rate").val(),
+					info: $("#info").val(),
+					type: type,
+					group: $("#group").val(),
+					status: $("#status").val(),
+					sort: $("#sort").val(),
+					node_speedlimit: $("#node_speedlimit").val(),
+					class: $("#class").val(),
+					node_bandwidth_limit: $("#node_bandwidth_limit").val(),
+					bandwidthlimit_resetday: $("#bandwidthlimit_resetday").val(),
+					custom_rss: custom_rss,
+					mu_only: $("#mu_only").val(),
+					v2conf: JSON.stringify(inbs)
                 },
                 success: function (data) {
                     if (data.ret) {
                         $("#result").modal();
                         $("#msg").html(data.msg);
-						{/literal}
-                        window.setTimeout("location.href=top.document.referrer", {$config['jump_delay']});
-						{literal}
+                        window.setTimeout("location.href='/admin/node'", {$config['jump_delay']});
+{literal}
                     } else {
                         $("#result").modal();
                         $("#msg").html(data.msg);
@@ -285,6 +600,5 @@
 		}
 	});
 
-</script>
-
 {/literal}
+</script>

@@ -161,14 +161,14 @@
                                     <nav class="tab-nav margin-top-no">
                                         <ul class="nav nav-list" id="inbounds-nav">
                                             <li class="active">
-                                                <a class="waves-attach waves-effect" data-toggle="tab" href="#in-1"><i class="icon icon-lg">vertical_align_bottom</i>&nbsp;in-1</a>
+                                                <a class="waves-attach waves-effect" data-toggle="tab" href="#in-0"><i class="icon icon-lg">vertical_align_bottom</i>&nbsp;in-0</a>
                                             </li>
                                         </ul>
                                     </nav>
 
 									<div class="card-inner">
 										<div class="tab-content" id="inbounds">
-											<div class="tab-pane fade active in" id="in-1">
+											<div class="tab-pane fade active in" id="in-0">
                                                 <div class="form-group form-group-label">
                                                     <label class="floating-label" for="listen">监听地址</label>
                                                     <input class="form-control" id="listen" type="text" name="listen">
@@ -292,7 +292,7 @@
                                                         </div>
                                                         <div class="form-group form-group-label">
                                                             <label class="floating-label" for="headers">Headers</label>
-                                                            <textarea class="form-control" id="headers" rows="10">"Host": "v2ray.com","Referer": "v2ray.com"</textarea>
+                                                            <textarea class="form-control" id="headers" rows="10">{}</textarea>
                                                         </div>
                                                     </div>
 
@@ -303,7 +303,7 @@
                                                         </div>
                                                         <div class="form-group form-group-label">
                                                             <label class="floating-label" for="host">Host</label>
-                                                            <textarea class="form-control" id="host" rows="10">"v2ray.com","baidu.com"</textarea>
+                                                            <textarea class="form-control" id="host" rows="10">[]</textarea>
                                                         </div>
                                                     </div>
 
@@ -514,42 +514,45 @@
                     "alterid": $(this).find("#alterid").val(),
                     "level": $(this).find("#level").val(),
                     "disableinsecureencryption": $(this).find("#disable_insecure_encryption").is(":checked"),
-                    "block_bt": $(this).find("#block_bt").is(":checked"),
+                    "blockbt": $(this).find("#block_bt").is(":checked"),
                     "network": $(this).find("#network").val(),
-                    "security": $(this).find("#security").val()
+                    // kcp
+                    "mtu": $(this).find("#kcp #mtu").val(),
+                    "tti": $(this).find("#kcp #tti").val(),
+                    "uplinkcapacity": $(this).find("#kcp #uplinkcapacity").val(),
+                    "downlinkcapacity": $(this).find("#kcp #downlinkcapacity").val(),
+                    "congestion": $(this).find("#kcp #congestion").is(":checked"),
+                    "readbuffersize": $(this).find("#kcp #readbuffersize").val(),
+                    "writebuffersize": $(this).find("#kcp #writebuffersize").val(),
+                    "obfs": $(this).find("#kcp #obfs").val(),
+                    //ws
+                    "path": $(this).find("#ws #path").val(),
+                    "headers": {},
+                    // http2
+                    "path": $(this).find("#http #path").val(),
+                    "host": [],
+                    // tls
+                    "security": $(this).find("#security").val(),
+                    "cert": $(this).find("#cert").val(),
+                    "key": $(this).find("#key").val(),
                 };
-                if(inb["security"] == "tls") {
-                    inb["cert"] = $(this).find("#cert").val();
-                    inb["key"] = $(this).find("#key").val();                    
+                if($(this).find("#"+inb["network"]+" #path").val() == null) {
+                    inb["path"] = "";
+                } else {
+                    inb["path"] = $(this).find("#"+inb["network"]+" #path").val();
                 }
-                if(inb["network"] == "kcp") {
-                	inb["mtu"] = $(this).find("#kcp #mtu").val();
-                	inb["tti"] = $(this).find("#kcp #tti").val();
-                	inb["uplinkcapacity"] = $(this).find("#kcp #uplinkcapacity").val();
-                	inb["downlinkcapacity"] = $(this).find("#kcp #downlinkcapacity").val();
-                	inb["congestion"] = $(this).find("#kcp #congestion").is(":checked");
-                	inb["readbuffersize"] = $(this).find("#kcp #readbuffersize").val();
-                	inb["writebuffersize"] = $(this).find("#kcp #writebuffersize").val();
-                	inb["obfs"] = $(this).find("#kcp #obfs").val();
-                }
-                if(inb["network"] == "ws") {
-                	inb["path"] = $(this).find("#ws #path").val();
-                	try {
-                		inb["headers"] = JSON.parse("{"+$(this).find("#ws #headers").val()+"}");
-					}
-					catch(err) { }
-                }
-                if(inb["network"] == "http") {
-                	inb["path"] = $(this).find("#http #path").val();
-                	try {
-                		inb["headers"] = JSON.parse("{"+$(this).find("#http #host").val()+"}");
-					}
-					catch(err) { }
-                }
+            	try {
+            		inb["headers"] = JSON.parse($(this).find("#ws #headers").val());
+				}
+				catch(err) { }
+            	try {
+            		inb["host"] = JSON.parse($(this).find("#http #host").val());
+				}
+				catch(err) { }
                 inbs.push(inb);
             });
-{/literal}
 
+{/literal}
             $.ajax({
                 type: "POST",
                 url: "/admin/node",
@@ -572,13 +575,14 @@
 					bandwidthlimit_resetday: $("#bandwidthlimit_resetday").val(),
 					custom_rss: custom_rss,
 					mu_only: $("#mu_only").val(),
-					v2conf: JSON.stringify(inbs),
+					v2conf: JSON.stringify(inbs)
                 },
                 success: function (data) {
                     if (data.ret) {
                         $("#result").modal();
                         $("#msg").html(data.msg);
                         window.setTimeout("location.href='/admin/node'", {$config['jump_delay']});
+{literal}
                     } else {
                         $("#result").modal();
                         $("#msg").html(data.msg);
@@ -591,5 +595,5 @@
             });
 		}
 	});
-
+{/literal}
 </script>

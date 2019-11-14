@@ -52,7 +52,7 @@ class NodeController extends AdminController
         $node->node_speedlimit = $request->getParam('node_speedlimit');
         $node->status = $request->getParam('status');
         $node->sort = $request->getParam('sort');
-        if ($node->sort == 0 || $node->sort == 1 || $node->sort == 10) {
+        if ($node->sort == 0 || $node->sort == 1 || $node->sort == 10 || $node->sort == 11) {
             if ($request->getParam('node_ip') != '') {
                 $node->node_ip = $request->getParam('node_ip');
             } else {
@@ -61,9 +61,6 @@ class NodeController extends AdminController
         } else {
             $node->node_ip="";
         }
-        if ($node->sort == 11) {
-            $node->v2conf = $request->getParam('v2conf');
-        }
 
         if ($node->sort==1) {
             Radius::AddNas($node->node_ip, $request->getParam('server'));
@@ -71,6 +68,10 @@ class NodeController extends AdminController
         $node->node_class=$request->getParam('class');
         $node->node_bandwidth_limit=$request->getParam('node_bandwidth_limit')*1024*1024*1024;
         $node->bandwidthlimit_resetday=$request->getParam('bandwidthlimit_resetday');
+
+        if ($node->sort == 11) {
+            $node->v2conf = $request->getParam('v2conf');
+        }
 
         if (!$node->save()) {
             $rs['ret'] = 0;
@@ -112,7 +113,7 @@ class NodeController extends AdminController
         $node->type = $request->getParam('type');
         $node->sort = $request->getParam('sort');
 
-        if ($node->sort == 0 || $node->sort == 1 || $node->sort == 10) {
+        if ($node->sort == 0 || $node->sort == 1 || $node->sort == 10 || $node->sort == 11) {
             if ($request->getParam('node_ip') != '') {
                 $node->node_ip = $request->getParam('node_ip');
             } else {
@@ -128,7 +129,7 @@ class NodeController extends AdminController
             $node->node_ip="";
         }
 
-        if ($node->sort == 0 || $node->sort == 10) {
+        if ($node->sort == 0 || $node->sort == 10 || $node->sort == 11) {
             Tools::updateRelayRuleIp($node);
         }
 
@@ -147,6 +148,10 @@ class NodeController extends AdminController
         $node->node_class=$request->getParam('class');
         $node->node_bandwidth_limit=$request->getParam('node_bandwidth_limit')*1024*1024*1024;
         $node->bandwidthlimit_resetday=$request->getParam('bandwidthlimit_resetday');
+
+        if ($node->sort == 11) {
+            $node->v2conf = $request->getParam('v2conf');
+        }
 
         if (!$node->save()) {
             $rs['ret'] = 0;
@@ -259,6 +264,9 @@ class NodeController extends AdminController
                   break;
                 case 10:
                   $sort = 'Shadowsocks - 中转';
+                  break;
+                case 11:
+                  $sort = 'V2Ray';
                   break;
                 default:
                   $sort = '系统保留';
