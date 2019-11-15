@@ -143,14 +143,16 @@ class URL
             $nodes=Node::where(
                 function ($query) {
                     $query->where('sort', 0)
-                        ->orwhere('sort', 10);
+                        ->orwhere('sort', 10)
+                        ->orwhere('sort', 11);
                 }
             )->where("type", "1")->orderBy("name")->get();
         } else {
             $nodes=Node::where(
                 function ($query) {
                     $query->where('sort', 0)
-                        ->orwhere('sort', 10);
+                        ->orwhere('sort', 10)
+                        ->orwhere('sort', 11);
                 }
             )->where(
                 function ($query) use ($user){
@@ -196,7 +198,15 @@ class URL
                     if($item != null) {
                         array_push($return_array, $item);
                     }
-                }else{
+                } elseif ($node->sort == 11) {
+                    $inbounds = json_decode($node->v2conf);
+                    foreach ($inbounds as $inbound) {
+                        $item = URL::getV2rayItem($user, $inbound, $node);
+                        if($item != null) {
+                            array_push($return_array, $item);
+                        }
+                    }
+                } else {
                     $item = URL::getItem($user, $node, 0, 0, $is_ss);
                     if($item != null) {
                         array_push($return_array, $item);
@@ -252,10 +262,12 @@ class URL
             return "ssr://".Tools::base64_url_encode($ssurl);
         } else {
             if($is_ss == 2) {
-                $personal_info = $item['method'].':'.$item['passwd']."@".$item['address'].":".$item['port'];
-                $ssurl = "ss://".Tools::base64_url_encode($personal_info);
+                // $personal_info = $item['method'].':'.$item['passwd']."@".$item['address'].":".$item['port'];
+                // $ssurl = "ss://".Tools::base64_url_encode($personal_info);
 
-                $ssurl .= "#".rawurlencode($item['remark']);
+                // $ssurl .= "#".rawurlencode($item['remark']);
+                // 不清楚楼上在做什么 地方被vmess占用啦
+                $ssurl = "vmess://".Tools::base64_url_encode(json_encode($item));
             }else{
                 $personal_info = $item['method'].':'.$item['passwd'];
                 $ssurl = "ss://".Tools::base64_url_encode($personal_info)."@".$item['address'].":".$item['port'];
@@ -385,6 +397,36 @@ class URL
         if($mu_port != 0) {
             $return_array['group'] .= ' - 单端口多用户';
         }
+        return $return_array;
+    }
+
+    /*
+        {
+        "v": "2",
+        "ps": "备注别名",
+        "add": "111.111.111.111",
+        "port": "32000",
+        "id": "1386f85e-657b-4d6e-9d56-78badb75e1fd",
+        "aid": "100",
+        "net": "tcp",
+        "type": "none",
+        "host": "www.bbb.com",
+        "path": "/",
+        "tls": "tls"
+        }
+    */
+    public static function getV2rayItem($user, $inbound, $node) {
+        $return_array['v'] = "2";
+        $return_array['ps'] = $node->name;
+        $return_array['add'] = $node->server;
+        $return_array['port'] = $inbound->proxyport;
+        $return_array['id'] = $user->get_v2ray_uuid();
+        $return_array['aid'] = $inbound->alterid;
+        $return_array['net'] = $inbound->network;
+        $return_array['type'] = $inbound->obfs;
+        $return_array['host'] = $node->server;
+        $return_array['path'] = $node->path;
+        $return_array['tls'] = $node->security;
         return $return_array;
     }
 

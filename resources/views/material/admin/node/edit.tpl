@@ -184,6 +184,11 @@
                                                 </div>
 
                                                 <div class="form-group form-group-label">
+                                                    <label class="floating-label" for="proxy_port">代理端口(Nginx/Caddy/CDN)</label>
+                                                    <input class="form-control" id="proxy_port" type="number" value="{$inbound->proxyport}">
+                                                </div>
+
+                                                <div class="form-group form-group-label">
                                                     <div class="form-group form-group-label">
                                                             <label class="floating-label" for="protocol">协议</label>
                                                             <select id="protocol" class="form-control" name="protocol">
@@ -445,9 +450,9 @@
         if($( "#inbounds" ).children().length == 1) {
             return
         }
-        $( "#inbounds-nav a" ).first().click();
         $( "#inbounds-nav" ).children( ".active" ).remove();
         $( "#inbounds" ).children( ".active" ).remove();
+        $( "#inbounds-nav a" ).first().click();
     });
 
     $( "#inbounds" ).children().each(function() {
@@ -506,6 +511,7 @@
              	var inb = {
                     "listen": $(this).find("#listen").val(),
                     "port": parseInt($(this).find("#port").val()),
+                    "proxyport": parseInt($(this).find("#proxy_port").val()),
                     "protocol": $(this).find("#protocol").val(),
                     "alterid": parseInt($(this).find("#alterid").val()),
                     "disableinsecureencryption": $(this).find("#disable_insecure_encryption").is(":checked"),

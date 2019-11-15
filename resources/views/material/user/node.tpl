@@ -78,7 +78,7 @@
 																			</p>
 
 
-																			{if $node->sort > 2 && $node->sort != 5 && $node->sort != 10}
+																			{if $node->sort > 2 && $node->sort != 5 && $node->sort != 10 && $node->sort != 11}
 																				<p>地址：<span class="label" >
 																				<a href="javascript:void(0);" onClick="urlChange('{$node->id}',0,0)">请点这里进入查看详细信息</a>
 																			{else}
@@ -88,7 +88,7 @@
 
 																				</span></p>
 
-																			{if $node->sort == 0||$node->sort==7||$node->sort==8||$node->sort==10}
+																			{if $node->sort == 0||$node->sort==7||$node->sort==8||$node->sort==10||$node->sort==11}
 
 
 																				<p>流量比例：<span class="label label-red">
@@ -97,7 +97,7 @@
 
 
 
-																				{if ($node->sort==0||$node->sort==7||$node->sort==8||$node->sort==10)&&($node->node_speedlimit!=0||$user->node_speedlimit!=0)}
+																				{if ($node->sort==0||$node->sort==7||$node->sort==8||$node->sort==10||$node->sort==11)&&($node->node_speedlimit!=0||$user->node_speedlimit!=0)}
 																					<p>节点限速：<span class="label label-green">
 																						{if $node->node_speedlimit>$user->node_speedlimit}
 																							{$node->node_speedlimit}Mbps
@@ -116,7 +116,7 @@
 																	</div>
 																	{/if}
 
-																	{if $node->sort == 0 || $node->sort == 10}
+																	{if $node->sort == 0 || $node->sort == 10 || $node->sort == 11}
 																		{$point_node=$node}
 																	{/if}
 
