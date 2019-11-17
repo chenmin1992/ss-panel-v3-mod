@@ -180,11 +180,6 @@
                                                 </div>
 
                                                 <div class="form-group form-group-label">
-                                                    <label class="floating-label" for="proxy_port">代理端口(Nginx/Caddy/CDN)</label>
-                                                    <input class="form-control" id="proxy_port" type="number" name="proxy_port">
-                                                </div>
-
-                                                <div class="form-group form-group-label">
                                                     <div class="form-group form-group-label">
                                                             <label class="floating-label" for="protocol">协议</label>
                                                             <select id="protocol" class="form-control" name="protocol">
@@ -228,7 +223,7 @@
                                                                 <option value="tcp">TCP</option>
                                                                 <option value="kcp">mKCP</option>
                                                                 <option value="ws" selected>WebSocket</option>
-                                                                <option value="http">HTTP/2</option>
+                                                                <option value="h2">HTTP/2</option>
                                                                 <option value="domainsocket">DomainSocket</option>
                                                                 <option value="quic">QUIC</option>
                                                             </select>
@@ -294,16 +289,48 @@
                                                             <label class="floating-label" for="headers">Headers</label>
                                                             <textarea class="form-control" id="headers" rows="10">{}</textarea>
                                                         </div>
+
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="proxy_addr">代理地址，不使用Nginx/Caddy/CDN请留空</label>
+                                                            <input class="form-control" id="proxy_addr" type="text" name="proxy_addr">
+                                                        </div>
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="proxy_port">代理端口，不使用Nginx/Caddy/CDN请留空</label>
+                                                            <input class="form-control" id="proxy_port" type="number" name="proxy_port">
+                                                        </div>
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="proxy_security">代理TLS，不使用Nginx/Caddy/CDN请选择none</label>
+                                                            <select id="proxy_security" class="form-control" name="proxy_security">
+                                                                <option value="none" selected>none</option>
+                                                                <option value="tls">tls</option>
+                                                            </select>
+                                                        </div>
                                                     </div>
 
-                                                    <div class="tab-pane fade" id="http">
+                                                    <div class="tab-pane fade" id="h2">
                                                         <div class="form-group form-group-label">
                                                             <label class="floating-label" for="path">Path</label>
                                                             <input class="form-control" id="path" type="text" name="path" value="/h2">
                                                         </div>
                                                         <div class="form-group form-group-label">
                                                             <label class="floating-label" for="host">Host</label>
-                                                            <textarea class="form-control" id="host" rows="10">[]</textarea>
+                                                            <textarea class="form-control" id="host" rows="10"></textarea>
+                                                        </div>
+
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="proxy_addr">代理地址，不使用Nginx/Caddy/CDN请留空</label>
+                                                            <input class="form-control" id="proxy_addr" type="text" name="proxy_addr">
+                                                        </div>
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="proxy_port">代理端口，不使用Nginx/Caddy/CDN请留空</label>
+                                                            <input class="form-control" id="proxy_port" type="number" name="proxy_port">
+                                                        </div>
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="proxy_security">代理TLS，不使用Nginx/Caddy/CDN请选择none</label>
+                                                            <select id="proxy_security" class="form-control" name="proxy_security">
+                                                                <option value="none" selected>none</option>
+                                                                <option value="tls">tls</option>
+                                                            </select>
                                                         </div>
                                                     </div>
 
@@ -416,49 +443,62 @@
 
 {literal}
 <script>
-    $( "#sort" ).change(function() {
-        if(this.value == "11" ) {
-            $( "#v2in" ).removeClass( "access-hide" );
+    $('#sort').change(function() {
+        if(this.value == '11') {
+            $('#v2in').removeClass('access-hide');
         } else {
-            $( "#v2in" ).addClass( "access-hide" );
+            $('#v2in').addClass('access-hide');
         }
     });
 
-    $( "#add-inbound" ).click(function() {
-        var newid = parseInt($( "#inbounds" ).children().last().attr( "id" ).split( "-" )[1]) + 1;
+    $('#add-inbound').click(function() {
+        var newid = parseInt($('#inbounds').children().last().prop('id').split('-')[1]) + 1;
 
-        var li = $( "<li><a class='waves-attach waves-effect' data-toggle='tab' href='#in-" + newid + "' aria-expanded='false'><i class='icon icon-lg'>vertical_align_bottom</i>&nbsp;in-" + newid + "</a></li>" );
-        $( "#inbounds-nav" ).append(li);
+        var li = $('<li><a class="waves-attach waves-effect" data-toggle="tab" href="#in-' + newid + '" aria-expanded="false"><i class="icon icon-lg">vertical_align_bottom</i>&nbsp;in-' + newid + '</a></li>');
+        $('#inbounds-nav').append(li);
 
-        var oinb = $( "#inbounds" ).children( "div.active.in" );
+        var oinb = $('#inbounds').children('div.active.in');
         var inb = oinb.clone();
-        inb.attr( "id", "in-" + newid);
-        inb.removeClass( "active in" );
-        inb.find("select").each(function() { // bug fix https://bugs.jquery.com/ticket/1294
-            $(this).val(oinb.find("select#"+$(this).attr("id")).val());
+        inb.prop('id', 'in-' + newid);
+        inb.removeClass('active in');
+        inb.find('select').each(function() { // bug fix https://bugs.jquery.com/ticket/1294
+            $(this).val(oinb.find('select#'+$(this).prop('id')).val());
         });
-        inb.find("#network").change(function() {
-            $(this).parent().parent().siblings("#networks").children( "div.active.in" ).removeClass( "active in" );
-            $(this).parent().parent().siblings("#networks").children( "div#" + this.value ).addClass( "active in" );
+        inb.find('#network').change(function() {
+            $(this).parent().parent().siblings('#networks').children('div.active.in').removeClass('active in');
+            $(this).parent().parent().siblings('#networks').children('div#' + this.value ).addClass('active in');
         });
-        $( "#inbounds" ).append(inb);
+        inb.find('span.switch-toggle').each(function() {
+            $(this).click(function(e) {
+                $(this).siblings('input').prop('checked', !$(this).siblings('input').prop('checked'))
+                e.preventDefault();
+            });
+        });
+        $('#inbounds').append(inb);
 
-        $( "a[href='#in-" + newid + "']" ).click();
+        $('a[href="#in-' + newid + '"]').click();
     });
 
-    $( "#del-inbound" ).click(function() {
-        if($( "#inbounds" ).children().length == 1) {
+    $('#del-inbound').click(function() {
+        if($('#inbounds').children().length == 1) {
             return
         }
-        $( "#inbounds-nav" ).children( ".active" ).remove();
-        $( "#inbounds" ).children( ".active" ).remove();
-        $( "#inbounds-nav a" ).first().click();
+        $('#inbounds-nav').children('.active').remove();
+        $('#inbounds').children('.active').remove();
+        $('#inbounds-nav a').first().click();
     });
     
-    $( "#inbounds" ).children().each(function() {
-        $(this).find("#network").change(function() {
-            $(this).parent().parent().siblings("#networks").children( "div.active.in" ).removeClass( "active in" );
-            $(this).parent().parent().siblings("#networks").children( "div#" + this.value ).addClass( "active in" );
+    $('#inbounds').children().each(function() {
+        $(this).find('#network').change(function() {
+            $(this).parent().parent().siblings('#networks').children('div.active.in').removeClass('active in');
+            $(this).parent().parent().siblings('#networks').children('div#' + this.value ).addClass('active in');
+        });
+    });
+    
+    $('#inbounds').find('span.switch-toggle').each(function() {
+        $(this).click(function(e) {
+            $(this).siblings('input').prop('checked', !$(this).siblings('input').prop('checked'))
+            e.preventDefault();
         });
     });
 
@@ -510,7 +550,6 @@
              	var inb = {
                     "listen": $(this).find("#listen").val(),
                     "port": parseInt($(this).find("#port").val()),
-                    "proxyport": parseInt($(this).find("#proxy_port").val()),
                     "protocol": $(this).find("#protocol").val(),
                     "alterid": parseInt($(this).find("#alterid").val()),
                     "disableinsecureencryption": $(this).find("#disable_insecure_encryption").is(":checked"),
@@ -528,9 +567,13 @@
                     //ws
                     "path": $(this).find("#ws #path").val(),
                     "headers": {},
-                    // http2
-                    "path": $(this).find("#http #path").val(),
-                    "host": [],
+                    // h2
+                    "path": $(this).find("#h2 #path").val(),
+                    "host": $(this).find("#h2 #host").val(),
+                    // proxy
+                    "proxyaddr": "",
+                    "proxyport": 0,
+                    "proxysecurity": "none",
                     // tls
                     "security": $(this).find("#security").val(),
                     "cert": $(this).find("#cert").val(),
@@ -544,11 +587,17 @@
             	try {
             		inb["headers"] = JSON.parse($(this).find("#ws #headers").val());
 				}
-				catch(err) { }
-            	try {
-            		inb["host"] = JSON.parse($(this).find("#http #host").val());
-				}
-				catch(err) { }
+				catch(err) {}
+                if(inb["network"] == "ws") {
+                    inb["proxyaddr"] = $(this).find("#ws #proxy_addr").val();
+                    inb["proxyport"] = parseInt($(this).find("#ws #proxy_port").val());
+                    inb["proxysecurity"] = $(this).find("#ws #proxy_security").val();
+                }
+                if(inb["network"] == "h2") {
+                    inb["proxyaddr"] = $(this).find("#h2 #proxy_addr").val();
+                    inb["proxyport"] = parseInt($(this).find("#h2 #proxy_port").val());
+                    inb["proxysecurity"] = $(this).find("#h2 #proxy_security").val();
+                }
                 inbs.push(inb);
             });
 

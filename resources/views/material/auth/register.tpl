@@ -210,7 +210,7 @@
 			document.getElementById("tos").disabled = false; 
 
 			{if $geetest_html != null}
-			captcha.refresh();
+			captcha.reset();
 			{/if}
                     }
                 },
@@ -220,7 +220,7 @@
 			$("#msg-error-p").html("发生错误："+jqXHR.status);
 			document.getElementById("tos").disabled = false; 
 			{if $geetest_html != null}
-			captcha.refresh();
+			captcha.reset();
 			{/if}
                 }
             });

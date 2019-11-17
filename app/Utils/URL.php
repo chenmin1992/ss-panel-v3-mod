@@ -201,7 +201,7 @@ class URL
                 } elseif ($node->sort == 11) {
                     $inbounds = json_decode($node->v2conf);
                     foreach ($inbounds as $inbound) {
-                        $item = URL::getV2rayItem($user, $inbound, $node);
+                        $item = URL::getV2rayItem($user, $node, $inbound, $is_ss);
                         if($item != null) {
                             array_push($return_array, $item);
                         }
@@ -262,13 +262,13 @@ class URL
             return "ssr://".Tools::base64_url_encode($ssurl);
         } else {
             if($is_ss == 2) {
-                // $personal_info = $item['method'].':'.$item['passwd']."@".$item['address'].":".$item['port'];
-                // $ssurl = "ss://".Tools::base64_url_encode($personal_info);
+                $personal_info = $item['method'].':'.$item['passwd']."@".$item['address'].":".$item['port'];
+                $ssurl = "ss://".Tools::base64_url_encode($personal_info);
 
-                // $ssurl .= "#".rawurlencode($item['remark']);
-                // 不清楚楼上在做什么 地方被vmess占用啦
+                $ssurl .= "#".rawurlencode($item['remark']);
+            } elseif ($is_ss == 3) {
                 $ssurl = "vmess://".Tools::base64_url_encode(json_encode($item));
-            }else{
+            } else {
                 $personal_info = $item['method'].':'.$item['passwd'];
                 $ssurl = "ss://".Tools::base64_url_encode($personal_info)."@".$item['address'].":".$item['port'];
 
@@ -344,6 +344,10 @@ class URL
     */
 
     public static function getItem($user, $node, $mu_port = 0, $relay_rule_id = 0, $is_ss = 0) {
+        if($is_ss == 3) {
+            return;
+        }
+        
         $relay_rule = Relay::where('id', $relay_rule_id)->where(
             function ($query) use ($user) {
                 $query->Where("user_id", "=", $user->id)
@@ -415,18 +419,37 @@ class URL
         "tls": "tls"
         }
     */
-    public static function getV2rayItem($user, $inbound, $node) {
+    public static function getV2rayItem($user, $node, $inbound, $is_ss) {
+        if($is_ss != 3) {
+            return;
+        }
         $return_array['v'] = "2";
-        $return_array['ps'] = $node->name;
+        $return_array['ps'] = str_replace(" - V2Ray", "", $node->name);
         $return_array['add'] = $node->server;
-        $return_array['port'] = $inbound->proxyport;
+        $return_array['port'] = $inbound->port;
         $return_array['id'] = $user->get_v2ray_uuid();
         $return_array['aid'] = $inbound->alterid;
         $return_array['net'] = $inbound->network;
         $return_array['type'] = $inbound->obfs;
-        $return_array['host'] = $node->server;
-        $return_array['path'] = $node->path;
-        $return_array['tls'] = $node->security;
+        $return_array['host'] = '';
+        $return_array['path'] = $inbound->path;
+        $return_array['tls'] = $inbound->security;
+        if($inbound->network == 'ws') {
+            if(isset($inbound->headers->Host)) {
+                $return_array['host'] = $inbound->headers->Host;
+            }
+        } elseif($inbound->network == 'h2') {
+            $return_array['host'] = $inbound->host;
+        }
+        if($inbound->network == 'ws' or $inbound->network == 'h2') {
+            if(!empty($inbound->proxyaddr) and !empty($inbound->proxyport)) {
+                $return_array['add'] = $inbound->proxyaddr;
+                $return_array['port'] = $inbound->proxyport;
+                if($inbound->security == 'none' and $inbound->proxysecurity == 'tls') {
+                    $return_array['tls'] = 'tls';
+                }
+            }
+        }
         return $return_array;
     }
 

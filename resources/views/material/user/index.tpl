@@ -111,7 +111,7 @@
 													<div class="tab-pane fade" id="all_ssr_windows">
 														<p><a href="/ssr-download/ssr-win.7z">下载</a>，解压，运行程序，然后您有三种方式导入所有节点<br>
 															(1)下载<a href="/user/getpcconf?is_mu=0&is_ss=0">这个（普通端口）</a>或者<a href="/user/getpcconf?is_mu=1&is_ss=0">这个（单端口多用户）</a>，右键小飞机 服务器 -- 从配置文件导入服务器，选择这个文件，<br>
-															(2)点击<a class="copy-text" data-clipboard-text="{$ssr_url_all}">这里（普通端口）</a>或者<a class="copy-text" data-clipboard-text="{$ssr_url_all}">这个(单端口多用户）</a>，然后右键小飞机 -- 从剪贴板复制地址<br>
+															(2)点击<a class="copy-text" data-clipboard-text="{$ssr_url_all}">这里（普通端口）</a>或者<a class="copy-text" data-clipboard-text="{$ssr_url_all_mu}">这个(单端口多用户）</a>，然后右键小飞机 -- 从剪贴板复制地址<br>
 															(3)(推荐)右键小飞机--服务器--SSR服务器订阅设置，将订阅地址设置为下面的地址，其他参数留空，确定之后再更新 SSR 服务器订阅。<br>
 															然后选择一个合适的服务器，系统代理模式选”全局模式”，代理规则选“绕过局域网和大陆”，然后即可上网。</p>
 
@@ -244,11 +244,11 @@
                                                         </ul>
                                                     </nav>
                                                     <div class="tab-pane fade active in" id="all_v2ray_info">
-                                                        {$user = URL::getSSRConnectInfo($pre_user)}
-                                                        {$v2ray_url_all = URL::getAllUrl($pre_user, 0, 2)}
+                                                        {$v2ray_url_all = URL::getAllUrl($pre_user, 0, 3, 1)}
+                                                        {$v2ray_url_all_ios = URL::getAllUrl($pre_user, 0, 3, 0)}
                                                         <dl class="dl-horizontal">
                                                             <p><dt>UUID</dt>
-                                                            <dd>{$user->get_v2ray_uuid()}</dd></p>
+                                                            <dd>{$pre_user->get_v2ray_uuid()}</dd></p>
                                                         </dl>
                                                     </div>
                                                     <div class="tab-pane fade" id="all_v2ray_windows">
@@ -259,26 +259,26 @@
                                                             <br>
                                                             然后参数设置 路由设置 预定义规则 选 ”绕过局域网及大陆地址”，点一下一键设置默认自定义路由规则，确定，右键v2rayN图标，HTTP代理选”全局代理“，然后即可上网。</p>
                                                         <br>
-                                                        <p>V2Ray 订阅地址：<code>{$baseUrl}/link/{$ssr_sub_token}?mu=0</code></p>
+                                                        <p>V2Ray 订阅地址：<code>{$baseUrl}/link/{$ssr_sub_token}</code></p>
                                                     </div>
                                                     <div class="tab-pane fade" id="all_v2ray_mac">
                                                         <p><a href="/ssr-download/v2ray-mac.dmg">下载</a>，安装，运行程序，然后点击<a class="copy-text" data-clipboard-text="{$v2ray_url_all}">这个</a>，V2rayU图标上点击 从粘贴板导入<br>然后选择一个合适的服务器，选择Pac模式，更新一下PAC，然后Turn v2ray-core On即可上网。</p>
                                                         <br>
-                                                        <p>V2Ray 订阅地址：<code>{$baseUrl}/link/{$ssr_sub_token}?mu=0</code></p>
+                                                        <p>V2Ray 订阅地址：<code>{$baseUrl}/link/{$ssr_sub_token}</code></p>
                                                     </div>
                                                     <div class="tab-pane fade" id="all_v2ray_ios">
-                                                        <p>推荐下载<a href="https://itunes.apple.com/cn/app/shadowrocket/id932747118?mt=8">Shadowrocket</a>，需要非大陆Apple ID，然后在 Safari 中点击<a href="{$v2ray_url_all}">这个</a>，然后点击确定，就可以批量添加节点。</p>
+                                                        <p>推荐下载<a href="https://itunes.apple.com/us/app/shadowrocket/id932747118">Shadowrocket</a>，需要非大陆Apple ID，然后在 Safari 中点击<a href="{$v2ray_url_all}">这个</a>，然后点击确定，就可以批量添加节点。</p>
                                                         <br>
-                                                        <p>V2Ray 订阅地址：<code>{$baseUrl}/link/{$ssr_sub_token}?mu=0</code></p>
+                                                        <p>V2Ray 订阅地址：<code>{$baseUrl}/link/{$ssr_sub_token}</code></p>
                                                     </div>
                                                     <div class="tab-pane fade" id="all_v2ray_android">
                                                         <p><a href="/ssr-download/v2ray-android.apk">下载</a>，安装，然后点击<a class="copy-text" data-clipboard-text="{$v2ray_url_all}">这个</a>，右上角点击加号,选择从剪贴板导入，然后设置里的路由模式选择“绕过局域网及大陆地址”，返回，选择一个合适的服务器，右下角开启就可以上网了。
                                                         </p><br>
-                                                        <p>V2Ray 订阅地址：<code>{$baseUrl}/link/{$ssr_sub_token}?mu=0</code></p>
+                                                        <p>V2Ray 订阅地址：<code>{$baseUrl}/link/{$ssr_sub_token}</code></p>
                                                     </div>
                                                     <div class="tab-pane fade" id="all_v2ray_router">
                                                         <p>路由器 刷入<a href="http://www.right.com.cn/forum/thread-161324-1-1.html">这个固件</a>，然后 SSH 登陆路由器，执行以下命令（导入普通端口）<br>
-                                                        <code>wget -O- {$baseUrl}/link/{$router_token}?is_ss=2 | bash && echo -e "\n0 */3 * * * wget -O- {$baseUrl}/link/{$router_token}?is_ss=2 | bash\n">> /etc/storage/cron/crontabs/admin && killall crond && crond </code><br>
+                                                        <code>wget -O- {$baseUrl}/link/{$router_token}?is_ss=2 | bash && echo -e "\n0 */3 * * * wget -O- {$baseUrl}/link/{$router_token}?is_ss=3 | bash\n">> /etc/storage/cron/crontabs/admin && killall crond && crond </code><br>
                                                         或者这个单端口多用户的<br>
                                                         <code>wget -O- {$baseUrl}/link/{$router_token_without_mu}?is_ss=2 | bash && echo -e "\n0 */3 * * * wget -O- {$baseUrl}/link/{$router_token_without_mu}?is_ss=2 | bash\n">> /etc/storage/cron/crontabs/admin && killall crond && crond </code><br>
                                                         执行完毕以后就可以到路由器的设置面板里随意选择 Shadowsocks 服务器进行连接了。</p>

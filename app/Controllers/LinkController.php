@@ -1753,6 +1753,6 @@ FINAL,Proxy';
 
     public static function GetSSRSub($user, $mu = 0, $max = 0)
     {
-        return Tools::base64_url_encode(URL::getAllUrl($user, $mu, 0, 1));
+        return Tools::base64_url_encode(URL::getAllUrl($user, $mu, 0, 1)."\n".URL::getAllUrl($user, 0, 3, 1));
     }
 }

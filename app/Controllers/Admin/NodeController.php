@@ -52,6 +52,7 @@ class NodeController extends AdminController
         $node->node_speedlimit = $request->getParam('node_speedlimit');
         $node->status = $request->getParam('status');
         $node->sort = $request->getParam('sort');
+        $node->v2conf = $request->getParam('v2conf');
         if ($node->sort == 0 || $node->sort == 1 || $node->sort == 10 || $node->sort == 11) {
             if ($request->getParam('node_ip') != '') {
                 $node->node_ip = $request->getParam('node_ip');
@@ -68,10 +69,6 @@ class NodeController extends AdminController
         $node->node_class=$request->getParam('class');
         $node->node_bandwidth_limit=$request->getParam('node_bandwidth_limit')*1024*1024*1024;
         $node->bandwidthlimit_resetday=$request->getParam('bandwidthlimit_resetday');
-
-        if ($node->sort == 11) {
-            $node->v2conf = $request->getParam('v2conf');
-        }
 
         if (!$node->save()) {
             $rs['ret'] = 0;
@@ -90,7 +87,7 @@ class NodeController extends AdminController
     {
         $id = $args['id'];
         $node = Node::find($id);
-        if ($node == null) {
+        if ($node != null) {
         }
         return $this->view()->assign('node', $node)->display('admin/node/edit.tpl');
     }
@@ -112,6 +109,7 @@ class NodeController extends AdminController
         $node->node_speedlimit = $request->getParam('node_speedlimit');
         $node->type = $request->getParam('type');
         $node->sort = $request->getParam('sort');
+        $node->v2conf = $request->getParam('v2conf');
 
         if ($node->sort == 0 || $node->sort == 1 || $node->sort == 10 || $node->sort == 11) {
             if ($request->getParam('node_ip') != '') {
@@ -148,10 +146,6 @@ class NodeController extends AdminController
         $node->node_class=$request->getParam('class');
         $node->node_bandwidth_limit=$request->getParam('node_bandwidth_limit')*1024*1024*1024;
         $node->bandwidthlimit_resetday=$request->getParam('bandwidthlimit_resetday');
-
-        if ($node->sort == 11) {
-            $node->v2conf = $request->getParam('v2conf');
-        }
 
         if (!$node->save()) {
             $rs['ret'] = 0;
