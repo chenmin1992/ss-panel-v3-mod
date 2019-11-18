@@ -105,23 +105,8 @@
                                         </nav>
                                         <div class="tab-content" id="v2ray_json">
                                             {foreach from=$node->v2conf|json_decode key=index item=inbound}
-                                            {$v2ray_item = URL::getV2rayItem($user, $node, $inbound, 3)}
                                             <div class="tab-pane fade {if $index==0}active in{/if}" id="json-{$index}">
-                                                <textarea class="form-control" rows="6">
-{
-    "v": "2",
-    "ps": "{$v2ray_item['ps']}",
-    "add": "{$v2ray_item['add']}",
-    "port": {$v2ray_item['port']},
-    "id": "{$v2ray_item['id']}",
-    "aid": {$v2ray_item['aid']},
-    "net": "{$v2ray_item['net']}",
-    "type": "{$v2ray_item['type']}",
-    "host": "{$v2ray_item['host']}",
-    "path": "{$v2ray_item['path']}",
-    "tls": "{$v2ray_item['tls']}"
-}
-                                                </textarea>
+                                                <textarea class="form-control" rows="15">{str_replace('    ', '  ', json_encode(URL::genV2rayClientItem(URL::getV2rayItem($user, $node, $inbound, 3)), JSON_PRETTY_PRINT))}</textarea>
                                             </div>
                                             {/foreach}
                                         </div>
@@ -148,10 +133,10 @@
                                         </nav>
                                         <div class="tab-content" id="v2ray_url">
                                             {foreach from=$node->v2conf|json_decode key=index item=inbound}
-                                            {$v2ray_item = URL::getV2rayItem($user, $node, $inbound, 3)}
+                                            {$v2ray_url = URL::getItemUrl(URL::getV2rayItem($user, $node, $inbound, 3), 3)}
                                             <div class="tab-pane fade {if $index==0}active in{/if}" id="link-{$index}">
-                                                <p><a href="{URL::getItemUrl($v2ray_item, 3)}"/>Android 手机上用默认浏览器打开点我就可以直接添加了(给 V2Ray APP)</a></p>
-                                                <p><a href="{URL::getItemUrl($v2ray_item, 3)}"/>iOS 上用 Safari 打开点我就可以直接添加了(给 Shadowrocket)</a></p>
+                                                <p><a href="{$v2ray_url}"/>Android 手机上用默认浏览器打开点我就可以直接添加了(给 V2Ray APP)</a></p>
+                                                <p><a href="{$v2ray_url}"/>iOS 上用 Safari 打开点我就可以直接添加了(给 Shadowrocket)</a></p>
                                             </div>
                                             {/foreach}
                                         </div>
@@ -178,10 +163,9 @@
                                         </nav>
                                         <div class="tab-content" id="v2ray_qrcode">
                                             {foreach from=$node->v2conf|json_decode key=index item=inbound}
-                                            {$v2ray_item = URL::getV2rayItem($user, $node, $inbound, 3)}
                                             <div class="tab-pane fade {if $index==0}active in{/if}" id="qr-{$index}">
                                                 <div class="text-center">
-                                                    <div data="{URL::getItemUrl($v2ray_item, 3)}" id="v2ray-qr"></div>
+                                                    <div data="{URL::getItemUrl(URL::getV2rayItem($user, $node, $inbound, 3), 3)}" id="v2ray-qr"></div>
                                                 </div>
                                             </div>
                                             {/foreach}

@@ -224,11 +224,11 @@
                                                     <div class="form-group form-group-label">
                                                             <label class="floating-label" for="network">传输类型</label>
                                                             <select id="network" class="form-control" name="network">
-                                                                <option value="tcp" {if $inbound->network=='tcp'}selected{/if}>TCP</option>
+                                                                <option value="tcp" disabled {if $inbound->network=='tcp'}selected{/if}>TCP</option>
                                                                 <option value="kcp" {if $inbound->network=='kcp'}selected{/if}>mKCP</option>
                                                                 <option value="ws" {if $inbound->network=='ws'}selected{/if}>WebSocket</option>
                                                                 <option value="h2" {if $inbound->network=='h2'}selected{/if}>HTTP/2</option>
-                                                                <option value="domainsocket" {if $inbound->network=='domainsocket'}selected{/if}>DomainSocket</option>
+                                                                <option value="domainsocket" disabled {if $inbound->network=='domainsocket'}selected{/if}>DomainSocket</option>
                                                                 <option value="quic" {if $inbound->network=='quic'}selected{/if}>QUIC</option>
                                                             </select>
                                                         </div>
@@ -265,21 +265,21 @@
                                                         </div>
                                                         <div class="form-group form-group-label">
                                                             <label class="floating-label" for="readbuffersize">ReadBufferSize (MB)</label>
-                                                            <input class="form-control" id="readbuffersize" type="number" name="readbuffersize" value="2">
+                                                            <input class="form-control" id="readbuffersize" type="number" name="readbuffersize" value="{$inbound->readbuffersize}">
                                                         </div>
                                                         <div class="form-group form-group-label">
                                                             <label class="floating-label" for="writebuffersize">WriteBufferSize (MB)</label>
-                                                            <input class="form-control" id="writebuffersize" type="number" name="writebuffersize" value="2">
+                                                            <input class="form-control" id="writebuffersize" type="number" name="writebuffersize" value="{$inbound->writebuffersize}">
                                                         </div>
                                                         <div class="form-group form-group-label">
                                                             <label class="floating-label" for="obfs">伪装类型</label>
                                                             <select id="obfs" class="form-control" name="obfs">
-                                                                <option value="none">none</option>
-                                                                <option value="srtp">srtp</option>
-                                                                <option value="utp">utp</option>
-                                                                <option value="wechat-video" selected>wechat-video</option>
-                                                                <option value="dtls">dtls</option>
-                                                                <option value="wireguard">wireguard</option>
+                                                                <option value="none" {if $inbound->obfs=='none'}selected{/if}>none</option>
+                                                                <option value="srtp" {if $inbound->obfs=='srtp'}selected{/if}>srtp</option>
+                                                                <option value="utp" {if $inbound->obfs=='utp'}selected{/if}>utp</option>
+                                                                <option value="wechat-video" {if $inbound->obfs=='wechat-video'}selected{/if}>wechat-video</option>
+                                                                <option value="dtls" {if $inbound->obfs=='dtls'}selected{/if}>dtls</option>
+                                                                <option value="wireguard" {if $inbound->obfs=='wireguard'}selected{/if}>wireguard</option>
                                                             </select>
                                                         </div>
                                                     </div>
@@ -340,37 +340,32 @@
 
                                                     <div class="tab-pane fade {if $inbound->network=='domainsocket'}active in{/if}" id="domainsocket">
                                                         <p>暂不支持此传输类型</p>
-                                                        <!-- <div class="form-group form-group-label">
-                                                            <label class="floating-label" for="path">Path</label>
-                                                            <input class="form-control" id="path" type="text" name="path" value="/ws">
-                                                        </div> -->
                                                     </div>
 
-                                                    <div class="tab-pane fade {if $inbound->network=='quic'}active in{/if}" id="quic">                                                    	
-                                                        <p>暂不支持此传输类型</p>
-                                                        <!-- <div class="form-group form-group-label">
+                                                    <div class="tab-pane fade" id="quic">
+                                                        <div class="form-group form-group-label">
                                                                 <label class="floating-label" for="encryption">加密方式</label>
                                                                 <select id="encryption" class="form-control" name="encryption">
-                                                                    <option value="none" selected>none</option>
-                                                                    <option value="aes-128-gcm">aes-128-gcm</option>
-                                                                    <option value="chacha20-poly1305">chacha20-poly1305</option>
+                                                                    <option value="none" {if $inbound->encryption=='none'}selected{/if}>none</option>
+                                                                    <option value="aes-128-gcm" {if $inbound->encryption=='aes-128-gcm'}selected{/if}>aes-128-gcm</option>
+                                                                    <option value="chacha20-poly1305" {if $inbound->encryption=='chacha20-poly1305'}selected{/if}>chacha20-poly1305</option>
                                                                 </select>
                                                         </div>
                                                         <div class="form-group form-group-label">
                                                             <label class="floating-label" for="quic_key">Key</label>
-                                                            <input class="form-control" id="quic_key" type="text" name="quic_key">
+                                                            <input class="form-control" id="quic_key" type="text" name="quic_key" value="{$inbound->quickey}">
                                                         </div>
                                                         <div class="form-group form-group-label">
                                                             <label class="floating-label" for="obfs">伪装类型</label>
                                                             <select id="obfs" class="form-control" name="obfs">
-                                                                <option value="none">none</option>
-                                                                <option value="srtp">srtp</option>
-                                                                <option value="utp">utp</option>
-                                                                <option value="wechat-video" selected>wechat-video</option>
-                                                                <option value="dtls">dtls</option>
-                                                                <option value="wireguard">wireguard</option>
+                                                                <option value="none" {if $inbound->obfs=='none'}selected{/if}>none</option>
+                                                                <option value="srtp" {if $inbound->obfs=='srtp'}selected{/if}>srtp</option>
+                                                                <option value="utp" {if $inbound->obfs=='utp'}selected{/if}>utp</option>
+                                                                <option value="wechat-video" {if $inbound->obfs=='wechat-video'}selected{/if}>wechat-video</option>
+                                                                <option value="dtls" {if $inbound->obfs=='dtls'}selected{/if}>dtls</option>
+                                                                <option value="wireguard" {if $inbound->obfs=='wireguard'}selected{/if}>wireguard</option>
                                                             </select>
-                                                        </div> -->
+                                                        </div>
                                                     </div>
                                                 </div>
 
@@ -544,9 +539,9 @@
 				var custom_rss=0;
 			}
 
-			var inbs = [];
+            var inbs = [];
             $("#inbounds").children().each(function() {
-             	var inb = {
+                var inb = {
                     "listen": $(this).find("#listen").val(),
                     "port": parseInt($(this).find("#port").val()),
                     "protocol": $(this).find("#protocol").val(),
@@ -563,13 +558,17 @@
                     "readbuffersize": parseInt($(this).find("#kcp #readbuffersize").val()),
                     "writebuffersize": parseInt($(this).find("#kcp #writebuffersize").val()),
                     "obfs": $(this).find("#kcp #obfs").val(),
-                    //ws
+                    // ws
                     "path": $(this).find("#ws #path").val(),
                     "headers": {},
                     // h2
                     "path": $(this).find("#h2 #path").val(),
                     "host": $(this).find("#h2 #host").val(),
-                    // proxy
+                    // quic
+                    "encryption": $(this).find("#quic #encryption").val(),
+                    "quickey": $(this).find("#quic #quic_key").val(),
+                    "obfs": $(this).find("#quic #obfs").val(),
+                    // reverse proxy
                     "proxyaddr": "",
                     "proxyport": 0,
                     "proxysecurity": "none",
@@ -578,15 +577,20 @@
                     "cert": $(this).find("#cert").val(),
                     "key": $(this).find("#key").val(),
                 };
+                try {
+                    inb["headers"] = JSON.parse($(this).find("#ws #headers").val());
+                }
+                catch(err) {}
                 if($(this).find("#"+inb["network"]+" #path").val() == null) {
                     inb["path"] = "";
                 } else {
                     inb["path"] = $(this).find("#"+inb["network"]+" #path").val();
                 }
-            	try {
-            		inb["headers"] = JSON.parse($(this).find("#ws #headers").val());
-				}
-				catch(err) {}
+                if($(this).find("#"+inb["network"]+" #obfs").val() == null) {
+                    inb["obfs"] = "";
+                } else {
+                    inb["obfs"] = $(this).find("#"+inb["network"]+" #obfs").val();
+                }
                 if(inb["network"] == "ws") {
                     inb["proxyaddr"] = $(this).find("#ws #proxy_addr").val();
                     inb["proxyport"] = parseInt($(this).find("#ws #proxy_port").val());

@@ -423,8 +423,8 @@ class URL
         if($is_ss != 3) {
             return;
         }
-        $return_array['v'] = "2";
-        $return_array['ps'] = str_replace(" - V2Ray", "", $node->name);
+        $return_array['v'] = '2';
+        $return_array['ps'] = '';
         $return_array['add'] = $node->server;
         $return_array['port'] = $inbound->port;
         $return_array['id'] = $user->get_v2ray_uuid();
@@ -435,11 +435,14 @@ class URL
         $return_array['path'] = $inbound->path;
         $return_array['tls'] = $inbound->security;
         if($inbound->network == 'ws') {
-            if(isset($inbound->headers->Host)) {
+            if(!empty($inbound->headers->Host)) {
                 $return_array['host'] = $inbound->headers->Host;
             }
         } elseif($inbound->network == 'h2') {
             $return_array['host'] = $inbound->host;
+        } elseif($inbound->network == 'quic') {
+            $return_array['host'] = $inbound->encryption;
+            $return_array['path'] = $inbound->quickey;
         }
         if($inbound->network == 'ws' or $inbound->network == 'h2') {
             if(!empty($inbound->proxyaddr) and !empty($inbound->proxyport)) {
@@ -450,7 +453,160 @@ class URL
                 }
             }
         }
+        $return_array['ps'] = explode(" - ", $node->name)[0].'-'.$return_array['net'].'-'.$return_array['add'];
         return $return_array;
+    }
+
+    public static function genV2rayClientItem($item) {
+        $root_conf = array(
+            "log" => array(
+                "loglevel" => "warning"
+            ),
+            "inbounds" => array(
+            array(
+                "listen" => "127.0.0.1",
+                "protocol" => "socks",
+                "port" => "1079",
+                "settings" => array(
+                    "udp" => true
+                )
+            ),
+            array(
+                "listen" => "127.0.0.1",
+                "protocol" => "http",
+                "port" => "1080"
+            )
+            ),
+            "outbounds" => array(),
+            "dns" => array(
+                "servers" => array(
+                    "8.8.8.8",
+                    "8.8.4.4"
+                )
+            ),
+            "routing" => array(
+                "domainStrategy" => "IPIfNonMatch",
+                "rules" => array(
+                    array(
+                        "type" => "field",
+                        "domain" => array(
+                            "geosite:cn",
+                            "geosite:speedtest"
+                        ),
+                        "outboundTag" => "direct"
+                    ),
+                    array(
+                        "type" => "field",
+                        "ip" => array(
+                            "geoip:private",
+                            "geoip:cn"
+                        ),
+                        "outboundTag" => "direct"
+                    ),
+                    array(
+                        "type" => "field",
+                        "domain" => array(
+                            "geosite:category-ads"
+                        ),
+                        "outboundTag" => "blocked"
+                    )
+                )
+            )
+        );
+
+        $out = array(
+          "protocol" => "vmess",
+          "settings" => array(
+            "vnext" => array(
+              array(
+                "address" => $item['add'],
+                "port" => $item['port'],
+                "users" => array(
+                  array(
+                    "id" => $item['id'],
+                    "alterId" => $item['aid'],
+                    "security" => "auto"
+                  )
+                )
+              )
+            )
+          ),
+          "streamSettings" => array(
+            "network" => $item['net']
+          ),
+          "tag" => "proxy"
+        );
+        switch ($item['net']) {
+            case 'ws':
+                $wss = array(
+                  "path" => $item['path']
+                );
+                if($item['host'] != '') {
+                    $wss['headers'] = array(
+                        "Host" => $item['host']
+                    );
+                }
+                $out['streamSettings']['wsSettings'] = $wss;
+                break;
+
+            case 'kcp':
+                $out['streamSettings']['kcpSettings'] = array(
+                  "mtu" => 1350,
+                  "tti" => 20,
+                  "uplinkCapacity" => 5,
+                  "downlinkCapacity" => 20,
+                  "congestion" => false,
+                  "readBufferSize" => 1,
+                  "writeBufferSize" => 1,
+                  "header" => array(
+                    "type" => $item['type']
+                  )
+                );
+                break;
+
+            case 'h2':
+                $h2s = array(
+                  "path" => $item['path']
+                );
+                if($item['host'] != '') {
+                    $h2s['host'] = array();
+                    foreach (explode(',', $item['host']) as $h) {
+                        array_push($h2s['host'], $h);
+                    }
+                }
+                $out['streamSettings']['httpSettings'] = $h2s;
+                break;
+
+            case 'quic':
+                $quics = array(
+                    "security" => $item['host'],
+                    "key" => $item['path'],
+                    "header" => array(
+                        "type" => $item['type']
+                    )
+                );
+                $out['streamSettings']['quicSettings'] = $quics;
+                break;
+            
+            default:
+                break;
+        }
+        $out['streamSettings']['security'] = $item['tls'];
+        if($item['tls'] == 'tls') {
+            $out['streamSettings']['tlsSettings'] = array(
+              "allowInsecure" => true
+            );
+        }
+        array_push($root_conf['outbounds'], $out);
+        array_push($root_conf['outbounds'], array(
+                    "protocol" => "freedom",
+                    "tag" => "direct"
+                ));
+        array_push($root_conf['outbounds'], array(
+                    "protocol" => "blackhole",
+                    "tag" => "blocked"
+                ));
+        return $root_conf;
     }
 
     public static function cloneUser($user) {

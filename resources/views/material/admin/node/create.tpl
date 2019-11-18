@@ -220,11 +220,11 @@
                                                     <div class="form-group form-group-label">
                                                             <label class="floating-label" for="network">传输类型</label>
                                                             <select id="network" class="form-control" name="network">
-                                                                <option value="tcp">TCP</option>
+                                                                <option value="tcp" disabled>TCP</option>
                                                                 <option value="kcp">mKCP</option>
                                                                 <option value="ws" selected>WebSocket</option>
                                                                 <option value="h2">HTTP/2</option>
-                                                                <option value="domainsocket">DomainSocket</option>
+                                                                <option value="domainsocket" disabled>DomainSocket</option>
                                                                 <option value="quic">QUIC</option>
                                                             </select>
                                                         </div>
@@ -336,15 +336,10 @@
 
                                                     <div class="tab-pane fade" id="domainsocket">
                                                         <p>暂不支持此传输类型</p>
-                                                        <!-- <div class="form-group form-group-label">
-                                                            <label class="floating-label" for="path">Path</label>
-                                                            <input class="form-control" id="path" type="text" name="path" value="/ws">
-                                                        </div> -->
                                                     </div>
 
-                                                    <div class="tab-pane fade" id="quic">                                                    	
-                                                        <p>暂不支持此传输类型</p>
-                                                        <!-- <div class="form-group form-group-label">
+                                                    <div class="tab-pane fade" id="quic">
+                                                        <div class="form-group form-group-label">
                                                                 <label class="floating-label" for="encryption">加密方式</label>
                                                                 <select id="encryption" class="form-control" name="encryption">
                                                                     <option value="none" selected>none</option>
@@ -366,7 +361,7 @@
                                                                 <option value="dtls">dtls</option>
                                                                 <option value="wireguard">wireguard</option>
                                                             </select>
-                                                        </div> -->
+                                                        </div>
                                                     </div>
                                                 </div>
 
@@ -564,13 +559,17 @@
                     "readbuffersize": parseInt($(this).find("#kcp #readbuffersize").val()),
                     "writebuffersize": parseInt($(this).find("#kcp #writebuffersize").val()),
                     "obfs": $(this).find("#kcp #obfs").val(),
-                    //ws
+                    // ws
                     "path": $(this).find("#ws #path").val(),
                     "headers": {},
                     // h2
                     "path": $(this).find("#h2 #path").val(),
                     "host": $(this).find("#h2 #host").val(),
-                    // proxy
+                    // quic
+                    "encryption": $(this).find("#quic #encryption").val(),
+                    "quickey": $(this).find("#quic #quic_key").val(),
+                    "obfs": $(this).find("#quic #obfs").val(),
+                    // reverse proxy
                     "proxyaddr": "",
                     "proxyport": 0,
                     "proxysecurity": "none",
@@ -579,15 +578,20 @@
                     "cert": $(this).find("#cert").val(),
                     "key": $(this).find("#key").val(),
                 };
+                try {
+                    inb["headers"] = JSON.parse($(this).find("#ws #headers").val());
+                }
+                catch(err) {}
                 if($(this).find("#"+inb["network"]+" #path").val() == null) {
                     inb["path"] = "";
                 } else {
                     inb["path"] = $(this).find("#"+inb["network"]+" #path").val();
                 }
-            	try {
-            		inb["headers"] = JSON.parse($(this).find("#ws #headers").val());
-				}
-				catch(err) {}
+                if($(this).find("#"+inb["network"]+" #obfs").val() == null) {
+                    inb["obfs"] = "";
+                } else {
+                    inb["obfs"] = $(this).find("#"+inb["network"]+" #obfs").val();
+                }
                 if(inb["network"] == "ws") {
                     inb["proxyaddr"] = $(this).find("#ws #proxy_addr").val();
                     inb["proxyport"] = parseInt($(this).find("#ws #proxy_port").val());
