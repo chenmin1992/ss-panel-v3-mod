@@ -442,7 +442,9 @@ class URL
             $return_array['host'] = $inbound->host;
         } elseif($inbound->network == 'quic') {
             $return_array['host'] = $inbound->encryption;
-            $return_array['path'] = $inbound->quickey;
+            if($inbound->encryption != 'none') {
+                $return_array['path'] = $inbound->quickey;
+            }
         }
         if($inbound->network == 'ws' or $inbound->network == 'h2') {
             if(!empty($inbound->proxyaddr) and !empty($inbound->proxyport)) {
@@ -580,11 +582,13 @@ class URL
             case 'quic':
                 $quics = array(
                     "security" => $item['host'],
-                    "key" => $item['path'],
                     "header" => array(
                         "type" => $item['type']
                     )
                 );
+                if($item['host'] != null) {
+                    $quics["key"] = $item['path'];
+                }
                 $out['streamSettings']['quicSettings'] = $quics;
                 break;
             

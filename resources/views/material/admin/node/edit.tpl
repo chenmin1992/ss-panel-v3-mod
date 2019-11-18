@@ -221,22 +221,36 @@
 			                                    </div>
 
                                                 <div class="form-group form-group-label">
-                                                    <div class="form-group form-group-label">
-                                                            <label class="floating-label" for="network">传输类型</label>
-                                                            <select id="network" class="form-control" name="network">
-                                                                <option value="tcp" disabled {if $inbound->network=='tcp'}selected{/if}>TCP</option>
-                                                                <option value="kcp" {if $inbound->network=='kcp'}selected{/if}>mKCP</option>
-                                                                <option value="ws" {if $inbound->network=='ws'}selected{/if}>WebSocket</option>
-                                                                <option value="h2" {if $inbound->network=='h2'}selected{/if}>HTTP/2</option>
-                                                                <option value="domainsocket" disabled {if $inbound->network=='domainsocket'}selected{/if}>DomainSocket</option>
-                                                                <option value="quic" {if $inbound->network=='quic'}selected{/if}>QUIC</option>
-                                                            </select>
-                                                        </div>
+                                                    <label class="floating-label" for="network">传输类型</label>
+                                                    <select id="network" class="form-control" name="network">
+                                                        <option value="tcp" {if $inbound->network=='tcp'}selected{/if}>TCP</option>
+                                                        <option value="kcp" {if $inbound->network=='kcp'}selected{/if}>mKCP</option>
+                                                        <option value="ws" {if $inbound->network=='ws'}selected{/if}>WebSocket</option>
+                                                        <option value="h2" {if $inbound->network=='h2'}selected{/if}>HTTP/2</option>
+                                                        <option value="domainsocket" {if $inbound->network=='domainsocket'}selected{/if}>DomainSocket</option>
+                                                        <option value="quic" {if $inbound->network=='quic'}selected{/if}>QUIC</option>
+                                                    </select>
                                                 </div>
 
                                                 <div class="tab-content" id="networks">
                                                     <div class="tab-pane fade {if $inbound->network=='tcp'}active in{/if}" id="tcp">
-                                                        <p>暂不支持此传输类型</p>
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="obfs">Header</label>
+                                                            <select id="obfs" class="form-control" name="obfs">
+                                                                <option value="none">none</option>
+                                                                <option value="http" selected>http</option>
+                                                            </select>
+                                                        </div>
+
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="http_request">HTTP Request</label>
+                                                            <textarea class="form-control" id="http_request" rows="15">{str_replace('    ', '  ', json_encode($inbound->httprequest, JSON_PRETTY_PRINT))}</textarea>
+                                                        </div>
+
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="http_response">HTTP Response</label>
+                                                            <textarea class="form-control" id="http_response" rows="15">{str_replace('    ', '  ', json_encode($inbound->httpresponse, JSON_PRETTY_PRINT))}</textarea>
+                                                        </div>
                                                     </div>
 
                                                     <div class="tab-pane fade {if $inbound->network=='kcp'}active in{/if}" id="kcp">
@@ -339,10 +353,13 @@
                                                     </div>
 
                                                     <div class="tab-pane fade {if $inbound->network=='domainsocket'}active in{/if}" id="domainsocket">
-                                                        <p>暂不支持此传输类型</p>
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="path">Path</label>
+                                                            <input class="form-control" id="path" type="text" name="path" value="/tmp/v2ray.sock">
+                                                        </div>
                                                     </div>
 
-                                                    <div class="tab-pane fade" id="quic">
+                                                    <div class="tab-pane fade {if $inbound->network=='quic'}active in{/if}" id="quic">
                                                         <div class="form-group form-group-label">
                                                                 <label class="floating-label" for="encryption">加密方式</label>
                                                                 <select id="encryption" class="form-control" name="encryption">
@@ -458,8 +475,8 @@
             $(this).val(oinb.find('select#'+$(this).prop('id')).val());
         });
         inb.find('#network').change(function() {
-            $(this).parent().parent().siblings('#networks').children('div.active.in').removeClass('active in');
-            $(this).parent().parent().siblings('#networks').children('div#' + this.value ).addClass('active in');
+            $(this).parent().siblings('#networks').children('div.active.in').removeClass('active in');
+            $(this).parent().siblings('#networks').children('div#' + this.value ).addClass('active in');
         });
         inb.find('span.switch-toggle').each(function() {
             $(this).click(function(e) {
@@ -483,8 +500,8 @@
 
     $('#inbounds').children().each(function() {
         $(this).find('#network').change(function() {
-            $(this).parent().parent().siblings('#networks').children('div.active.in').removeClass('active in');
-            $(this).parent().parent().siblings('#networks').children('div#' + this.value ).addClass('active in');
+            $(this).parent().siblings('#networks').children('div.active.in').removeClass('active in');
+            $(this).parent().siblings('#networks').children('div#' + this.value ).addClass('active in');
         });
     });
     
@@ -539,9 +556,9 @@
 				var custom_rss=0;
 			}
 
-            var inbs = [];
+			var inbs = [];
             $("#inbounds").children().each(function() {
-                var inb = {
+             	var inb = {
                     "listen": $(this).find("#listen").val(),
                     "port": parseInt($(this).find("#port").val()),
                     "protocol": $(this).find("#protocol").val(),
@@ -549,6 +566,10 @@
                     "disableinsecureencryption": $(this).find("#disable_insecure_encryption").is(":checked"),
                     "blockbt": $(this).find("#block_bt").is(":checked"),
                     "network": $(this).find("#network").val(),
+                    // tcp
+                    "obfs": $(this).find("#tcp #obfs").val(),
+                    "httprequest": {},
+                    "httpresponse": {},
                     // kcp
                     "mtu": parseInt($(this).find("#kcp #mtu").val()),
                     "tti": parseInt($(this).find("#kcp #tti").val()),
@@ -579,6 +600,14 @@
                 };
                 try {
                     inb["headers"] = JSON.parse($(this).find("#ws #headers").val());
+                }
+                catch(err) {}
+                try {
+                    inb["httprequest"] = JSON.parse($(this).find("#tcp #http_request").val());
+                }
+                catch(err) {}
+                try {
+                    inb["httpresponse"] = JSON.parse($(this).find("#tcp #http_response").val());
                 }
                 catch(err) {}
                 if($(this).find("#"+inb["network"]+" #path").val() == null) {
