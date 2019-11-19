@@ -586,7 +586,7 @@ class URL
                         "type" => $item['type']
                     )
                 );
-                if($item['host'] != null) {
+                if($item['host'] != 'none') {
                     $quics["key"] = $item['path'];
                 }
                 $out['streamSettings']['quicSettings'] = $quics;

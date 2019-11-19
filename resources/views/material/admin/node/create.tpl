@@ -156,7 +156,7 @@
 									<p><h4>V2Ray设置</h4></p>
 
                                     <button class="btn btn-flat waves-attach" type="button" id="add-inbound"><span class="icon icon-lg">add</span>&nbsp;添加一个Inbound</button>
-                                    <button class="btn btn-flat waves-attach" type="button" id="del-inbound"><span class="icon icon-lg">add</span>&nbsp;移除当前Inbound</button>
+                                    <button class="btn btn-flat waves-attach" type="button" id="del-inbound"><span class="icon icon-lg">clear</span>&nbsp;移除当前Inbound</button>
 
                                     <nav class="tab-nav margin-top-no">
                                         <ul class="nav nav-list" id="inbounds-nav">
@@ -409,8 +409,8 @@
                                                 <div class="form-group form-group-label">
                                                     <label class="floating-label" for="security">TLS</label>
                                                     <select id="security" class="form-control" name="security">
-                                                        <option value="none">none</option>
-                                                        <option value="tls" selected>tls</option>
+                                                        <option value="none" selected>none</option>
+                                                        <option value="tls">tls</option>
                                                     </select>
                                                 </div>
 

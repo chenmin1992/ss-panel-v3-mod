@@ -87,7 +87,7 @@ class NodeController extends AdminController
     {
         $id = $args['id'];
         $node = Node::find($id);
-        if ($node != null) {
+        if ($node == null) {
         }
         return $this->view()->assign('node', $node)->display('admin/node/edit.tpl');
     }

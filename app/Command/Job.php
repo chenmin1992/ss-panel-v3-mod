@@ -453,7 +453,7 @@ class Job
                         echo "Send mail to user: ".$user->id;
                         $subject = Config::get('appName')."-系统提示";
                         $to = $user->email;
-                        $text = "管理员您好，系统发现有了新版本，您可以到 <a href=\"https://github.com/esdeathlove/ss-panel-v3-mod/wiki/%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97\">https://github.com/esdeathlove/ss-panel-v3-mod/wiki/%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97</a> 按照步骤进行升级。" ;
+                        $text = "管理员您好，系统发现有了新版本，您可以到 <a href=\"https://github.com/chenmin1992/ss-panel-v3-mod/wiki/%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97\">https://github.com/chenmin1992/ss-panel-v3-mod/wiki/%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97</a> 按照步骤进行升级。" ;
                         try {
                             Mail::send($to, $subject, 'news/warn.tpl', [
                                 "user" => $user,"text" => $text
@@ -655,7 +655,7 @@ class Job
                 Radius::Delete($user->email);
             }
 
-            if (strtotime($user->expire_in) < time() && (((Config::get('enable_account_expire_reset')=='true' && strtotime($user->expire_in) < time()) ? $user->transfer_enable != Tools::toGB(Config::get('enable_account_expire_reset_traffic')) : true) && ((Config::get('enable_class_expire_reset')=='true' && ($user->class!=0 && strtotime($user->class_expire)<time() && strtotime($user->class_expire) > 1420041600))? $user->transfer_enable != Tools::toGB(Config::get('enable_class_expire_reset_traffic')) : true))) {
+            if ((Config::get('enable_account_expire_reset')=='true' && strtotime($user->expire_in) < time() && strtotime($user->expire_in) > 1420041600) ? $user->transfer_enable != Tools::toGB(Config::get('enable_account_expire_reset_traffic')) : false) {
                 if (Config::get('enable_account_expire_reset')=='true') {
                     $user->transfer_enable = Tools::toGB(Config::get('enable_account_expire_reset_traffic'));
                     $user->u = 0;
@@ -754,7 +754,7 @@ class Job
                 }
             }
 
-            if ($user->class!=0 && (((Config::get('enable_account_expire_reset')=='true' && strtotime($user->expire_in) < time()) ? $user->transfer_enable != Tools::toGB(Config::get('enable_account_expire_reset_traffic')) : true) && ((Config::get('enable_class_expire_reset')=='true' && ($user->class!=0 && strtotime($user->class_expire)<time() && strtotime($user->class_expire) > 1420041600))? $user->transfer_enable != Tools::toGB(Config::get('enable_class_expire_reset_traffic')) : true)) && strtotime($user->class_expire)<time() && strtotime($user->class_expire) > 1420041600) {
+            if ((Config::get('enable_class_expire_reset')=='true' && ($user->class!=0 && strtotime($user->class_expire)<time() && strtotime($user->class_expire) > 1420041600))? $user->transfer_enable != Tools::toGB(Config::get('enable_class_expire_reset_traffic')) : false) {
                 if (Config::get('enable_class_expire_reset')=='true') {
                     $user->transfer_enable = Tools::toGB(Config::get('enable_class_expire_reset_traffic'));
                     $user->u = 0;
