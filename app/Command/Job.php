@@ -128,7 +128,7 @@ class Job
     {
         $nodes = Node::all();
         foreach ($nodes as $node) {
-            if ($node->sort == 0 || $node->sort == 10) {
+            if ($node->sort == 0 || $node->sort == 10 || $node->sort == 11) {
                 if (date("d")==$node->bandwidthlimit_resetday) {
                     $node->node_bandwidth=0;
                     $node->save();
@@ -494,45 +494,45 @@ class Job
                         } catch (Exception $e) {
                             echo $e->getMessage();
                         }
+                    }
 
-                        if (Config::get('enable_cloudxns')=='true' && ($node->sort==0 || $node->sort==10)) {
-                            $api=new Api();
-                            $api->setApiKey(Config::get("cloudxns_apikey"));//修改成自己API KEY
-                            $api->setSecretKey(Config::get("cloudxns_apisecret"));//修改成自己的SECERET KEY
+                    if (Config::get('enable_cloudxns')=='true' && ($node->sort==0 || $node->sort==10 || $node->sort==11)) {
+                        $api=new Api();
+                        $api->setApiKey(Config::get("cloudxns_apikey"));//修改成自己API KEY
+                        $api->setSecretKey(Config::get("cloudxns_apisecret"));//修改成自己的SECERET KEY
 
-                            $api->setProtocol(true);
+                        $api->setProtocol(true);
 
-                            $domain_json=json_decode($api->domain->domainList());
+                        $domain_json=json_decode($api->domain->domainList());
 
-                            foreach ($domain_json->data as $domain) {
-                                if (strpos($domain->domain, Config::get('cloudxns_domain'))!==false) {
-                                    $domain_id=$domain->id;
-                                }
+                        foreach ($domain_json->data as $domain) {
+                            if (strpos($domain->domain, Config::get('cloudxns_domain'))!==false) {
+                                $domain_id=$domain->id;
                             }
-
-                            $record_json=json_decode($api->record->recordList($domain_id, 0, 0, 2000));
-
-                            foreach ($record_json->data as $record) {
-                                if (($record->host.".".Config::get('cloudxns_domain'))==$node->server) {
-                                    $record_id=$record->record_id;
-
-                                    $Temp_node=Node::where('node_class', '<=', $node->node_class)->where(
-                                        function ($query) use ($node) {
-                                            $query->where("node_group", "=", $node->node_group)
-                                                ->orWhere("node_group", "=", 0);
-                                        }
-                                    )->whereRaw('UNIX_TIMESTAMP()-`node_heartbeat`<300')->first();
-
-                                    if ($Temp_node!=null) {
-                                        $api->record->recordUpdate($domain_id, $record->host, $Temp_node->server, 'CNAME', 55, 60, 1, '', $record_id);
-                                    }
-
-                                    $notice_text = "喵喵喵~ ".$node->name." 节点掉线了喵~域名解析被切换到了 ".$Temp_node->name." 上了喵~";
-                                }
-                            }
-                        } else {
-                            $notice_text = "喵喵喵~ ".$node->name." 节点掉线了喵~";
                         }
+
+                        $record_json=json_decode($api->record->recordList($domain_id, 0, 0, 2000));
+
+                        foreach ($record_json->data as $record) {
+                            if (($record->host.".".Config::get('cloudxns_domain'))==$node->server) {
+                                $record_id=$record->record_id;
+
+                                $Temp_node=Node::where('node_class', '<=', $node->node_class)->where(
+                                    function ($query) use ($node) {
+                                        $query->where("node_group", "=", $node->node_group)
+                                            ->orWhere("node_group", "=", 0);
+                                    }
+                                )->whereRaw('UNIX_TIMESTAMP()-`node_heartbeat`<300')->first();
+
+                                if ($Temp_node!=null) {
+                                    $api->record->recordUpdate($domain_id, $record->host, $Temp_node->server, 'CNAME', 55, 60, 1, '', $record_id);
+                                }
+
+                                $notice_text = "喵喵喵~ ".$node->name." 节点掉线了喵~域名解析被切换到了 ".$Temp_node->name." 上了喵~";
+                            }
+                        }
+                    } else {
+                        $notice_text = "喵喵喵~ ".$node->name." 节点掉线了喵~";
                     }
 
                     Telegram::Send($notice_text);
@@ -563,7 +563,7 @@ class Job
                     }
 
 
-                    if (Config::get('enable_cloudxns')=='true'&& ($node->sort==0 || $node->sort==10)) {
+                    if (Config::get('enable_cloudxns')=='true'&& ($node->sort==0 || $node->sort==10 || $node->sort==11)) {
                         $api=new Api();
                         $api->setApiKey(Config::get("cloudxns_apikey"));//修改成自己API KEY
                         $api->setSecretKey(Config::get("cloudxns_apisecret"));//修改成自己的SECERET KEY
