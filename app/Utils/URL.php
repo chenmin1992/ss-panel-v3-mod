@@ -460,132 +460,129 @@ class URL
     }
 
     public static function genV2rayClientItem($item) {
-        $root_conf = array(
-            "log" => array(
+        $root_conf = [
+            "log" => [
                 "loglevel" => "warning"
-            ),
-            "inbounds" => array(
-            array(
-                "listen" => "127.0.0.1",
-                "protocol" => "socks",
-                "port" => "1079",
-                "settings" => array(
-                    "udp" => true
-                )
-            ),
-            array(
-                "listen" => "127.0.0.1",
-                "protocol" => "http",
-                "port" => "1080"
-            )
-            ),
-            "outbounds" => array(),
-            "dns" => array(
-                "servers" => array(
+            ],
+            "inbounds" => [
+                [
+                    "listen" => "127.0.0.1",
+                    "protocol" => "socks",
+                    "port" => "1079",
+                    "settings" => [
+                        "udp" => true
+                    ]
+                ],
+                [
+                    "listen" => "127.0.0.1",
+                    "protocol" => "http",
+                    "port" => "1080"
+                ]
+            ],
+            "outbounds" => [],
+            "dns" => [
+                "servers" => [
                     "8.8.8.8",
                     "8.8.4.4"
-                )
-            ),
-            "routing" => array(
+                ]
+            ],
+            "routing" => [
                 "domainStrategy" => "IPIfNonMatch",
-                "rules" => array(
-                    array(
+                "rules" => [
+                    [
                         "type" => "field",
-                        "domain" => array(
+                        "domain" => [
                             "geosite:cn",
                             "geosite:speedtest"
-                        ),
+                        ],
                         "outboundTag" => "direct"
-                    ),
-                    array(
+                    ],
+                    [
                         "type" => "field",
-                        "ip" => array(
+                        "ip" => [
                             "geoip:private",
                             "geoip:cn"
-                        ),
+                        ],
                         "outboundTag" => "direct"
-                    ),
-                    array(
+                    ],
+                    [
                         "type" => "field",
-                        "domain" => array(
+                        "domain" => [
                             "geosite:category-ads"
-                        ),
+                        ],
                         "outboundTag" => "blocked"
-                    )
-                )
-            )
-        );
+                    ]
+                ]
+            ]
+        ];
 
-        $out = array(
-          "protocol" => "vmess",
-          "settings" => array(
-            "vnext" => array(
-              array(
-                "address" => $item['add'],
-                "port" => $item['port'],
-                "users" => array(
-                  array(
-                    "id" => $item['id'],
-                    "alterId" => $item['aid'],
-                    "security" => "auto"
-                  )
-                )
-              )
-            )
-          ),
-          "streamSettings" => array(
-            "network" => $item['net']
-          ),
-          "tag" => "proxy"
-        );
+        $out = [
+            "protocol" => "vmess",
+            "settings" => [
+                    "vnext" => [
+                    [
+                        "address" => $item['add'],
+                        "port" => $item['port'],
+                        "users" => [
+                            [
+                                "id" => $item['id'],
+                                "alterId" => $item['aid'],
+                                "security" => "auto"
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            "streamSettings" => [
+                "network" => $item['net']
+            ],
+            "tag" => "proxy"
+        ];
         switch ($item['net']) {
             case 'ws':
-                $wss = array(
-                  "path" => $item['path']
-                );
+                $wss = [
+                    "path" => $item['path']
+                ];
                 if($item['host'] != '') {
-                    $wss['headers'] = array(
+                    $wss['headers'] = [
                         "Host" => $item['host']
-                    );
+                    ];
                 }
                 $out['streamSettings']['wsSettings'] = $wss;
                 break;
 
             case 'kcp':
-                $out['streamSettings']['kcpSettings'] = array(
-                  "mtu" => 1350,
-                  "tti" => 20,
-                  "uplinkCapacity" => 5,
-                  "downlinkCapacity" => 20,
-                  "congestion" => false,
-                  "readBufferSize" => 1,
-                  "writeBufferSize" => 1,
-                  "header" => array(
-                    "type" => $item['type']
-                  )
-                );
+                $out['streamSettings']['kcpSettings'] = [
+                        "mtu" => 1350,
+                        "tti" => 20,
+                        "uplinkCapacity" => 5,
+                        "downlinkCapacity" => 20,
+                        "congestion" => false,
+                        "readBufferSize" => 1,
+                        "writeBufferSize" => 1,
+                        "header" => [
+                        "type" => $item['type']
+                    ]
+                ];
                 break;
 
             case 'h2':
-                $h2s = array(
-                  "path" => $item['path']
-                );
-                if($item['host'] != '') {
-                    $h2s['host'] = array();
-                    foreach (explode(',', $item['host']) as $h) {
-                        array_push($h2s['host'], $h);
-                    }
+                $h2s = [
+                    "path" => $item['path']
+                ];
+                if(preg_replace('/\s+/gm', '', $item['host']) != '') {
+                    $h2s['host'] = explode(',', preg_replace('/\s+/gm', '', $item['host']));
                 }
                 $out['streamSettings']['httpSettings'] = $h2s;
                 break;
 
             case 'quic':
-                $quics = array(
+                $quics = [
                     "security" => $item['host'],
-                    "header" => array(
+                    "header" => [
                         "type" => $item['type']
-                    )
-                );
+                    ]
+                ];
                 if($item['host'] != 'none') {
                     $quics["key"] = $item['path'];
                 }
@@ -597,19 +594,13 @@ class URL
         }
         $out['streamSettings']['security'] = $item['tls'];
         if($item['tls'] == 'tls') {
-            $out['streamSettings']['tlsSettings'] = array(
-              "allowInsecure" => true
-            );
+            $out['streamSettings']['tlsSettings'] = [
+                "allowInsecure" => true
+            ];
         }
         array_push($root_conf['outbounds'], $out);
-        array_push($root_conf['outbounds'], array(
-                    "protocol" => "freedom",
-                    "tag" => "direct"
-                ));
-        array_push($root_conf['outbounds'], array(
-                    "protocol" => "blackhole",
-                    "tag" => "blocked"
-                ));
+        array_push($root_conf['outbounds'], ["protocol" => "freedom", "tag" => "direct"]);
+        array_push($root_conf['outbounds'], ["protocol" => "blackhole", "tag" => "blocked"]);
         return $root_conf;
     }
 

@@ -106,7 +106,7 @@
                                         <div class="tab-content" id="v2ray_json">
                                             {foreach from=$node->v2conf|json_decode key=index item=inbound}
                                             <div class="tab-pane fade {if $index==0}active in{/if}" id="json-{$index}">
-                                                <textarea class="form-control" rows="15">{str_replace('    ', '  ', json_encode(URL::genV2rayClientItem(URL::getV2rayItem($user, $node, $inbound, 3)), JSON_PRETTY_PRINT))}</textarea>
+                                                <textarea class="form-control" rows="15">{json_encode(URL::genV2rayClientItem(URL::getV2rayItem($user, $node, $inbound, 3)), JSON_PRETTY_PRINT)}</textarea>
                                             </div>
                                             {/foreach}
                                         </div>
