@@ -133,10 +133,9 @@
                                         </nav>
                                         <div class="tab-content" id="v2ray_url">
                                             {foreach from=$node->v2conf|json_decode key=index item=inbound}
-                                            {$v2ray_url = URL::getItemUrl(URL::getV2rayItem($user, $node, $inbound, 3), 3)}
                                             <div class="tab-pane fade {if $index==0}active in{/if}" id="link-{$index}">
-                                                <p><a href="{$v2ray_url}"/>Android 手机上用默认浏览器打开点我就可以直接添加了(给 V2Ray APP)</a></p>
-                                                <p><a href="{$v2ray_url}"/>iOS 上用 Safari 打开点我就可以直接添加了(给 Shadowrocket)</a></p>
+                                                <p><a href="{URL::getItemUrl(URL::getV2rayItem($user, $node, $inbound, 4), 4)}"/>Android 手机上用默认浏览器打开点我就可以直接添加了(给 V2Ray APP)</a></p>
+                                                <p><a href="{URL::getItemUrl(URL::getV2rayItem($user, $node, $inbound, 3), 3)}"/>iOS 上用 Safari 打开点我就可以直接添加了(给 Shadowrocket)</a></p>
                                             </div>
                                             {/foreach}
                                         </div>

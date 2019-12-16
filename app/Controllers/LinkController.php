@@ -259,18 +259,18 @@ class LinkController extends BaseController
                     return null;
                 }
 
-                $max = 0;
-                if (isset($request->getQueryParams()["max"])) {
-                    $max = (int)$request->getQueryParams()["max"];
-                }
-
                 $mu = 0;
                 if (isset($request->getQueryParams()["mu"])) {
                     $mu = (int)$request->getQueryParams()["mu"];
                 }
 
+                $v = 2;
+                if (isset($request->getQueryParams()["v"])) {
+                    $max = (int)$request->getQueryParams()["v"];
+                }
+
                 $newResponse = $response->withHeader('Content-type', ' application/octet-stream; charset=utf-8')->withHeader('Cache-Control', 'no-store, no-cache, must-revalidate')->withHeader('Content-Disposition', ' attachment; filename='.$token.'.txt');
-                $newResponse->getBody()->write(LinkController::GetSSRSub(User::where("id", "=", $Elink->userid)->first(), $mu, $max));
+                $newResponse->getBody()->write(LinkController::GetSSRSub(User::where("id", "=", $Elink->userid)->first(), $mu, $v));
                 return $newResponse;
             default:
                 break;
@@ -1751,8 +1751,8 @@ FINAL,Proxy';
         return $bash;
     }
 
-    public static function GetSSRSub($user, $mu = 0, $max = 0)
+    public static function GetSSRSub($user, $mu = 0, $v = 2)
     {
-        return Tools::base64_url_encode(URL::getAllUrl($user, $mu, 0, 1)."\n".URL::getAllUrl($user, 0, 3, 1));
+        return Tools::base64_url_encode(URL::getAllUrl($user, $mu, 0, 1)."\n".URL::getAllUrl($user, 0, $v+2, 1));
     }
 }

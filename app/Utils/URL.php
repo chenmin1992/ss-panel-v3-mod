@@ -257,18 +257,20 @@ class URL
     public static function getItemUrl($item, $is_ss) {
         $ss_obfs_list = Config::getSupportParam('ss_obfs');
 
-        if(!$is_ss) {
+        if(!$is_ss) { // ssr
             $ssurl = $item['address'].":".$item['port'].":".$item['protocol'].":".$item['method'].":".$item['obfs'].":".Tools::base64_url_encode($item['passwd'])."/?obfsparam=".Tools::base64_url_encode($item['obfs_param'])."&protoparam=".Tools::base64_url_encode($item['protocol_param'])."&remarks=".Tools::base64_url_encode($item['remark'])."&group=".Tools::base64_url_encode($item['group']);
             return "ssr://".Tools::base64_url_encode($ssurl);
         } else {
-            if($is_ss == 2) {
+            if($is_ss == 2) { // ss windows
                 $personal_info = $item['method'].':'.$item['passwd']."@".$item['address'].":".$item['port'];
                 $ssurl = "ss://".Tools::base64_url_encode($personal_info);
 
                 $ssurl .= "#".rawurlencode($item['remark']);
-            } elseif ($is_ss == 3) {
+            } elseif ($is_ss == 3) { // v2ray v1
                 $ssurl = "vmess://".Tools::base64_url_encode(json_encode($item));
-            } else {
+            } elseif ($is_ss == 4) { // v2ray v2
+                $ssurl = "vmess://".Tools::base64_url_encode(json_encode($item));
+            } else { // ss other
                 $personal_info = $item['method'].':'.$item['passwd'];
                 $ssurl = "ss://".Tools::base64_url_encode($personal_info)."@".$item['address'].":".$item['port'];
 

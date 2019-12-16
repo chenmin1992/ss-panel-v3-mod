@@ -244,8 +244,8 @@
                                                         </ul>
                                                     </nav>
                                                     <div class="tab-pane fade active in" id="all_v2ray_info">
-                                                        {$v2ray_url_all = URL::getAllUrl($pre_user, 0, 3, 1)}
-                                                        {$v2ray_url_all_ios = URL::getAllUrl($pre_user, 0, 3, 0)}
+                                                        {$v2ray_url_all_v1 = URL::getAllUrl($pre_user, 0, 3, 1)}
+                                                        {$v2ray_url_all_v2 = URL::getAllUrl($pre_user, 0, 4, 1)}
                                                         <dl class="dl-horizontal">
                                                             <p><dt>UUID</dt>
                                                             <dd>{$pre_user->get_v2ray_uuid()}</dd></p>
@@ -254,7 +254,7 @@
                                                     <div class="tab-pane fade" id="all_v2ray_windows">
                                                         <p><a href="/ssr-download/v2ray-win.zip">下载</a>，解压，运行程序，然后您有三种方式导入所有节点<br>
                                                             (1)下载<a href="/user/getpcconf?is_mu=0&is_ss=2">这个</a>，然后点击v2rayN图标 服务器 -- 添加自定义配置服务器，选择这个文件，<br>
-                                                            (2)点击<a class="copy-text" data-clipboard-text="{$v2ray_url_all}">这个</a>，然后点击v2rayN图标 服务器 -- 从剪贴板导入批量URL<br>
+                                                            (2)点击<a class="copy-text" data-clipboard-text="{$v2ray_url_all_v2}">这个</a>，然后点击v2rayN图标 服务器 -- 从剪贴板导入批量URL<br>
                                                             (3)(推荐)点击v2rayN图标 订阅 -- 订阅设置，添加，将订阅地址设置为下面的地址，改一个喜欢的备注，确定之后再更新订阅。<br>
                                                             <br>
                                                             然后参数设置 路由设置 预定义规则 选 ”绕过局域网及大陆地址”，点一下一键设置默认自定义路由规则，确定，右键v2rayN图标，HTTP代理选”全局代理“，然后即可上网。</p>
@@ -262,17 +262,17 @@
                                                         <p>V2Ray 订阅地址：<code>{$baseUrl}/link/{$ssr_sub_token}</code></p>
                                                     </div>
                                                     <div class="tab-pane fade" id="all_v2ray_mac">
-                                                        <p><a href="/ssr-download/v2ray-mac.dmg">下载</a>，安装，运行程序，然后点击<a class="copy-text" data-clipboard-text="{$v2ray_url_all}">这个</a>，V2rayU图标上点击 从粘贴板导入<br>然后选择一个合适的服务器，选择Pac模式，更新一下PAC，然后Turn v2ray-core On即可上网。</p>
+                                                        <p><a href="/ssr-download/v2ray-mac.dmg">下载</a>，安装，运行程序，然后点击<a class="copy-text" data-clipboard-text="{$v2ray_url_all_v2}">这个</a>，V2rayU图标上点击 从粘贴板导入<br>然后选择一个合适的服务器，选择Pac模式，更新一下PAC，然后Turn v2ray-core On即可上网。</p>
                                                         <br>
                                                         <p>V2Ray 订阅地址：<code>{$baseUrl}/link/{$ssr_sub_token}</code></p>
                                                     </div>
                                                     <div class="tab-pane fade" id="all_v2ray_ios">
-                                                        <p>推荐下载<a href="https://itunes.apple.com/us/app/shadowrocket/id932747118">Shadowrocket</a>，需要非大陆Apple ID，然后在 Safari 中点击<a href="{$v2ray_url_all}">这个</a>，然后点击确定，就可以批量添加节点。</p>
+                                                        <p>推荐下载<a href="https://itunes.apple.com/us/app/shadowrocket/id932747118">Shadowrocket</a>，需要非大陆Apple ID，然后在 Safari 中点击<a href="{$v2ray_url_all_v1}">这个</a>，然后点击确定，就可以批量添加节点。</p>
                                                         <br>
                                                         <p>V2Ray 订阅地址：<code>{$baseUrl}/link/{$ssr_sub_token}</code></p>
                                                     </div>
                                                     <div class="tab-pane fade" id="all_v2ray_android">
-                                                        <p><a href="/ssr-download/v2ray-android.apk">下载</a>，安装，然后点击<a class="copy-text" data-clipboard-text="{$v2ray_url_all}">这个</a>，右上角点击加号,选择从剪贴板导入，然后设置里的路由模式选择“绕过局域网及大陆地址”，返回，选择一个合适的服务器，右下角开启就可以上网了。
+                                                        <p><a href="/ssr-download/v2ray-android.apk">下载</a>，安装，然后点击<a class="copy-text" data-clipboard-text="{$v2ray_url_all_v2}">这个</a>，右上角点击加号,选择从剪贴板导入，然后设置里的路由模式选择“绕过局域网及大陆地址”，返回，选择一个合适的服务器，右下角开启就可以上网了。
                                                         </p><br>
                                                         <p>V2Ray 订阅地址：<code>{$baseUrl}/link/{$ssr_sub_token}</code></p>
                                                     </div>
