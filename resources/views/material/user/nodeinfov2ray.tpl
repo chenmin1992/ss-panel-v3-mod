@@ -48,7 +48,7 @@
                                             <div class="tab-content">
                                                 {foreach from=$node->v2conf|json_decode key=index item=inbound}
                                                 <div class="tab-pane fade {if $index==0}active in{/if}" id="info-{$index}">
-                                                    {$v2ray_item = URL::getV2rayItem($user, $node, $inbound, 3)}
+                                                    {$v2ray_item = URL::getV2rayItem($user, $node, $inbound, 4)}
                                                     <p>服务器地址：{$v2ray_item['add']}<br>
                                                     服务器端口：{$v2ray_item['port']}<br>
                                                     UUID：{$v2ray_item['id']}<br>
@@ -106,7 +106,7 @@
                                         <div class="tab-content" id="v2ray_json">
                                             {foreach from=$node->v2conf|json_decode key=index item=inbound}
                                             <div class="tab-pane fade {if $index==0}active in{/if}" id="json-{$index}">
-                                                <textarea class="form-control" rows="15">{json_encode(URL::genV2rayClientItem(URL::getV2rayItem($user, $node, $inbound, 3)), JSON_PRETTY_PRINT)}</textarea>
+                                                <textarea class="form-control" rows="15">{json_encode(URL::genV2rayClientItem(URL::getV2rayItem($user, $node, $inbound, 4)), JSON_PRETTY_PRINT)}</textarea>
                                             </div>
                                             {/foreach}
                                         </div>

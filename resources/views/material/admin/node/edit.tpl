@@ -232,6 +232,15 @@
                                                     </select>
                                                 </div>
 
+                                                <div class="form-group form-group-label">
+                                                    <label class="floating-label" for="tcpfastopen">TCP Fast Open</label>
+                                                    <select id="tcpfastopen" class="form-control" name="tcpfastopen">
+                                                        <option value="none" {if $inbound->tcpfastopen=='none'}selected{/if}>跟随系统</option>
+                                                        <option value="true" {if $inbound->tcpfastopen=='true'}selected{/if}>强制开启</option>
+                                                        <option value="false" {if $inbound->tcpfastopen=='false'}selected{/if}>强制关闭</option>
+                                                    </select>
+                                                </div>
+
                                                 <div class="tab-content" id="networks">
                                                     <div class="tab-pane fade {if $inbound->network=='tcp'}active in{/if}" id="tcp">
                                                         <div class="form-group form-group-label">
@@ -557,93 +566,98 @@
 			}
 
 			var inbs = [];
-            $("#inbounds").children().each(function() {
-             	var inb = {
-                    "listen": $(this).find("#listen").val(),
-                    "port": parseInt($(this).find("#port").val()),
-                    "protocol": $(this).find("#protocol").val(),
-                    "alterid": parseInt($(this).find("#alterid").val()),
-                    "disableinsecureencryption": $(this).find("#disable_insecure_encryption").is(":checked"),
-                    "blockbt": $(this).find("#block_bt").is(":checked"),
-                    "network": $(this).find("#network").val(),
-                    // tcp
-                    "obfs": $(this).find("#tcp #obfs").val(),
-                    "httprequest": {},
-                    "httpresponse": {},
-                    // kcp
-                    "mtu": parseInt($(this).find("#kcp #mtu").val()),
-                    "tti": parseInt($(this).find("#kcp #tti").val()),
-                    "uplinkcapacity": parseInt($(this).find("#kcp #uplinkcapacity").val()),
-                    "downlinkcapacity": parseInt($(this).find("#kcp #downlinkcapacity").val()),
-                    "congestion": $(this).find("#kcp #congestion").is(":checked"),
-                    "readbuffersize": parseInt($(this).find("#kcp #readbuffersize").val()),
-                    "writebuffersize": parseInt($(this).find("#kcp #writebuffersize").val()),
-                    "obfs": $(this).find("#kcp #obfs").val(),
-                    // ws
-                    "path": $(this).find("#ws #path").val(),
-                    "headers": {},
-                    // h2
-                    "path": $(this).find("#h2 #path").val(),
-                    "host": $(this).find("#h2 #host").val(),
-                    // quic
-                    "encryption": $(this).find("#quic #encryption").val(),
-                    "quickey": $(this).find("#quic #quic_key").val(),
-                    "obfs": $(this).find("#quic #obfs").val(),
-                    // reverse proxy
-                    "proxyaddr": "",
-                    "proxyport": 0,
-                    "proxysecurity": "none",
-                    // tls
-                    "security": $(this).find("#security").val(),
-                    "cert": "",
-                    "key": ""
-                };
-                try {
-                    inb["headers"] = JSON.parse($(this).find("#ws #headers").val());
-                }
-                catch(err) {}
-                try {
-                    inb["httprequest"] = JSON.parse($(this).find("#tcp #http_request").val());
-                }
-                catch(err) {}
-                try {
-                    inb["httpresponse"] = JSON.parse($(this).find("#tcp #http_response").val());
-                }
-                catch(err) {}
-                if($(this).find("#"+inb["network"]+" #path").val() == null) {
-                    inb["path"] = "";
-                } else {
-                    inb["path"] = $(this).find("#"+inb["network"]+" #path").val();
-                }
-                if($(this).find("#"+inb["network"]+" #obfs").val() == null) {
-                    inb["obfs"] = "";
-                } else {
-                    inb["obfs"] = $(this).find("#"+inb["network"]+" #obfs").val();
-                }
-                if(inb["network"] == "ws") {
-                    inb["proxyaddr"] = $(this).find("#ws #proxy_addr").val();
-                    inb["proxyport"] = parseInt($(this).find("#ws #proxy_port").val());
-                    inb["proxysecurity"] = $(this).find("#ws #proxy_security").val();
-                }
-                if(inb["network"] == "h2") {
-                    inb["proxyaddr"] = $(this).find("#h2 #proxy_addr").val();
-                    inb["proxyport"] = parseInt($(this).find("#h2 #proxy_port").val());
-                    inb["proxysecurity"] = $(this).find("#h2 #proxy_security").val();
-                }
-                if(inb["security"] == "tls") {
-                    inb["cert"] = $(this).find("#cert").val();
-                    inb["key"] = $(this).find("#key").val();
-                }
-                inbs.push(inb);
-            });
+			$("#inbounds").children().each(function() {
+				var inb = {
+					"listen": $(this).find("#listen").val(),
+					"port": parseInt($(this).find("#port").val()),
+					"protocol": $(this).find("#protocol").val(),
+					"alterid": parseInt($(this).find("#alterid").val()),
+					"disableinsecureencryption": $(this).find("#disable_insecure_encryption").is(":checked"),
+					"blockbt": $(this).find("#block_bt").is(":checked"),
+					"network": $(this).find("#network").val(),
+					"tcpfastopen": $(this).find("#tcpfastopen").val(),
+					// tcp
+					"obfs": "none",
+					"httprequest": {},
+					"httpresponse": {},
+					// kcp
+					"mtu": 1350,
+					"tti": 20,
+					"uplinkcapacity": 5,
+					"downlinkcapacity": 20,
+					"congestion": false,
+					"readbuffersize": 1,
+					"writebuffersize": 1,
+					"obfs": "wechat-video",
+					// ws
+					"path": "/ws",
+					"headers": { "Host": $("#server").val() },
+					// h2
+					"host": $("#server").val(),
+					"path": "/h2",
+					// quic
+					"encryption": "none",
+					"quickey": "",
+					"obfs": "wechat-video",
+					// reverse proxy
+					"proxyaddr": $("#server").val(),
+					"proxyport": 443,
+					"proxysecurity": "none",
+					// tls
+					"security": $(this).find("#security").val(),
+					"cert": "",
+					"key": ""
+				};
+				if(inb["network"] == "tcp") {
+					inb["obfs"] = $(this).find("#tcp #obfs").val();
+					try { inb["httprequest"] = JSON.parse($(this).find("#tcp #http_request").val()); } catch(err) {}
+					try { inb["httpresponse"] = JSON.parse($(this).find("#tcp #http_response").val()); } catch(err) {}
+				}
+				if(inb["network"] == "kcp") {
+					inb["mtu"] = parseInt($(this).find("#kcp #mtu").val());
+					inb["tti"] = parseInt($(this).find("#kcp #tti").val());
+					inb["uplinkcapacity"] = parseInt($(this).find("#kcp #uplinkcapacity").val());
+					inb["downlinkcapacity"] = parseInt($(this).find("#kcp #downlinkcapacity").val());
+					inb["congestion"] = $(this).find("#kcp #congestion").is(":checked");
+					inb["readbuffersize"] = parseInt($(this).find("#kcp #readbuffersize").val());
+					inb["writebuffersize"] = parseInt($(this).find("#kcp #writebuffersize").val());
+					inb["obfs"] = $(this).find("#kcp #obfs").val();
+				}
+				if(inb["network"] == "ws") {
+					inb["path"] = $(this).find("#ws #path").val();
+					try { inb["headers"] = JSON.parse($(this).find("#ws #headers").val()); } catch(err) {}
+					inb["proxyaddr"] = $(this).find("#ws #proxy_addr").val();
+					inb["proxyport"] = parseInt($(this).find("#ws #proxy_port").val());
+					inb["proxysecurity"] = $(this).find("#ws #proxy_security").val();
+				}
+				if(inb["network"] == "h2") {
+					inb["host"] = $(this).find("#h2 #host").val();
+					inb["path"] = $(this).find("#h2 #path").val();
+					inb["proxyaddr"] = $(this).find("#h2 #proxy_addr").val();
+					inb["proxyport"] = parseInt($(this).find("#h2 #proxy_port").val());
+					inb["proxysecurity"] = $(this).find("#h2 #proxy_security").val();
+				}
+				if(inb["network"] == "domainsocket") {
+					inb["path"] = $(this).find("#domainsocket #path").val();
+				}
+				if(inb["network"] == "quic") {
+					inb["encryption"] = $(this).find("#quic #encryption").val();
+					inb["quickey"] = $(this).find("#quic #quic_key").val();
+					inb["obfs"] = $(this).find("#quic #obfs").val();
+				}
+				if(inb["security"] == "tls") {
+					inb["cert"] = $(this).find("#cert").val();
+					inb["key"] = $(this).find("#key").val();
+				}
+				inbs.push(inb);
+			});
 
 {/literal}
-            $.ajax({
-
+			$.ajax({
 				type: "PUT",
-                url: "/admin/node/{$node->id}",
-                dataType: "json",
-                data: {
+				url: "/admin/node/{$node->id}",
+				dataType: "json",
+				data: {
 					name: $("#name").val(),
 					server: $("#server").val(),
 					node_ip: $("#node_ip").val(),
@@ -662,23 +676,23 @@
 					custom_rss: custom_rss,
 					mu_only: $("#mu_only").val(),
 					v2conf: JSON.stringify(inbs)
-                },
-                success: function (data) {
-                    if (data.ret) {
-                        $("#result").modal();
-                        $("#msg").html(data.msg);
-                        window.setTimeout("location.href='/admin/node'", {$config['jump_delay']});
+				},
+				success: function (data) {
+					if (data.ret) {
+						$("#result").modal();
+						$("#msg").html(data.msg);
+						window.setTimeout("location.href='/admin/node'", {$config['jump_delay']});
 {literal}
-                    } else {
-                        $("#result").modal();
-                        $("#msg").html(data.msg);
-                    }
-                },
-                error: function (jqXHR) {
-                    $("#result").modal();
-                    $("#msg").html(data.msg+"  发生错误了。");
-                }
-            });
+					} else {
+						$("#result").modal();
+						$("#msg").html(data.msg);
+					}
+				},
+				error: function (jqXHR) {
+					$("#result").modal();
+					$("#msg").html(data.msg+"  发生错误了。");
+				}
+			});
 		}
 	});
 

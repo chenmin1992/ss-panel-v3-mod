@@ -266,10 +266,17 @@ class URL
                 $ssurl = "ss://".Tools::base64_url_encode($personal_info);
 
                 $ssurl .= "#".rawurlencode($item['remark']);
-            } elseif ($is_ss == 3) { // v2ray v1
-                $ssurl = "vmess://".Tools::base64_url_encode(json_encode($item));
+            } elseif ($is_ss == 3) { // v2ray v1 vmess://base64(security:uuid@host:port)?[urlencode(parameters)]
+                $parameters = '';
+                foreach ($item as $key => $value) {
+                    if($key == 'security' or $key == 'uuid' or $key == 'add' or $key == 'port') {
+                        continue;
+                    }
+                    $parameters .= $key.'='.rawurlencode($value).'&';
+                }
+                $ssurl = 'vmess://'.Tools::base64_url_encode($item['security'].':'.$item['uuid'].'@'.$item['add'].':'.$item['port']).'?'.substr($parameters, 0, -1);
             } elseif ($is_ss == 4) { // v2ray v2
-                $ssurl = "vmess://".Tools::base64_url_encode(json_encode($item));
+                $ssurl = 'vmess://'.Tools::base64_url_encode(json_encode($item));
             } else { // ss other
                 $personal_info = $item['method'].':'.$item['passwd'];
                 $ssurl = "ss://".Tools::base64_url_encode($personal_info)."@".$item['address'].":".$item['port'];
@@ -346,10 +353,10 @@ class URL
     */
 
     public static function getItem($user, $node, $mu_port = 0, $relay_rule_id = 0, $is_ss = 0) {
-        if($is_ss == 3) {
+        if($is_ss == 3 or $is_ss == 4) {
             return;
         }
-        
+
         $relay_rule = Relay::where('id', $relay_rule_id)->where(
             function ($query) use ($user) {
                 $query->Where("user_id", "=", $user->id)
@@ -407,27 +414,6 @@ class URL
     }
 
     /*
-    vmess://base64(security:uuid@host:port)?[urlencode(parameters)]
-    其中 base64、urlencode 为函数，security 为加密方式，parameters 是以 & 为分隔符的参数列表，例如：network=kcp&aid=32&remark=服务器1 经过 urlencode 后为 network=kcp&aid=32&remark=%E6%9C%8D%E5%8A%A1%E5%99%A81
-    可选参数（参数名称不区分大小写）：
-    network - 可选的值为 "tcp"、 "kcp"、"ws"、"h2" 等
-    wsPath - WebSocket 的协议路径
-    wsHost - WebSocket HTTP 头里面的 Host 字段值
-    kcpHeader - kcp 的伪装类型
-    uplinkCapacity - kcp 的上行容量
-    downlinkCapacity - kcp 的下行容量
-    h2Path - h2 的路径
-    h2Host - h2 的域名
-    aid - AlterId
-    tls - 是否启用 TLS，为 0 或 1
-    allowInsecure - TLS 的 AllowInsecure，为 0 或 1
-    tlsServer - TLS 的服务器端证书的域名
-    mux - 是否启用 mux，为 0 或 1
-    muxConcurrency - mux 的 最大并发连接数
-    remark - 备注名称
-    导入配置时，不在列表中的参数一般会按照 Core 的默认值处理。
-
-
     json数据如下
     {
     "v": "2",
@@ -456,45 +442,160 @@ class URL
     2)h2 path
     3)QUIC key
     tls：底层传输安全（tls)
+
+
+    vmess://base64(security:uuid@host:port)?[urlencode(parameters)]
+    其中 base64、urlencode 为函数，security 为加密方式，parameters 是以 & 为分隔符的参数列表，例如：network=kcp&aid=32&remark=服务器1 经过 urlencode 后为 network=kcp&aid=32&remark=%E6%9C%8D%E5%8A%A1%E5%99%A81
+    可选参数（参数名称不区分大小写）：
+    network - 可选的值为 "tcp"、 "kcp"、"ws"、"h2" 等
+    wsPath - WebSocket 的协议路径
+    wsHost - WebSocket HTTP 头里面的 Host 字段值
+    kcpHeader - kcp 的伪装类型
+    uplinkCapacity - kcp 的上行容量
+    downlinkCapacity - kcp 的下行容量
+    h2Path - h2 的路径
+    h2Host - h2 的域名
+    aid - AlterId
+    tls - 是否启用 TLS，为 0 或 1
+    allowInsecure - TLS 的 AllowInsecure，为 0 或 1
+    tlsServer - TLS 的服务器端证书的域名
+    mux - 是否启用 mux，为 0 或 1
+    muxConcurrency - mux 的 最大并发连接数
+    remark - 备注名称
+    导入配置时，不在列表中的参数一般会按照 Core 的默认值处理。
     */
     public static function getV2rayItem($user, $node, $inbound, $is_ss) {
-        if($is_ss != 3) {
-            return;
-        }
-        $return_array['v'] = '2';
-        $return_array['ps'] = '';
-        $return_array['add'] = $node->server;
-        $return_array['port'] = $inbound->port;
-        $return_array['id'] = $user->get_v2ray_uuid();
-        $return_array['aid'] = $inbound->alterid;
-        $return_array['net'] = $inbound->network;
-        $return_array['type'] = $inbound->obfs;
-        $return_array['host'] = '';
-        $return_array['path'] = $inbound->path;
-        $return_array['tls'] = $inbound->security;
-        if($inbound->network == 'ws') {
-            if(!empty($inbound->headers->Host)) {
-                $return_array['host'] = $inbound->headers->Host;
+        if($is_ss == 3) {
+            $return_array["v"] = 1;
+            $return_array["security"] = "auto";
+            $return_array["uuid"] = $user->get_v2ray_uuid();
+            $return_array["add"] = $node->server;
+            $return_array["port"] = $inbound->port;
+            $return_array["network"] = $inbound->network;
+            $return_array["aid"] = $inbound->alterid;
+            $return_array["tls"] = $inbound->security == "tls" ? 1 : 0;
+            $return_array["allowInsecure"] = 0;
+            $return_array["tlsServer"] = $node->server;
+            $return_array["mux"] = 1;
+            $return_array["muxConcurrency"] = 8;
+            switch ($inbound->network) {
+                case "tcp":
+                    break;
+                case "kcp":
+                    $return_array["kcpHeader"] = $inbound->obfs;
+                    $return_array["uplinkCapacity"] = $inbound->uplinkcapacity;
+                    $return_array["downlinkCapacity"] = $inbound->downlinkcapacity;
+                    break;
+                case "ws":
+                    $return_array["wsPath"] = $inbound->path;
+                    if(!empty($inbound->headers->Host)) {
+                        $return_array["wsHost"] = $inbound->headers->Host;
+                    }
+                    break;
+                case "h2":
+                    $return_array["h2Path"] = $inbound->path;
+                    $return_array["h2Host"] = $inbound->host;
+                    break;
+                case "quic":
+                    break;
+                default:
+                    break;
             }
-        } elseif($inbound->network == 'h2') {
-            $return_array['host'] = $inbound->host;
-        } elseif($inbound->network == 'quic') {
-            $return_array['host'] = $inbound->encryption;
-            if($inbound->encryption != 'none') {
-                $return_array['path'] = $inbound->quickey;
+            if($inbound->security == "tls") {
+                $return_array["peer"] = $node->server;
             }
-        }
-        if($inbound->network == 'ws' or $inbound->network == 'h2') {
-            if(!empty($inbound->proxyaddr) and !empty($inbound->proxyport)) {
-                $return_array['add'] = $inbound->proxyaddr;
-                $return_array['port'] = $inbound->proxyport;
-                if($inbound->security == 'none' and $inbound->proxysecurity == 'tls') {
-                    $return_array['tls'] = 'tls';
+            if($inbound->network == "ws" or $inbound->network == "h2") {
+                if(!empty($inbound->proxyaddr) and !empty($inbound->proxyport)) {
+                    $return_array["add"] = $inbound->proxyaddr;
+                    $return_array["port"] = $inbound->proxyport;
+                    if($inbound->security == "none" and $inbound->proxysecurity == "tls") {
+                        $return_array["tls"] = 1;
+                        $return_array["tlsServer"] = $return_array["add"];
+                    }
                 }
             }
+            $return_array["remark"] = explode(" - ", $node->name)[0]."-".$return_array["network"]."-".$return_array["add"];
+            // for shadowrocket only
+            $return_array["remarks"] = $return_array["remark"];
+            switch ($inbound->network) {
+                case "tcp":
+                    break;
+                case "kcp":
+                    $return_array["obfsParam"] = json_encode([ "uplinkCapacity" => $inbound->uplinkcapacity, "downlinkCapacity" => $inbound->downlinkcapacity, "tti" => $inbound->tti, "header" => $inbound->obfs, "mtu" => $inbound->mtu ]);
+                    break;
+                case "ws":
+                    if(!empty($inbound->headers->Host)) {
+                        $return_array["obfsParam"] = $inbound->headers->Host;
+                    }
+                    break;
+                case "h2":
+                    $return_array["obfsParam"] = $inbound->host;
+                    break;
+                case "quic":
+                    break;
+                default:
+                    break;
+            }
+            $return_array["path"] = $inbound->path;
+            if($inbound->network == "kcp") {
+                $return_array["obfs"] = "mkcp";
+            } else {
+                $return_array["obfs"] = $inbound->network;
+            }
+            $return_array["peer"] = $return_array["add"];
+            if($inbound->tcpfastopen == "true") {
+                $return_array["tfo"] = 1;
+            } else {
+                $return_array["tfo"] = 0;
+            }
+            return $return_array;
+        } elseif ($is_ss == 4) {
+            $return_array["v"] = 2;
+            $return_array["ps"] = "";
+            $return_array["add"] = $node->server;
+            $return_array["port"] = $inbound->port;
+            $return_array["id"] = $user->get_v2ray_uuid();
+            $return_array["aid"] = $inbound->alterid;
+            $return_array["net"] = $inbound->network;
+            $return_array["type"] = $inbound->obfs;
+            $return_array["host"] = "";
+            $return_array["path"] = $inbound->path;
+            $return_array["tls"] = $inbound->security;
+            switch ($inbound->network) {
+                case "tcp":
+                    break;
+                case "kcp":
+                    break;
+                case "ws":
+                    if(!empty($inbound->headers->Host)) {
+                        $return_array["host"] = $inbound->headers->Host;
+                    }
+                    break;
+                case "h2":
+                    $return_array["host"] = $inbound->host;
+                    break;
+                case "quic":
+                    $return_array["host"] = $inbound->encryption;
+                    if($inbound->encryption != "none") {
+                        $return_array["path"] = $inbound->quickey;
+                    }
+                    break;
+                default:
+                    break;
+            }
+            if($inbound->network == "ws" or $inbound->network == "h2") {
+                if(!empty($inbound->proxyaddr) and !empty($inbound->proxyport)) {
+                    $return_array["add"] = $inbound->proxyaddr;
+                    $return_array["port"] = $inbound->proxyport;
+                    if($inbound->security == "none" and $inbound->proxysecurity == "tls") {
+                        $return_array["tls"] = "tls";
+                    }
+                }
+            }
+            $return_array["ps"] = explode(" - ", $node->name)[0]."-".$return_array["net"]."-".$return_array["add"];
+            return $return_array;
         }
-        $return_array['ps'] = explode(" - ", $node->name)[0].'-'.$return_array['net'].'-'.$return_array['add'];
-        return $return_array;
+        return;
     }
 
     public static function genV2rayClientItem($item) {
@@ -608,8 +709,8 @@ class URL
                 $h2s = [
                     "path" => $item['path']
                 ];
-                if(preg_replace('/\s+/gm', '', $item['host']) != '') {
-                    $h2s['host'] = explode(',', preg_replace('/\s+/gm', '', $item['host']));
+                if(preg_replace('/\s+/m', '', $item['host']) != '') {
+                    $h2s['host'] = explode(',', preg_replace('/\s+/m', '', $item['host']));
                 }
                 $out['streamSettings']['httpSettings'] = $h2s;
                 break;
@@ -626,7 +727,7 @@ class URL
                 }
                 $out['streamSettings']['quicSettings'] = $quics;
                 break;
-            
+
             default:
                 break;
         }

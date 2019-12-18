@@ -244,7 +244,7 @@
                                                         </ul>
                                                     </nav>
                                                     <div class="tab-pane fade active in" id="all_v2ray_info">
-                                                        {$v2ray_url_all_v1 = URL::getAllUrl($pre_user, 0, 3, 1)}
+                                                        {$v2ray_url_all_v1 = URL::getAllUrl($pre_user, 0, 3, 0)}
                                                         {$v2ray_url_all_v2 = URL::getAllUrl($pre_user, 0, 4, 1)}
                                                         <dl class="dl-horizontal">
                                                             <p><dt>UUID</dt>
