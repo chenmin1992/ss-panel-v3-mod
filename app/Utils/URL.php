@@ -407,19 +407,55 @@ class URL
     }
 
     /*
-        {
-        "v": "2",
-        "ps": "备注别名",
-        "add": "111.111.111.111",
-        "port": "32000",
-        "id": "1386f85e-657b-4d6e-9d56-78badb75e1fd",
-        "aid": "100",
-        "net": "tcp",
-        "type": "none",
-        "host": "www.bbb.com",
-        "path": "/",
-        "tls": "tls"
-        }
+    vmess://base64(security:uuid@host:port)?[urlencode(parameters)]
+    其中 base64、urlencode 为函数，security 为加密方式，parameters 是以 & 为分隔符的参数列表，例如：network=kcp&aid=32&remark=服务器1 经过 urlencode 后为 network=kcp&aid=32&remark=%E6%9C%8D%E5%8A%A1%E5%99%A81
+    可选参数（参数名称不区分大小写）：
+    network - 可选的值为 "tcp"、 "kcp"、"ws"、"h2" 等
+    wsPath - WebSocket 的协议路径
+    wsHost - WebSocket HTTP 头里面的 Host 字段值
+    kcpHeader - kcp 的伪装类型
+    uplinkCapacity - kcp 的上行容量
+    downlinkCapacity - kcp 的下行容量
+    h2Path - h2 的路径
+    h2Host - h2 的域名
+    aid - AlterId
+    tls - 是否启用 TLS，为 0 或 1
+    allowInsecure - TLS 的 AllowInsecure，为 0 或 1
+    tlsServer - TLS 的服务器端证书的域名
+    mux - 是否启用 mux，为 0 或 1
+    muxConcurrency - mux 的 最大并发连接数
+    remark - 备注名称
+    导入配置时，不在列表中的参数一般会按照 Core 的默认值处理。
+
+
+    json数据如下
+    {
+    "v": "2",
+    "ps": "备注别名",
+    "add": "111.111.111.111",
+    "port": "32000",
+    "id": "1386f85e-657b-4d6e-9d56-78badb75e1fd",
+    "aid": "100",
+    "net": "tcp",
+    "type": "none",
+    "host": "www.bbb.com",
+    "path": "/",
+    "tls": "tls"
+    }
+
+    v:配置文件版本号,主要用来识别当前配置
+    net ：传输协议（tcp\kcp\ws\h2\quic)
+    type:伪装类型（none\http\srtp\utp\wechat-video） *tcp or kcp or QUIC
+    host：伪装的域名
+    1)http host中间逗号(,)隔开
+    2)ws host
+    3)h2 host
+    4)QUIC securty
+    path:path
+    1)ws path
+    2)h2 path
+    3)QUIC key
+    tls：底层传输安全（tls)
     */
     public static function getV2rayItem($user, $node, $inbound, $is_ss) {
         if($is_ss != 3) {
