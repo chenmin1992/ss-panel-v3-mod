@@ -69,7 +69,7 @@ class UserController extends BaseController
 
         $key_list = array('method', 'obfs', 'obfs_param', 'protocol', 'protocol_param',
                 'forbidden_ip', 'forbidden_port', 'node_speedlimit', 'disconnect_ip',
-                'is_multi_user', 'id', 'port', 'passwd', 'u', 'd', 'class');
+                'is_multi_user', 'id', 'port', 'passwd', 'u', 'd', 'class', 'email');
 
         foreach ($users_raw as $user_raw) {
             if ($user_raw->transfer_enable > $user_raw->u + $user_raw->d) {

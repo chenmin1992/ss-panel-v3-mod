@@ -163,8 +163,25 @@
                                         <div class="tab-content" id="v2ray_qrcode">
                                             {foreach from=$node->v2conf|json_decode key=index item=inbound}
                                             <div class="tab-pane fade {if $index==0}active in{/if}" id="qr-{$index}">
-                                                <div class="text-center">
-                                                    <div data="{URL::getItemUrl(URL::getV2rayItem($user, $node, $inbound, 3), 3)}" id="v2ray-qr"></div>
+                                                <nav class="tab-nav margin-top-no">
+                                                    <ul class="nav nav-list">
+                                                        <li class="active">
+                                                            <a class="waves-attach" data-toggle="tab" href="#qr-{$index}-v2"><i class="icon icon-lg">android</i>&nbsp;其他平台</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="waves-attach" data-toggle="tab" href="#qr-{$index}-v1"><i class="icon icon-lg">phone_iphone</i>&nbsp;iOS</a>
+                                                        </li>
+                                                    </ul>
+                                                </nav>
+                                                <div class="tab-pane fade active in" id="qr-{$index}-v2">
+                                                    <div class="text-center">
+                                                        <div data="{URL::getItemUrl(URL::getV2rayItem($user, $node, $inbound, 4), 4)}" id="v2ray-qr"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="tab-pane fade" id="qr-{$index}-v1">
+                                                    <div class="text-center">
+                                                        <div data="{URL::getItemUrl(URL::getV2rayItem($user, $node, $inbound, 3), 3)}" id="v2ray-qr"></div>
+                                                    </div>
                                                 </div>
                                             </div>
                                             {/foreach}

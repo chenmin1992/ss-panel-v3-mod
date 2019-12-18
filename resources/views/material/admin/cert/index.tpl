@@ -9,7 +9,7 @@
 <main class="content">
 	<div class="content-header ui-content-header">
 		<div class="container">
-			<h1 class="content-heading">节点列表</h1>
+			<h1 class="content-heading">TLS证书</h1>
 		</div>
 	</div>
 	<div class="container">
@@ -19,7 +19,7 @@
 				<div class="card">
 					<div class="card-main">
 						<div class="card-inner">
-							<p>系统中所有节点的列表。</p>
+							<p>系统中所有TLS证书。</p>
               <p>显示表项:
                 {include file='table/checkbox.tpl'}
               </p>

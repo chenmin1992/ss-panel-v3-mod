@@ -59,7 +59,7 @@
 											<label class="floating-label" for="sspwd">连接密码</label>
 											<input class="form-control" id="sspwd" type="text">
 										</div>
-
+										<p>想修改V2Ray的UUID改一下连接密码就可以了</p>
 									</div>
 									<div class="card-action">
 										<div class="card-action-btn pull-left">

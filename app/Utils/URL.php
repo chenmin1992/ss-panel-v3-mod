@@ -466,7 +466,7 @@ class URL
     */
     public static function getV2rayItem($user, $node, $inbound, $is_ss) {
         if($is_ss == 3) {
-            $return_array["v"] = 1;
+            // $return_array["v"] = 1;
             $return_array["security"] = "auto";
             $return_array["uuid"] = $user->get_v2ray_uuid();
             $return_array["add"] = $node->server;
@@ -500,9 +500,6 @@ class URL
                     break;
                 default:
                     break;
-            }
-            if($inbound->security == "tls") {
-                $return_array["peer"] = $node->server;
             }
             if($inbound->network == "ws" or $inbound->network == "h2") {
                 if(!empty($inbound->proxyaddr) and !empty($inbound->proxyport)) {
@@ -542,7 +539,7 @@ class URL
             } else {
                 $return_array["obfs"] = $inbound->network;
             }
-            $return_array["peer"] = $return_array["add"];
+            // $return_array["peer"] = $return_array["tlsServer"];
             if($inbound->tcpfastopen == "true") {
                 $return_array["tfo"] = 1;
             } else {
@@ -557,24 +554,29 @@ class URL
             $return_array["id"] = $user->get_v2ray_uuid();
             $return_array["aid"] = $inbound->alterid;
             $return_array["net"] = $inbound->network;
-            $return_array["type"] = $inbound->obfs;
+            $return_array["type"] = "";
             $return_array["host"] = "";
-            $return_array["path"] = $inbound->path;
+            $return_array["path"] = "";
             $return_array["tls"] = $inbound->security;
             switch ($inbound->network) {
                 case "tcp":
+                    $return_array["type"] = $inbound->obfs;
                     break;
                 case "kcp":
+                    $return_array["type"] = $inbound->obfs;
                     break;
                 case "ws":
+                    $return_array["path"] = $inbound->path;
                     if(!empty($inbound->headers->Host)) {
                         $return_array["host"] = $inbound->headers->Host;
                     }
                     break;
                 case "h2":
                     $return_array["host"] = $inbound->host;
+                    $return_array["path"] = $inbound->path;
                     break;
                 case "quic":
+                    $return_array["type"] = $inbound->obfs;
                     $return_array["host"] = $inbound->encryption;
                     if($inbound->encryption != "none") {
                         $return_array["path"] = $inbound->quickey;
@@ -700,8 +702,8 @@ class URL
                         "readBufferSize" => 1,
                         "writeBufferSize" => 1,
                         "header" => [
-                        "type" => $item['type']
-                    ]
+                            "type" => $item['type']
+                        ]
                 ];
                 break;
 

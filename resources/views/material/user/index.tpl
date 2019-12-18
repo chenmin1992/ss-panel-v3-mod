@@ -138,7 +138,7 @@
 														</p>
 													</div>
 													<div class="tab-pane fade" id="all_ssr_router">
-														<p>路由器 刷入<a href="http://www.right.com.cn/forum/thread-161324-1-1.html">这个固件</a>，然后 SSH 登陆路由器，执行以下命令（导入普通端口）<br>
+														<p>路由器 刷入<a href="http://opt.cn2qq.com/padavan/">这个固件</a>，然后 SSH 登陆路由器，执行以下命令（导入普通端口）<br>
 														<code>wget -O- {$baseUrl}/link/{$router_token}?is_ss=0 | bash && echo -e "\n0 */3 * * * wget -O- {$baseUrl}/link/{$router_token}?is_ss=0 | bash\n">> /etc/storage/cron/crontabs/admin && killall crond && crond </code><br>
 														或者这个单端口多用户的<br>
 														<code>wget -O- {$baseUrl}/link/{$router_token_without_mu}?is_ss=0 | bash && echo -e "\n0 */3 * * * wget -O- {$baseUrl}/link/{$router_token_without_mu}?is_ss=0 | bash\n">> /etc/storage/cron/crontabs/admin && killall crond && crond </code><br>
@@ -213,7 +213,7 @@
 														<p><a href="/ssr-download/ss-android.apk">下载</a>，再<a href="/ssr-download/ss-android-obfs.apk">下载</a>，然后安装，然后在手机上点击<a class="copy-text" data-clipboard-text="{$ss_url_all}">这个链接（普通端口）</a>或者<a class="copy-text" data-clipboard-text="{$ss_url_all_mu}">这个链接（单端口多用户端口）</a>复制到剪贴板，打开 Shadowsocks 客户端，选择从剪贴板导入，然后选择一个节点，设置一下路由为绕过大陆，点击飞机就可以上网了。</p>
 													</div>
 													<div class="tab-pane fade" id="all_ss_router">
-														<p>路由器 刷入<a href="http://www.right.com.cn/forum/thread-161324-1-1.html">这个固件</a>，然后 SSH 登陆路由器，执行以下命令（导入普通端口）<br>
+														<p>路由器 刷入<a href="http://opt.cn2qq.com/padavan/">这个固件</a>，然后 SSH 登陆路由器，执行以下命令（导入普通端口）<br>
 														<code>wget -O- {$baseUrl}/link/{$router_token}?is_ss=1 | bash && echo -e "\n0 */3 * * * wget -O- {$baseUrl}/link/{$router_token}?is_ss=1 | bash\n">> /etc/storage/cron/crontabs/admin && killall crond && crond </code><br>
 														或者这个单端口多用户的<br>
 														<code>wget -O- {$baseUrl}/link/{$router_token_without_mu}?is_ss=1 | bash && echo -e "\n0 */3 * * * wget -O- {$baseUrl}/link/{$router_token_without_mu}?is_ss=1 | bash\n">> /etc/storage/cron/crontabs/admin && killall crond && crond </code><br>
@@ -259,29 +259,29 @@
                                                             <br>
                                                             然后参数设置 路由设置 预定义规则 选 ”绕过局域网及大陆地址”，点一下一键设置默认自定义路由规则，确定，右键v2rayN图标，HTTP代理选”全局代理“，然后即可上网。</p>
                                                         <br>
-                                                        <p>V2Ray 订阅地址：<code>{$baseUrl}/link/{$ssr_sub_token}</code></p>
+                                                        <p>V2Ray 订阅地址：<code>{$baseUrl}/link/{$ssr_sub_token}?v=2</code></p>
                                                     </div>
                                                     <div class="tab-pane fade" id="all_v2ray_mac">
                                                         <p><a href="/ssr-download/v2ray-mac.dmg">下载</a>，安装，运行程序，然后点击<a class="copy-text" data-clipboard-text="{$v2ray_url_all_v2}">这个</a>，V2rayU图标上点击 从粘贴板导入<br>然后选择一个合适的服务器，选择Pac模式，更新一下PAC，然后Turn v2ray-core On即可上网。</p>
                                                         <br>
-                                                        <p>V2Ray 订阅地址：<code>{$baseUrl}/link/{$ssr_sub_token}</code></p>
+                                                        <p>V2Ray 订阅地址：<code>{$baseUrl}/link/{$ssr_sub_token}?v=2</code></p>
                                                     </div>
                                                     <div class="tab-pane fade" id="all_v2ray_ios">
                                                         <p>推荐下载<a href="https://itunes.apple.com/us/app/shadowrocket/id932747118">Shadowrocket</a>，需要非大陆Apple ID，然后在 Safari 中点击<a href="{$v2ray_url_all_v1}">这个</a>，然后点击确定，就可以批量添加节点。</p>
                                                         <br>
-                                                        <p>V2Ray 订阅地址：<code>{$baseUrl}/link/{$ssr_sub_token}</code></p>
+                                                        <p>V2Ray 订阅地址：<code>{$baseUrl}/link/{$ssr_sub_token}?v=1</code></p>
                                                     </div>
                                                     <div class="tab-pane fade" id="all_v2ray_android">
                                                         <p><a href="/ssr-download/v2ray-android.apk">下载</a>，安装，然后点击<a class="copy-text" data-clipboard-text="{$v2ray_url_all_v2}">这个</a>，右上角点击加号,选择从剪贴板导入，然后设置里的路由模式选择“绕过局域网及大陆地址”，返回，选择一个合适的服务器，右下角开启就可以上网了。
                                                         </p><br>
-                                                        <p>V2Ray 订阅地址：<code>{$baseUrl}/link/{$ssr_sub_token}</code></p>
+                                                        <p>V2Ray 订阅地址：<code>{$baseUrl}/link/{$ssr_sub_token}?v=2</code></p>
                                                     </div>
                                                     <div class="tab-pane fade" id="all_v2ray_router">
-                                                        <p>路由器 刷入<a href="http://www.right.com.cn/forum/thread-161324-1-1.html">这个固件</a>，然后 SSH 登陆路由器，执行以下命令（导入普通端口）<br>
-                                                        <code>wget -O- {$baseUrl}/link/{$router_token}?is_ss=2 | bash && echo -e "\n0 */3 * * * wget -O- {$baseUrl}/link/{$router_token}?is_ss=3 | bash\n">> /etc/storage/cron/crontabs/admin && killall crond && crond </code><br>
-                                                        或者这个单端口多用户的<br>
-                                                        <code>wget -O- {$baseUrl}/link/{$router_token_without_mu}?is_ss=2 | bash && echo -e "\n0 */3 * * * wget -O- {$baseUrl}/link/{$router_token_without_mu}?is_ss=2 | bash\n">> /etc/storage/cron/crontabs/admin && killall crond && crond </code><br>
-                                                        执行完毕以后就可以到路由器的设置面板里随意选择 Shadowsocks 服务器进行连接了。</p>
+                                                        <p>路由器 刷入<a target="_blank" href="http://opt.cn2qq.com/padavan/">这个固件</a>，连接互联网，依次进入 搭建Web环境 -- v2ray -- 在“服务器订阅节点”填入下面订阅地址 -- 然后点击更新。<br>
+                                                           等待路由器更新订阅。<br>
+                                                           然后选一个节点，点击右边的 应用，再把最上边的 “v2ray proxy 开关”打开，最后点击最下边的“应用本页面设置”，看日志里面是否启动正常，正常就可以设置设备的代理到路由器使用了。<br>
+                                                        </p><br>
+                                                        <p>V2Ray 订阅地址：<code>{$baseUrl}/link/{$ssr_sub_token}?v=2</code></p>
                                                     </div>
 
                                                 </div>

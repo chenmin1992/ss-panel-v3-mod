@@ -337,8 +337,9 @@ class User extends Model
 
     public function get_v2ray_uuid()
     {
+        $email = $this->attributes['email'];
         $passwd = $this->attributes['passwd'];
-        $md5 = MD5($passwd);
+        $md5 = MD5($email.$passwd);
         return substr($md5, 0, 8).'-'.substr($md5, 8, 4).'-'.substr($md5, 12, 4).'-'.substr($md5, 16, 4).'-'.substr($md5, 20);
     }
 }

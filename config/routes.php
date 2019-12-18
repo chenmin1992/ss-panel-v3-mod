@@ -195,6 +195,7 @@ $app->group('/admin', function () {
     $this->delete('/node', 'App\Controllers\Admin\NodeController:delete');
     $this->post('/node/ajax', 'App\Controllers\Admin\NodeController:ajax');
 
+    $this->get('/cert', 'App\Controllers\Admin\TLSController:index');
 
     $this->get('/ticket', 'App\Controllers\Admin\TicketController:index');
     $this->get('/ticket/{id}/view', 'App\Controllers\Admin\TicketController:show');
