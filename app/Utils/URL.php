@@ -269,12 +269,12 @@ class URL
             } elseif ($is_ss == 3) { // v2ray v1 vmess://base64(security:uuid@host:port)?[urlencode(parameters)]
                 $parameters = '';
                 foreach ($item as $key => $value) {
-                    if($key == 'security' or $key == 'uuid' or $key == 'add' or $key == 'port') {
+                    if($key == 'security' or $key == 'uuid' or $key == 'host' or $key == 'port') {
                         continue;
                     }
                     $parameters .= $key.'='.rawurlencode($value).'&';
                 }
-                $ssurl = 'vmess://'.Tools::base64_url_encode($item['security'].':'.$item['uuid'].'@'.$item['add'].':'.$item['port']).'?'.substr($parameters, 0, -1);
+                $ssurl = 'vmess://'.Tools::base64_url_encode($item['security'].':'.$item['uuid'].'@'.$item['host'].':'.$item['port']).'?'.substr($parameters, 0, -1);
             } elseif ($is_ss == 4) { // v2ray v2
                 $ssurl = 'vmess://'.Tools::base64_url_encode(json_encode($item));
             } else { // ss other
@@ -455,6 +455,9 @@ class URL
     downlinkCapacity - kcp 的下行容量
     h2Path - h2 的路径
     h2Host - h2 的域名
+    quicSecurity - quic 加密算法
+    quitKey - quic 加密用的密码
+    quicHeader - quic 的伪装类型
     aid - AlterId
     tls - 是否启用 TLS，为 0 或 1
     allowInsecure - TLS 的 AllowInsecure，为 0 或 1
@@ -469,7 +472,7 @@ class URL
             // $return_array["v"] = 1;
             $return_array["security"] = "auto";
             $return_array["uuid"] = $user->get_v2ray_uuid();
-            $return_array["add"] = $node->server;
+            $return_array["host"] = $node->server;
             $return_array["port"] = $inbound->port;
             $return_array["network"] = $inbound->network;
             $return_array["aid"] = $inbound->alterid;
@@ -493,25 +496,28 @@ class URL
                     }
                     break;
                 case "h2":
-                    $return_array["h2Path"] = $inbound->path;
                     $return_array["h2Host"] = $inbound->host;
+                    $return_array["h2Path"] = $inbound->path;
                     break;
                 case "quic":
+                    $return_array["quicSecurity"] = $inbound->encryption;
+                    $return_array["quitKey"] = $inbound->quickey;
+                    $return_array["quicHeader"] = $inbound->obfs;
                     break;
                 default:
                     break;
             }
             if($inbound->network == "ws" or $inbound->network == "h2") {
                 if(!empty($inbound->proxyaddr) and !empty($inbound->proxyport)) {
-                    $return_array["add"] = $inbound->proxyaddr;
+                    $return_array["host"] = $inbound->proxyaddr;
                     $return_array["port"] = $inbound->proxyport;
                     if($inbound->security == "none" and $inbound->proxysecurity == "tls") {
                         $return_array["tls"] = 1;
-                        $return_array["tlsServer"] = $return_array["add"];
+                        $return_array["tlsServer"] = $return_array["host"];
                     }
                 }
             }
-            $return_array["remark"] = explode(" - ", $node->name)[0]."-".$return_array["network"]."-".$return_array["add"];
+            $return_array["remark"] = explode(" - ", $node->name)[0]."-".$return_array["network"]."-".$return_array["host"];
             // for shadowrocket only
             $return_array["remarks"] = $return_array["remark"];
             switch ($inbound->network) {
@@ -600,7 +606,8 @@ class URL
         return;
     }
 
-    public static function genV2rayClientItem($item) {
+    // use subscribe rule v1 to generate a clien json configuration
+    public static function genV2rayClientJson($item) {
         $root_conf = [
             "log" => [
                 "loglevel" => "warning"
@@ -656,17 +663,17 @@ class URL
                 ]
             ]
         ];
-
+        // out bound
         $out = [
             "protocol" => "vmess",
             "settings" => [
                     "vnext" => [
                     [
-                        "address" => $item['add'],
+                        "address" => $item['host'],
                         "port" => $item['port'],
                         "users" => [
                             [
-                                "id" => $item['id'],
+                                "id" => $item['uuid'],
                                 "alterId" => $item['aid'],
                                 "security" => "auto"
                             ]
@@ -675,73 +682,86 @@ class URL
                 ]
             ],
             "streamSettings" => [
-                "network" => $item['net']
-            ],
-            "tag" => "proxy"
+                "network" => $item['network']
+            ]
         ];
-        switch ($item['net']) {
-            case 'ws':
+        // network
+        switch ($item['network']) {
+            case "tcp":
+                break;
+            case "ws":
                 $wss = [
-                    "path" => $item['path']
+                    "path" => $item['wsPath']
                 ];
-                if($item['host'] != '') {
-                    $wss['headers'] = [
-                        "Host" => $item['host']
+                if(!isempty($item['wsHost'])) {
+                    $wss["headers"] = [
+                        "Host" => $item['wsHost']
                     ];
                 }
                 $out['streamSettings']['wsSettings'] = $wss;
                 break;
-
-            case 'kcp':
+            case "kcp":
                 $out['streamSettings']['kcpSettings'] = [
                         "mtu" => 1350,
                         "tti" => 20,
-                        "uplinkCapacity" => 5,
-                        "downlinkCapacity" => 20,
+                        "uplinkCapacity" => $item['uplinkCapacity'],
+                        "downlinkCapacity" => $item['downlinkCapacity'],
                         "congestion" => false,
                         "readBufferSize" => 1,
                         "writeBufferSize" => 1,
                         "header" => [
-                            "type" => $item['type']
+                            "type" => $item['kcpHeader']
                         ]
                 ];
                 break;
-
-            case 'h2':
+            case "h2":
                 $h2s = [
-                    "path" => $item['path']
+                    "path" => $item['h2Path']
                 ];
-                if(preg_replace('/\s+/m', '', $item['host']) != '') {
-                    $h2s['host'] = explode(',', preg_replace('/\s+/m', '', $item['host']));
+                if(preg_replace("/\s+/m", "", $item['h2Host']) != "") {
+                    $h2s["host"] = explode(",", preg_replace("/\s+/m", "", $item['h2Host']));
                 }
                 $out['streamSettings']['httpSettings'] = $h2s;
                 break;
-
-            case 'quic':
+            case "quic":
                 $quics = [
-                    "security" => $item['host'],
+                    "security" => $item['quicSecurity'],
                     "header" => [
-                        "type" => $item['type']
+                        "type" => $item['quicHeader']
                     ]
                 ];
-                if($item['host'] != 'none') {
-                    $quics["key"] = $item['path'];
+                if($item['quicSecurity'] != "none") {
+                    $quics["key"] = $item['quitKey'];
                 }
                 $out['streamSettings']['quicSettings'] = $quics;
                 break;
-
             default:
                 break;
         }
-        $out['streamSettings']['security'] = $item['tls'];
-        if($item['tls'] == 'tls') {
+        // tls
+        $out['streamSettings']['security'] = $item['tls'] == 1 ? "tls" : "none";
+        if($item['tls'] == 1) {
             $out['streamSettings']['tlsSettings'] = [
-                "allowInsecure" => true
+                "allowInsecure" => $item['allowInsecure'] == 1 ? true : false
             ];
         }
-        array_push($root_conf['outbounds'], $out);
-        array_push($root_conf['outbounds'], ["protocol" => "freedom", "tag" => "direct"]);
-        array_push($root_conf['outbounds'], ["protocol" => "blackhole", "tag" => "blocked"]);
+        // tcp fast open
+        if($item['tfo'] == 1) {
+            $out['streamSettings']['sockopt'] = [
+                "tcpFastOpen" => true
+            ];
+        }
+        // mux
+        if($item['mux'] == 1) {
+            $out['mux'] = [
+                "enabled" => true,
+                "concurrency" => $item['muxConcurrency']
+            ];
+        }
+        $out['tag'] = 'proxy';
+        array_push($root_conf["outbounds"], $out);
+        array_push($root_conf["outbounds"], ["protocol" => "freedom", "tag" => "direct"]);
+        array_push($root_conf["outbounds"], ["protocol" => "blackhole", "tag" => "blocked"]);
         return $root_conf;
     }
 

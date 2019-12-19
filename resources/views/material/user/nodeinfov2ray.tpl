@@ -35,7 +35,7 @@
 									<div class="card-inner margin-bottom-no">
 										<p class="card-heading">配置信息</p>
 										<div class="tab-content">
-                                        
+
                                             <nav class="tab-nav margin-top-no">
                                                 <ul class="nav nav-list" id="inbounds-nav">
                                                     {foreach from=$node->v2conf|json_decode key=index item=inbound}
@@ -93,7 +93,7 @@
 								<div class="card-main">
 									<div class="card-inner margin-bottom-no">
 										<p class="card-heading">配置Json</p>
-                                        
+
                                         <nav class="tab-nav margin-top-no">
                                             <ul class="nav nav-list" id="inbounds-nav">
                                                 {foreach from=$node->v2conf|json_decode key=index item=inbound}
@@ -106,7 +106,7 @@
                                         <div class="tab-content" id="v2ray_json">
                                             {foreach from=$node->v2conf|json_decode key=index item=inbound}
                                             <div class="tab-pane fade {if $index==0}active in{/if}" id="json-{$index}">
-                                                <textarea class="form-control" rows="15">{json_encode(URL::genV2rayClientItem(URL::getV2rayItem($user, $node, $inbound, 4)), JSON_PRETTY_PRINT)}</textarea>
+                                                <textarea class="form-control" rows="15">{json_encode(URL::genV2rayClientJson(URL::getV2rayItem($user, $node, $inbound, 3)), JSON_PRETTY_PRINT)}</textarea>
                                             </div>
                                             {/foreach}
                                         </div>
@@ -121,7 +121,7 @@
 								<div class="card-main">
 									<div class="card-inner margin-bottom-no">
 										<p class="card-heading">配置链接</p>
-                                        
+
                                         <nav class="tab-nav margin-top-no">
                                             <ul class="nav nav-list" id="inbounds-nav">
                                                 {foreach from=$node->v2conf|json_decode key=index item=inbound}
@@ -150,7 +150,7 @@
 								<div class="card-main">
 									<div class="card-inner margin-bottom-no">
 										<p class="card-heading">配置二维码</p>
-                                        
+
                                         <nav class="tab-nav margin-top-no">
                                             <ul class="nav nav-list" id="inbounds-nav">
                                                 {foreach from=$node->v2conf|json_decode key=index item=inbound}
@@ -166,7 +166,7 @@
                                                 <nav class="tab-nav margin-top-no">
                                                     <ul class="nav nav-list">
                                                         <li class="active">
-                                                            <a class="waves-attach" data-toggle="tab" href="#qr-{$index}-v2"><i class="icon icon-lg">android</i>&nbsp;其他平台</a>
+                                                            <a class="waves-attach" data-toggle="tab" href="#qr-{$index}-v2"><i class="icon icon-lg">devices_other</i>&nbsp;其他平台</a>
                                                         </li>
                                                         <li>
                                                             <a class="waves-attach" data-toggle="tab" href="#qr-{$index}-v1"><i class="icon icon-lg">phone_iphone</i>&nbsp;iOS</a>

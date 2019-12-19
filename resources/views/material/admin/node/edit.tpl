@@ -513,14 +513,14 @@
             $(this).parent().siblings('#networks').children('div#' + this.value ).addClass('active in');
         });
     });
-    
+
     $('#inbounds').find('span.switch-toggle').each(function() {
         $(this).click(function(e) {
             $(this).siblings('input').prop('checked', !$(this).siblings('input').prop('checked'))
             e.preventDefault();
         });
     });
-    
+
 	$('#main_form').validate({
 		rules: {
 		  name: {required: true},
@@ -590,11 +590,11 @@
 					"writebuffersize": 1,
 					"obfs": "wechat-video",
 					// ws
-					"path": "/ws",
-					"headers": { "Host": $("#server").val() },
+					"path": "",
+					"headers": {},
 					// h2
-					"host": $("#server").val(),
-					"path": "/h2",
+					"host": "",
+					"path": "",
 					// quic
 					"encryption": "none",
 					"quickey": "",
