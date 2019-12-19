@@ -600,8 +600,8 @@
 					"quickey": "",
 					"obfs": "wechat-video",
 					// reverse proxy
-					"proxyaddr": $("#server").val(),
-					"proxyport": 443,
+					"proxyaddr": "",
+					"proxyport": 0,
 					"proxysecurity": "none",
 					// tls
 					"security": $(this).find("#security").val(),

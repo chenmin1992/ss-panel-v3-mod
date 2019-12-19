@@ -54,9 +54,6 @@
                                                     UUID：{$v2ray_item['id']}<br>
                                                     额外ID：{$v2ray_item['aid']}<br>
                                                     传输类型：{$v2ray_item['net']}<br>
-                                                    伪装类型：{$v2ray_item['type']}<br>
-                                                    Host：{$v2ray_item['host']}<br>
-                                                    Path：{$v2ray_item['path']}<br>
                                                     TLS：{$v2ray_item['tls']}<br></p>
                                                 </div>
                                                 {/foreach}

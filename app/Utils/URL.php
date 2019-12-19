@@ -468,6 +468,7 @@ class URL
     导入配置时，不在列表中的参数一般会按照 Core 的默认值处理。
     */
     public static function getV2rayItem($user, $node, $inbound, $is_ss) {
+        $return_array = Array();
         if($is_ss == 3) {
             // $return_array["v"] = 1;
             $return_array["security"] = "auto";
@@ -551,7 +552,6 @@ class URL
             } else {
                 $return_array["tfo"] = 0;
             }
-            return $return_array;
         } elseif ($is_ss == 4) {
             $return_array["v"] = 2;
             $return_array["ps"] = "";
@@ -601,9 +601,8 @@ class URL
                 }
             }
             $return_array["ps"] = explode(" - ", $node->name)[0]."-".$return_array["net"]."-".$return_array["add"];
-            return $return_array;
         }
-        return;
+        return $return_array;
     }
 
     // use subscribe rule v1 to generate a clien json configuration
