@@ -33,7 +33,7 @@
 
 				<div class="fbtn-container">
 					<div class="fbtn-inner">
-						<a class="fbtn fbtn-lg fbtn-brand-accent waves-attach waves-circle waves-light" href="/admin/node/create">+</a>
+						<a class="fbtn fbtn-lg fbtn-brand-accent waves-attach waves-circle waves-light" href="/admin/cert/create">+</a>
 
 					</div>
 				</div>
@@ -87,7 +87,7 @@ $(document).ready(function(){
 	function delete_id(){
 		$.ajax({
 			type:"DELETE",
-			url:"/admin/node",
+			url:"/admin/cert",
 			dataType:"json",
 			data:{
 				id: deleteid

@@ -214,12 +214,12 @@
 							<div class="card-inner">
 
 								<div class="form-group form-group-label">
-									<label class="floating-label" for="node_speedlimit">禁止用户访问的IP，一行一个</label>
+									<label class="floating-label" for="forbidden_ip">禁止用户访问的IP，一行一个</label>
 									<textarea class="form-control" id="forbidden_ip" rows="8">{$edit_user->get_forbidden_ip()}</textarea>
 								</div>
 
 								<div class="form-group form-group-label">
-									<label class="floating-label" for="node_speedlimit">禁止用户访问的端口，一行一个</label>
+									<label class="floating-label" for="forbidden_port">禁止用户访问的端口，一行一个</label>
 									<textarea class="form-control" id="forbidden_port" rows="8">{$edit_user->get_forbidden_port()}</textarea>
 								</div>
 							</div>

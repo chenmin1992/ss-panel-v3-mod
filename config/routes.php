@@ -196,6 +196,12 @@ $app->group('/admin', function () {
     $this->post('/node/ajax', 'App\Controllers\Admin\NodeController:ajax');
 
     $this->get('/cert', 'App\Controllers\Admin\TLSController:index');
+    $this->post('/cert/ajax', 'App\Controllers\Admin\TLSController:ajax');
+    $this->get('/cert/create', 'App\Controllers\Admin\TLSController:create');
+    $this->post('/cert', 'App\Controllers\Admin\TLSController:add');
+    $this->get('/cert/{id}/edit', 'App\Controllers\Admin\TLSController:edit');
+    $this->put('/cert/{id}', 'App\Controllers\Admin\TLSController:update');
+    $this->delete('/cert', 'App\Controllers\Admin\TLSController:delete');
 
     $this->get('/ticket', 'App\Controllers\Admin\TicketController:index');
     $this->get('/ticket/{id}/view', 'App\Controllers\Admin\TicketController:show');
