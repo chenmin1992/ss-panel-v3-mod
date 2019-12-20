@@ -468,11 +468,12 @@ class URL
     导入配置时，不在列表中的参数一般会按照 Core 的默认值处理。
     */
     public static function getV2rayItem($user, $node, $inbound, $is_ss) {
+        $uuid = $user->get_v2ray_uuid();
         $return_array = Array();
         if($is_ss == 3) {
             // $return_array["v"] = 1;
             $return_array["security"] = "auto";
-            $return_array["uuid"] = $user->get_v2ray_uuid();
+            $return_array["uuid"] = $uuid;
             $return_array["host"] = $node->server;
             $return_array["port"] = $inbound->port;
             $return_array["network"] = $inbound->network;
@@ -525,7 +526,8 @@ class URL
                 case "tcp":
                     break;
                 case "kcp":
-                    $return_array["obfsParam"] = json_encode([ "uplinkCapacity" => $inbound->uplinkcapacity, "downlinkCapacity" => $inbound->downlinkcapacity, "tti" => $inbound->tti, "header" => $inbound->obfs, "mtu" => $inbound->mtu ]);
+                    // $return_array["obfsParam"] = json_encode([ "uplinkCapacity" => $inbound->uplinkcapacity, "downlinkCapacity" => $inbound->downlinkcapacity, "tti" => $inbound->tti, "header" => $inbound->obfs, "mtu" => $inbound->mtu ]);
+                    $return_array["obfsParam"] = json_encode([ "header" => $inbound->obfs ]);
                     break;
                 case "ws":
                     if(!empty($inbound->headers->Host)) {
@@ -541,10 +543,9 @@ class URL
                     break;
             }
             $return_array["path"] = $inbound->path;
+            $return_array["obfs"] = $inbound->network;
             if($inbound->network == "kcp") {
                 $return_array["obfs"] = "mkcp";
-            } else {
-                $return_array["obfs"] = $inbound->network;
             }
             // $return_array["peer"] = $return_array["tlsServer"];
             if($inbound->tcpfastopen == "true") {
@@ -557,7 +558,7 @@ class URL
             $return_array["ps"] = "";
             $return_array["add"] = $node->server;
             $return_array["port"] = $inbound->port;
-            $return_array["id"] = $user->get_v2ray_uuid();
+            $return_array["id"] = $uuid;
             $return_array["aid"] = $inbound->alterid;
             $return_array["net"] = $inbound->network;
             $return_array["type"] = "";
