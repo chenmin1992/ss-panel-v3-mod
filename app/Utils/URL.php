@@ -623,8 +623,17 @@ class URL
                             "geoip:cn"
                         ]
                     ],
-                    "1.0.0.1",
-                    "182.254.116.116"
+                    [
+                        "address" => "1.0.0.1",
+                        "domains" => [
+                            "geosite:geolocation-!cn",
+                            "geosite:speedtest",
+                        ],
+                        "expectIPs" => [
+                            "geoip:cn"
+                        ]
+                    ],
+                    "localhost"
                 ]
             ],
             "inbounds" => [
@@ -714,7 +723,7 @@ class URL
                 $wss = [
                     "path" => $item['wsPath']
                 ];
-                if(!isempty($item['wsHost'])) {
+                if(!empty($item['wsHost'])) {
                     $wss["headers"] = [
                         "Host" => $item['wsHost']
                     ];
