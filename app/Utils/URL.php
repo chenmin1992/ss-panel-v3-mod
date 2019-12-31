@@ -612,6 +612,21 @@ class URL
             "log" => [
                 "loglevel" => "warning"
             ],
+            "dns" => [
+                "servers" => [
+                    [
+                        "address" => "182.254.116.116",
+                        "domains" => [
+                            "geosite:cn"
+                        ],
+                        "expectIPs" => [
+                            "geoip:cn"
+                        ]
+                    ],
+                    "1.0.0.1",
+                    "182.254.116.116"
+                ]
+            ],
             "inbounds" => [
                 [
                     "listen" => "127.0.0.1",
@@ -628,28 +643,34 @@ class URL
                 ]
             ],
             "outbounds" => [],
-            "dns" => [
-                "servers" => [
-                    "8.8.8.8",
-                    "8.8.4.4"
-                ]
-            ],
             "routing" => [
                 "domainStrategy" => "IPIfNonMatch",
                 "rules" => [
                     [
                         "type" => "field",
                         "domain" => [
-                            "geosite:cn",
-                            "geosite:speedtest"
+                            "geosite:cn"
                         ],
                         "outboundTag" => "direct"
                     ],
                     [
                         "type" => "field",
                         "ip" => [
-                            "geoip:private",
                             "geoip:cn"
+                        ],
+                        "outboundTag" => "direct"
+                    ],
+                    [
+                        "type" => "field",
+                        "ip" => [
+                            "geoip:private"
+                        ],
+                        "outboundTag" => "direct"
+                    ],
+                    [
+                        "type" => "field",
+                        "domain" => [
+                            "geosite:speedtest"
                         ],
                         "outboundTag" => "direct"
                     ],
