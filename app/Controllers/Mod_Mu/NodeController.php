@@ -7,6 +7,7 @@ use App\Controllers\BaseController;
 use App\Models\NodeOnlineLog;
 use App\Models\NodeInfoLog;
 use App\Models\Node;
+use App\Models\Cert;
 
 class NodeController extends BaseController
 {
@@ -72,6 +73,30 @@ class NodeController extends BaseController
         $res = [
             "ret" => 1,
             "data" => $nodes
+        ];
+        return $this->echoJson($response, $res);
+    }
+
+    public function get_cert($request, $response, $args)
+    {
+        $cert_id = $args['id'];
+        $cert = Cert::find($cert_id);
+        if ($cert == null) {
+            $res = [
+                "ret" => 0
+            ];
+            return $this->echoJson($response, $res);
+        }
+        if ($cert->type == 1) {
+            $cert->cert = file_get_contents($cert->cert);
+            $cert->key = file_get_contents($cert->key);
+        }
+        $res = [
+            "ret" => 1,
+            "data" => [
+                "cert" => $cert->cert,
+                "key" => $cert->key
+            ],
         ];
         return $this->echoJson($response, $res);
     }

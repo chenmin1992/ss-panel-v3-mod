@@ -405,12 +405,12 @@
 
                                                 <div class="form-group form-group-label">
                                                     <label class="floating-label" for="cert">证书/cert</label>
-                                                    <textarea class="form-control" id="cert" rows="10">{$inbound->cert}</textarea>
-                                                </div>
-
-                                                <div class="form-group form-group-label">
-                                                    <label class="floating-label" for="key">私钥/key</label>
-                                                    <textarea class="form-control" id="key" rows="10">{$inbound->key}</textarea>
+                                                    <select id="cert" class="form-control" name="cert">
+                                                        <option value="0">none</option>
+														{foreach $certs as $cert}
+                                                        <option value="{$cert->id}" {if $inbound->cert==$cert->id}selected{/if}>{$cert->name}</option>
+                                                        {/foreach}
+                                                    </select>
                                                 </div>
                                             </div>
 											{/foreach}
@@ -605,8 +605,7 @@
 					"proxysecurity": "none",
 					// tls
 					"security": $(this).find("#security").val(),
-					"cert": "",
-					"key": ""
+					"cert": 0
 				};
 				if(inb["network"] == "tcp") {
 					inb["obfs"] = $(this).find("#tcp #obfs").val();
@@ -646,8 +645,7 @@
 					inb["obfs"] = $(this).find("#quic #obfs").val();
 				}
 				if(inb["security"] == "tls") {
-					inb["cert"] = $(this).find("#cert").val();
-					inb["key"] = $(this).find("#key").val();
+					inb["cert"] = parseInt($(this).find("#cert").val());
 				}
 				inbs.push(inb);
 			});

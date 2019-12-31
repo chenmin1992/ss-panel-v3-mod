@@ -30,9 +30,9 @@ class TLSController extends AdminController
     public function add($request, $response, $args)
     {
         $cert = new Cert();
-        $cert->name =  $request->getParam('name');
-        $cert->cert =  $request->getParam('cert');
-        $cert->key =  $request->getParam('key');
+        $cert->name = $request->getParam('name');
+        $cert->cert = $request->getParam('cert');
+        $cert->key = $request->getParam('key');
 
         $cert_attr = false;
         try {
@@ -46,8 +46,10 @@ class TLSController extends AdminController
                     $rs['msg'] = "私钥无法获取";
                     return $response->getBody()->write(json_encode($rs));
                 }
+                $cert->type = 1;
             } else {
                 $cert_attr = openssl_x509_parse($cert->cert);
+                $cert->type = 0;
             }
             if(!$cert_attr) {
                 $rs['ret'] = 0;
@@ -85,9 +87,9 @@ class TLSController extends AdminController
     {
         $id = $args['id'];
         $cert = Cert::find($id);
-        $cert->name =  $request->getParam('name');
-        $cert->cert =  $request->getParam('cert');
-        $cert->key =  $request->getParam('key');
+        $cert->name = $request->getParam('name');
+        $cert->cert = $request->getParam('cert');
+        $cert->key = $request->getParam('key');
 
         $cert_attr = false;
         try {
@@ -101,8 +103,10 @@ class TLSController extends AdminController
                     $rs['msg'] = "私钥无法获取";
                     return $response->getBody()->write(json_encode($rs));
                 }
+                $cert->type = 1;
             } else {
                 $cert_attr = openssl_x509_parse($cert->cert);
+                $cert->type = 0;
             }
             if(!$cert_attr) {
                 $rs['ret'] = 0;

@@ -321,6 +321,7 @@ $app->group('/mod_mu', function () {
     $this->post('/users/aliveip', 'App\Controllers\Mod_Mu\UserController:addAliveIp');
     $this->post('/users/detectlog', 'App\Controllers\Mod_Mu\UserController:addDetectLog');
     $this->post('/nodes/{id}/info', 'App\Controllers\Mod_Mu\NodeController:info');
+    $this->get('/certs/{id}', 'App\Controllers\Mod_Mu\NodeController:get_cert');
 
     $this->get('/nodes', 'App\Controllers\Mod_Mu\NodeController:get_all_info');
 

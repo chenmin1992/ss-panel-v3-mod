@@ -11,6 +11,8 @@ use App\Controllers\AdminController;
 use Ozdemir\Datatables\Datatables;
 use App\Utils\DatatablesHelper;
 
+use App\Models\Cert;
+
 class NodeController extends AdminController
 {
     public function index($request, $response, $args)
@@ -89,7 +91,8 @@ class NodeController extends AdminController
         $node = Node::find($id);
         if ($node == null) {
         }
-        return $this->view()->assign('node', $node)->display('admin/node/edit.tpl');
+        $certs = Cert::all();
+        return $this->view()->assign('node', $node)->assign('certs', $certs)->display('admin/node/edit.tpl');
     }
 
     public function update($request, $response, $args)
