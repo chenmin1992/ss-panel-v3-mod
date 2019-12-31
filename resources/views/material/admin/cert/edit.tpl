@@ -84,7 +84,6 @@
 	$('#main_form').validate({
 {literal}
 		rules: {
-		  name: {required: true},
 		  cert: {required: true},
 		  key: {required: true}
 		},

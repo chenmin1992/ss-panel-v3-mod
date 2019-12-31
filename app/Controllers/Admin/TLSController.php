@@ -41,9 +41,7 @@ class TLSController extends AdminController
             }
             if($cert_attr) {
                 $key = file_get_contents($cert->key);
-                if($key) {
-                    $cert->key = $key;
-                } else {
+                if(!$key) {
                     $rs['ret'] = 0;
                     $rs['msg'] = "私钥无法获取";
                     return $response->getBody()->write(json_encode($rs));
@@ -87,19 +85,33 @@ class TLSController extends AdminController
     {
         $id = $args['id'];
         $cert = Cert::find($id);
-
         $cert->name =  $request->getParam('name');
         $cert->cert =  $request->getParam('cert');
         $cert->key =  $request->getParam('key');
 
-        $crt = file_get_contents($cert->cert);
-        if($crt) {
-            $cert_attr = openssl_x509_parse($cert->cert);
-        }
-        $key = file_get_contents($cert->key);
-        if(!$key or strlen(trim($key)) == 0) {
+        $cert_attr = false;
+        try {
+            if(strlen($cert->cert) <= 1000) {
+                $cert_attr = openssl_x509_parse(file_get_contents($cert->cert));
+            }
+            if($cert_attr) {
+                $key = file_get_contents($cert->key);
+                if(!$key) {
+                    $rs['ret'] = 0;
+                    $rs['msg'] = "私钥无法获取";
+                    return $response->getBody()->write(json_encode($rs));
+                }
+            } else {
+                $cert_attr = openssl_x509_parse($cert->cert);
+            }
+            if(!$cert_attr) {
+                $rs['ret'] = 0;
+                $rs['msg'] = "证书无法解析";
+                return $response->getBody()->write(json_encode($rs));
+            }
+        } catch (Exception $e) {
             $rs['ret'] = 0;
-            $rs['msg'] = "无法获取私钥";
+            $rs['msg'] = "获取证书失败";
             return $response->getBody()->write(json_encode($rs));
         }
         if(empty($cert->name)) {
