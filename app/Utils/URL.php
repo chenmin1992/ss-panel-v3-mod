@@ -628,11 +628,10 @@ class URL
                         "domains" => [
                             "geosite:geolocation-!cn",
                             "geosite:speedtest",
-                        ],
-                        "expectIPs" => [
-                            "geoip:cn"
                         ]
                     ],
+                    "182.254.116.116",
+                    "223.6.6.6",
                     "localhost"
                 ]
             ],

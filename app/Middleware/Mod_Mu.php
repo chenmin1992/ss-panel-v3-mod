@@ -15,7 +15,7 @@ class Mod_Mu
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
     {
         $key = Helper::getMuKeyFromReq($request);
-        if ($key == null) {
+        if (empty($key)) {
             $res['ret'] = 0;
             $res['data'] = "key is null";
             $response->getBody()->write(json_encode($res));
