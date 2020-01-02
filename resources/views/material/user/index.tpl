@@ -402,7 +402,7 @@
 											<p id="checkin-msg"></p>
 
 											{if $geetest_html != null}
-												<div id="popup-captcha"></div>
+												<div id="popup-captcha" style="display: none;"></div>
 											{/if}
 									</div>
 
@@ -591,7 +591,7 @@ var handlerPopup = function (captchaObj) {
 		});
 	});
 	// 弹出式需要绑定触发验证码弹出按钮
-	captchaObj.bindOn("#checkin");
+	captchaObj.bindButton("#checkin");
 	// 将验证码加到id为captcha的元素里
 	captchaObj.appendTo("#popup-captcha");
 	// 更多接口参考：http://www.geetest.com/install/sections/idx-client-sdk.html
