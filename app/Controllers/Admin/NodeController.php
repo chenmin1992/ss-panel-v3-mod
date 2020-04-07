@@ -35,7 +35,8 @@ class NodeController extends AdminController
 
     public function create($request, $response, $args)
     {
-        return $this->view()->display('admin/node/create.tpl');
+        $certs = Cert::all();
+        return $this->view()->assign('certs', $certs)->display('admin/node/create.tpl');
     }
 
     public function add($request, $response, $args)

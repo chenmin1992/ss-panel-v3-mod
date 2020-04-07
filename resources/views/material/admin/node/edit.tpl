@@ -221,6 +221,24 @@
 			                                    </div>
 
                                                 <div class="form-group form-group-label">
+                                                    <label class="floating-label" for="security">TLS</label>
+                                                    <select id="security" class="form-control" name="security">
+                                                        <option value="none" {if $inbound->security!='tls'}selected{/if}>none</option>
+                                                        <option value="tls" {if $inbound->security=='tls'}selected{/if}>tls</option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group form-group-label">
+                                                    <label class="floating-label" for="cert">证书/cert</label>
+                                                    <select id="cert" class="form-control" name="cert">
+                                                        <option value="0">none</option>
+														{foreach $certs as $cert}
+                                                        <option value="{$cert->id}" {if $inbound->cert==$cert->id}selected{/if}>{$cert->name}</option>
+                                                        {/foreach}
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group form-group-label">
                                                     <label class="floating-label" for="network">传输类型</label>
                                                     <select id="network" class="form-control" name="network">
                                                         <option value="tcp" {if $inbound->network=='tcp'}selected{/if}>TCP</option>
@@ -259,6 +277,22 @@
                                                         <div class="form-group form-group-label">
                                                             <label class="floating-label" for="http_response">HTTP Response</label>
                                                             <textarea class="form-control" id="http_response" rows="15">{str_replace('    ', '  ', json_encode($inbound->httpresponse, JSON_PRETTY_PRINT))}</textarea>
+                                                        </div>
+
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="proxy_addr">代理地址，不使用Nginx/Caddy/CDN请留空</label>
+                                                            <input class="form-control" id="proxy_addr" type="text" name="proxy_addr">
+                                                        </div>
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="proxy_port">代理端口，不使用Nginx/Caddy/CDN请留空</label>
+                                                            <input class="form-control" id="proxy_port" type="number" name="proxy_port">
+                                                        </div>
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="proxy_security">代理TLS，不使用Nginx/Caddy/CDN请选择none</label>
+                                                            <select id="proxy_security" class="form-control" name="proxy_security">
+                                                                <option value="none" selected>none</option>
+                                                                <option value="tls">tls</option>
+                                                            </select>
                                                         </div>
                                                     </div>
 
@@ -394,24 +428,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-
-                                                <div class="form-group form-group-label">
-                                                    <label class="floating-label" for="security">TLS</label>
-                                                    <select id="security" class="form-control" name="security">
-                                                        <option value="none" {if $inbound->security!='tls'}selected{/if}>none</option>
-                                                        <option value="tls" {if $inbound->security=='tls'}selected{/if}>tls</option>
-                                                    </select>
-                                                </div>
-
-                                                <div class="form-group form-group-label">
-                                                    <label class="floating-label" for="cert">证书/cert</label>
-                                                    <select id="cert" class="form-control" name="cert">
-                                                        <option value="0">none</option>
-														{foreach $certs as $cert}
-                                                        <option value="{$cert->id}" {if $inbound->cert==$cert->id}selected{/if}>{$cert->name}</option>
-                                                        {/foreach}
-                                                    </select>
-                                                </div>
+                                                
                                             </div>
 											{/foreach}
                                         </div>
