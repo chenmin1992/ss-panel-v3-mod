@@ -457,7 +457,23 @@
 							</div>
 						</div>
 
+						<div class="card access-hide" id="trojan">
+							<div class="card-main">
+								<div class="card-inner">
 
+                                    <div class="form-group form-group-label">
+                                        <label class="floating-label" for="listen">监听地址</label>
+                                        <input class="form-control" id="listen" type="text" name="listen">
+                                    </div>
+
+                                    <div class="form-group form-group-label">
+                                        <label class="floating-label" for="port">端口</label>
+                                        <input class="form-control" id="port" type="number" name="port">
+                                    </div>
+
+								</div>
+							</div>
+						</div>
 
 						<div class="card">
 							<div class="card-main">
