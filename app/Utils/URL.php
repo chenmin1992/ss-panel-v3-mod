@@ -143,16 +143,14 @@ class URL
             $nodes=Node::where(
                 function ($query) {
                     $query->where('sort', 0)
-                        ->orwhere('sort', 10)
-                        ->orwhere('sort', 11);
+                        ->orwhere('sort', 10);
                 }
             )->where("type", "1")->orderBy("name")->get();
         } else {
             $nodes=Node::where(
                 function ($query) {
                     $query->where('sort', 0)
-                        ->orwhere('sort', 10)
-                        ->orwhere('sort', 11);
+                        ->orwhere('sort', 10);
                 }
             )->where(
                 function ($query) use ($user){
@@ -198,14 +196,6 @@ class URL
                     if($item != null) {
                         array_push($return_array, $item);
                     }
-                } elseif ($node->sort == 11) {
-                    $inbounds = json_decode($node->v2conf);
-                    foreach ($inbounds as $inbound) {
-                        $item = URL::getV2rayItem($user, $node, $inbound, $is_ss);
-                        if($item != null) {
-                            array_push($return_array, $item);
-                        }
-                    }
                 } else {
                     $item = URL::getItem($user, $node, 0, 0, $is_ss);
                     if($item != null) {
@@ -245,13 +235,120 @@ class URL
         return $return_array;
     }
 
-    public static function getAllUrl($user, $is_mu, $is_ss = 0, $enter = 0) {
-        $items = URL::getAllItems($user, $is_mu, $is_ss);
+    public static function getAllV2RayItems($user, $conf_version = 2) {
+        $return_array = array();
+        if ($user->is_admin) {
+            $nodes=Node::where(
+                function ($query) {
+                    $query->where('sort', 11);
+                }
+            )->where("type", "1")->orderBy("name")->get();
+        } else {
+            $nodes=Node::where(
+                function ($query) {
+                    $query->where('sort', 11);
+                }
+            )->where(
+                function ($query) use ($user){
+                    $query->where("node_group", "=", $user->node_group)
+                        ->orWhere("node_group", "=", 0);
+                }
+            )->where("type", "1")->where("node_class", "<=", $user->class)->orderBy("name")->get();
+        }
+
+        // $relay_rules = Relay::where('user_id', $user->id)->orwhere('user_id', 0)->orderBy('id', 'asc')->get();
+
+        // if (!Tools::is_protocol_relay($user)) {
+        //     $relay_rules = array();
+        // }
+
+        foreach ($nodes as $node) {
+            $inbounds = json_decode($node->v2conf);
+            foreach ($inbounds as $inbound) {
+                $item = URL::getV2rayItem($user, $node, $inbound, $conf_version);
+                if($item != null) {
+                    array_push($return_array, $item);
+                }
+            }
+        }
+
+        return $return_array;
+
+    }
+
+    public static function getAllTrojanItems($user) {
+        $return_array = array();
+        if ($user->is_admin) {
+            $nodes=Node::where(
+                function ($query) {
+                    $query->where('sort', 12);
+                }
+            )->where("type", "1")->orderBy("name")->get();
+        } else {
+            $nodes=Node::where(
+                function ($query) {
+                    $query->where('sort', 12);
+                }
+            )->where(
+                function ($query) use ($user){
+                    $query->where("node_group", "=", $user->node_group)
+                        ->orWhere("node_group", "=", 0);
+                }
+            )->where("type", "1")->where("node_class", "<=", $user->class)->orderBy("name")->get();
+        }
+
+        // $relay_rules = Relay::where('user_id', $user->id)->orwhere('user_id', 0)->orderBy('id', 'asc')->get();
+
+        // if (!Tools::is_protocol_relay($user)) {
+        //     $relay_rules = array();
+        // }
+
+        foreach ($nodes as $node) {
+            $conf = json_decode($node->trojan_conf);
+            $item = URL::getTrojanItem($user, $node, $conf);
+            if($item != null) {
+                array_push($return_array, $item);
+            }
+        }
+
+        return $return_array;
+    }
+
+    public static function getAllUrl($user, $is_mu, $is_ss = 0, $v = 2, $enter = 0) {
         $return_url = '';
+        $items = URL::getAllItems($user, $is_mu, $is_ss);
         foreach($items as $item) {
             $return_url .= URL::getItemUrl($item, $is_ss).($enter == 0 ? ' ' : "\n");
         }
-        return $return_url;
+
+        $items = URL::getAllV2RayItems($user, $v);
+        foreach($items as $item) {
+            $return_url .= URL::getV2RayItemUrl($item, $v).($enter == 0 ? ' ' : "\n");
+        }
+
+        $items = URL::getAllTrojanItems($user);
+        foreach($items as $item) {
+            $return_url .= URL::getTrojanItemUrl($item).($enter == 0 ? ' ' : "\n");
+        }
+        return substr($return_url, 0, -1);
+    }
+
+    public static function getAllV2RayUrl($user, $v = 2, $enter = 0) {
+        $return_url = '';
+        $items = URL::getAllV2RayItems($user, $v);
+        foreach($items as $item) {
+            $return_url .= URL::getV2RayItemUrl($item, $v).($enter == 0 ? ' ' : "\n");
+        }
+        return substr($return_url, 0, -1);
+    }
+
+    public static function getAllTrojanUrl($user, $enter = 0) {
+        $return_url = '';
+        $items = URL::getAllTrojanItems($user);
+        foreach($items as $item) {
+            $return_url .= URL::getTrojanItemUrl($item).($enter == 0 ? ' ' : "\n");
+        }
+        return substr($return_url, 0, -1);
     }
 
     public static function getItemUrl($item, $is_ss) {
@@ -266,17 +363,6 @@ class URL
                 $ssurl = "ss://".Tools::base64_url_encode($personal_info);
 
                 $ssurl .= "#".rawurlencode($item['remark']);
-            } elseif ($is_ss == 3) { // v2ray v1 vmess://base64(security:uuid@host:port)?[urlencode(parameters)]
-                $parameters = '';
-                foreach ($item as $key => $value) {
-                    if($key == 'security' or $key == 'uuid' or $key == 'host' or $key == 'port') {
-                        continue;
-                    }
-                    $parameters .= $key.'='.rawurlencode($value).'&';
-                }
-                $ssurl = 'vmess://'.Tools::base64_url_encode($item['security'].':'.$item['uuid'].'@'.$item['host'].':'.$item['port']).'?'.substr($parameters, 0, -1);
-            } elseif ($is_ss == 4) { // v2ray v2
-                $ssurl = 'vmess://'.Tools::base64_url_encode(json_encode($item));
             } else { // ss other
                 $personal_info = $item['method'].':'.$item['passwd'];
                 $ssurl = "ss://".Tools::base64_url_encode($personal_info)."@".$item['address'].":".$item['port'];
@@ -300,6 +386,34 @@ class URL
             }
             return $ssurl;
         }
+    }
+
+    public static function getV2RayItemUrl($item, $conf_version = 2) {
+        switch ($conf_version) {
+            case 1:
+                $parameters = '';
+                foreach ($item as $key => $value) {
+                    if($key == 'security' or $key == 'uuid' or $key == 'host' or $key == 'port') {
+                        continue;
+                    }
+                    $parameters .= $key.'='.rawurlencode($value).'&';
+                }
+                $url = 'vmess://'.Tools::base64_url_encode($item['security'].':'.$item['uuid'].'@'.$item['host'].':'.$item['port']).'?'.substr($parameters, 0, -1);
+                break;
+
+            case 2:
+                $url = 'vmess://'.Tools::base64_url_encode(json_encode($item));
+                break;
+            
+            default:
+                break;
+        }
+        return $url;
+    }
+
+    public static function getTrojanItemUrl($item) {
+        // return 'trojan://'.$item['passwd'].'@'.$item['address'].':'.$item['port'].'?allowInsecure=0&tfo='.$item['fast_open'].'#'.rawurlencode($item['remark']);
+        return 'trojan://'.$item['passwd'].'@'.$item['address'].':'.$item['port'].'?allowInsecure=0&tfo='.$item['fast_open'].'#'.$item['remark'];
     }
 
     public static function getJsonObfs($item) {
@@ -353,9 +467,6 @@ class URL
     */
 
     public static function getItem($user, $node, $mu_port = 0, $relay_rule_id = 0, $is_ss = 0) {
-        if($is_ss == 3 or $is_ss == 4) {
-            return;
-        }
 
         $relay_rule = Relay::where('id', $relay_rule_id)->where(
             function ($query) use ($user) {
@@ -467,142 +578,166 @@ class URL
     remark - 备注名称
     导入配置时，不在列表中的参数一般会按照 Core 的默认值处理。
     */
-    public static function getV2rayItem($user, $node, $inbound, $is_ss) {
+    public static function getV2rayItem($user, $node, $inbound, $conf_version) {
         $uuid = $user->get_v2ray_uuid();
         $return_array = Array();
-        if($is_ss == 3) {
-            // $return_array["v"] = 1;
-            $return_array["security"] = "auto";
-            $return_array["uuid"] = $uuid;
-            $return_array["host"] = $node->server;
-            $return_array["port"] = $inbound->port;
-            $return_array["network"] = $inbound->network;
-            $return_array["aid"] = $inbound->alterid;
-            $return_array["tls"] = $inbound->security == "tls" ? 1 : 0;
-            $return_array["allowInsecure"] = 0;
-            $return_array["tlsServer"] = $node->server;
-            $return_array["mux"] = 1;
-            $return_array["muxConcurrency"] = 8;
-            switch ($inbound->network) {
-                case "tcp":
-                    break;
-                case "kcp":
-                    $return_array["kcpHeader"] = $inbound->obfs;
-                    $return_array["uplinkCapacity"] = $inbound->uplinkcapacity;
-                    $return_array["downlinkCapacity"] = $inbound->downlinkcapacity;
-                    break;
-                case "ws":
-                    $return_array["wsPath"] = $inbound->path;
-                    if(!empty($inbound->headers->Host)) {
-                        $return_array["wsHost"] = $inbound->headers->Host;
-                    }
-                    break;
-                case "h2":
-                    $return_array["h2Host"] = $inbound->host;
-                    $return_array["h2Path"] = $inbound->path;
-                    break;
-                case "quic":
-                    $return_array["quicSecurity"] = $inbound->encryption;
-                    $return_array["quitKey"] = $inbound->quickey;
-                    $return_array["quicHeader"] = $inbound->obfs;
-                    break;
-                default:
-                    break;
-            }
-            if($inbound->network == "ws" or $inbound->network == "h2") {
-                if(!empty($inbound->proxyaddr) and !empty($inbound->proxyport)) {
-                    $return_array["host"] = $inbound->proxyaddr;
-                    $return_array["port"] = $inbound->proxyport;
-                    if($inbound->security == "none" and $inbound->proxysecurity == "tls") {
-                        $return_array["tls"] = 1;
-                        $return_array["tlsServer"] = $return_array["host"];
+        switch ($conf_version) {
+            case 1:
+                // $return_array["v"] = 1;
+                $return_array["security"] = "auto";
+                $return_array["uuid"] = $uuid;
+                $return_array["host"] = $node->server;
+                $return_array["port"] = $inbound->port;
+                $return_array["network"] = $inbound->network;
+                $return_array["aid"] = $inbound->alterid;
+                $return_array["tls"] = $inbound->security == "tls" ? 1 : 0;
+                $return_array["allowInsecure"] = 0;
+                $return_array["tlsServer"] = $node->server;
+                $return_array["mux"] = 1;
+                $return_array["muxConcurrency"] = 8;
+                switch ($inbound->network) {
+                    case "tcp":
+                        break;
+                    case "kcp":
+                        $return_array["kcpHeader"] = $inbound->obfs;
+                        $return_array["uplinkCapacity"] = $inbound->uplinkcapacity;
+                        $return_array["downlinkCapacity"] = $inbound->downlinkcapacity;
+                        break;
+                    case "ws":
+                        $return_array["wsPath"] = $inbound->path;
+                        if(!empty($inbound->headers->Host)) {
+                            $return_array["wsHost"] = $inbound->headers->Host;
+                        }
+                        break;
+                    case "h2":
+                        $return_array["h2Host"] = $inbound->host;
+                        $return_array["h2Path"] = $inbound->path;
+                        break;
+                    case "quic":
+                        $return_array["quicSecurity"] = $inbound->encryption;
+                        $return_array["quitKey"] = $inbound->quickey;
+                        $return_array["quicHeader"] = $inbound->obfs;
+                        break;
+                    default:
+                        break;
+                }
+                if($inbound->network == "ws" or $inbound->network == "h2") {
+                    if(!empty($inbound->proxyaddr) and !empty($inbound->proxyport)) {
+                        $return_array["host"] = $inbound->proxyaddr;
+                        $return_array["port"] = $inbound->proxyport;
+                        if($inbound->security == "none" and $inbound->proxysecurity == "tls") {
+                            $return_array["tls"] = 1;
+                            $return_array["tlsServer"] = $return_array["host"];
+                        }
                     }
                 }
-            }
-            $return_array["remark"] = explode(" - ", $node->name)[0]."-".$return_array["network"]."-".$return_array["host"];
-            // for shadowrocket only
-            $return_array["remarks"] = $return_array["remark"];
-            switch ($inbound->network) {
-                case "tcp":
-                    break;
-                case "kcp":
-                    // $return_array["obfsParam"] = json_encode([ "uplinkCapacity" => $inbound->uplinkcapacity, "downlinkCapacity" => $inbound->downlinkcapacity, "tti" => $inbound->tti, "header" => $inbound->obfs, "mtu" => $inbound->mtu ]);
-                    $return_array["obfsParam"] = json_encode([ "header" => $inbound->obfs ]);
-                    break;
-                case "ws":
-                    if(!empty($inbound->headers->Host)) {
-                        $return_array["obfsParam"] = $inbound->headers->Host;
-                    }
-                    break;
-                case "h2":
-                    $return_array["obfsParam"] = $inbound->host;
-                    break;
-                case "quic":
-                    break;
-                default:
-                    break;
-            }
-            $return_array["path"] = $inbound->path;
-            $return_array["obfs"] = $inbound->network;
-            if($inbound->network == "kcp") {
-                $return_array["obfs"] = "mkcp";
-            }
-            // $return_array["peer"] = $return_array["tlsServer"];
-            if($inbound->tcpfastopen == "true") {
-                $return_array["tfo"] = 1;
-            } else {
-                $return_array["tfo"] = 0;
-            }
-        } elseif ($is_ss == 4) {
-            $return_array["v"] = 2;
-            $return_array["ps"] = "";
-            $return_array["add"] = $node->server;
-            $return_array["port"] = $inbound->port;
-            $return_array["id"] = $uuid;
-            $return_array["aid"] = $inbound->alterid;
-            $return_array["net"] = $inbound->network;
-            $return_array["type"] = "";
-            $return_array["host"] = "";
-            $return_array["path"] = "";
-            $return_array["tls"] = $inbound->security;
-            switch ($inbound->network) {
-                case "tcp":
-                    $return_array["type"] = $inbound->obfs;
-                    break;
-                case "kcp":
-                    $return_array["type"] = $inbound->obfs;
-                    break;
-                case "ws":
-                    $return_array["path"] = $inbound->path;
-                    if(!empty($inbound->headers->Host)) {
-                        $return_array["host"] = $inbound->headers->Host;
-                    }
-                    break;
-                case "h2":
-                    $return_array["host"] = $inbound->host;
-                    $return_array["path"] = $inbound->path;
-                    break;
-                case "quic":
-                    $return_array["type"] = $inbound->obfs;
-                    $return_array["host"] = $inbound->encryption;
-                    if($inbound->encryption != "none") {
-                        $return_array["path"] = $inbound->quickey;
-                    }
-                    break;
-                default:
-                    break;
-            }
-            if($inbound->network == "ws" or $inbound->network == "h2") {
-                if(!empty($inbound->proxyaddr) and !empty($inbound->proxyport)) {
-                    $return_array["add"] = $inbound->proxyaddr;
-                    $return_array["port"] = $inbound->proxyport;
-                    if($inbound->security == "none" and $inbound->proxysecurity == "tls") {
-                        $return_array["tls"] = "tls";
+                $return_array["remark"] = explode(" - ", $node->name)[0]."-".$return_array["network"]."-".$return_array["host"];
+                // for shadowrocket only
+                $return_array["remarks"] = $return_array["remark"];
+                switch ($inbound->network) {
+                    case "tcp":
+                        break;
+                    case "kcp":
+                        // $return_array["obfsParam"] = json_encode([ "uplinkCapacity" => $inbound->uplinkcapacity, "downlinkCapacity" => $inbound->downlinkcapacity, "tti" => $inbound->tti, "header" => $inbound->obfs, "mtu" => $inbound->mtu ]);
+                        $return_array["obfsParam"] = json_encode([ "header" => $inbound->obfs ]);
+                        break;
+                    case "ws":
+                        if(!empty($inbound->headers->Host)) {
+                            $return_array["obfsParam"] = $inbound->headers->Host;
+                        }
+                        break;
+                    case "h2":
+                        $return_array["obfsParam"] = $inbound->host;
+                        break;
+                    case "quic":
+                        break;
+                    default:
+                        break;
+                }
+                $return_array["path"] = $inbound->path;
+                $return_array["obfs"] = $inbound->network;
+                if($inbound->network == "kcp") {
+                    $return_array["obfs"] = "mkcp";
+                }
+                // $return_array["peer"] = $return_array["tlsServer"];
+                if($inbound->tcpfastopen == "true") {
+                    $return_array["tfo"] = 1;
+                } else {
+                    $return_array["tfo"] = 0;
+                }
+                break;
+            case 2:
+                $return_array["v"] = 2;
+                $return_array["ps"] = "";
+                $return_array["add"] = $node->server;
+                $return_array["port"] = $inbound->port;
+                $return_array["id"] = $uuid;
+                $return_array["aid"] = $inbound->alterid;
+                $return_array["net"] = $inbound->network;
+                $return_array["type"] = "";
+                $return_array["host"] = "";
+                $return_array["path"] = "";
+                $return_array["tls"] = $inbound->security;
+                switch ($inbound->network) {
+                    case "tcp":
+                        $return_array["type"] = $inbound->obfs;
+                        break;
+                    case "kcp":
+                        $return_array["type"] = $inbound->obfs;
+                        break;
+                    case "ws":
+                        $return_array["path"] = $inbound->path;
+                        if(!empty($inbound->headers->Host)) {
+                            $return_array["host"] = $inbound->headers->Host;
+                        }
+                        break;
+                    case "h2":
+                        $return_array["host"] = $inbound->host;
+                        $return_array["path"] = $inbound->path;
+                        break;
+                    case "quic":
+                        $return_array["type"] = $inbound->obfs;
+                        $return_array["host"] = $inbound->encryption;
+                        if($inbound->encryption != "none") {
+                            $return_array["path"] = $inbound->quickey;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                if($inbound->network == "ws" or $inbound->network == "h2") {
+                    if(!empty($inbound->proxyaddr) and !empty($inbound->proxyport)) {
+                        $return_array["add"] = $inbound->proxyaddr;
+                        $return_array["port"] = $inbound->proxyport;
+                        if($inbound->security == "none" and $inbound->proxysecurity == "tls") {
+                            $return_array["tls"] = "tls";
+                        }
                     }
                 }
-            }
-            $return_array["ps"] = explode(" - ", $node->name)[0]."-".$return_array["net"]."-".$return_array["add"];
+                $return_array["ps"] = explode(" - ", $node->name)[0]."-".$return_array["net"]."-".$return_array["add"];
+                break;
+            default:
+                break;
         }
+        return $return_array;
+    }
+
+    public static function getTrojanItem($user, $node, $conf) {
+        // 'trojan://'.$item['passwd'].'@'.$item['address'].':'.$item['port'].'?allowInsecure=0&tfo='.$item['fast_open'].'#'.rawurlencode($item['remark']);
+        $return_array = Array();
+        $return_array['passwd'] = $user->passwd;
+        $return_array['address'] = $node->server;
+        $return_array['port'] = $conf->local_port;
+        $return_array['fast_open'] = $conf->fast_open;
+        $return_array['remark'] = $node->name;
+
+        $return_array['reuse_session'] = $conf->reuse_session;
+        $return_array['session_ticket'] = $conf->session_ticket;
+        $return_array['no_delay'] = $conf->no_delay;
+        $return_array['keep_alive'] = $conf->keep_alive;
+        $return_array['reuse_port'] = $conf->reuse_port;
+        $return_array['fast_open'] = $conf->fast_open;
+        $return_array['fast_open_qlen'] = $conf->fast_open_qlen;
         return $return_array;
     }
 

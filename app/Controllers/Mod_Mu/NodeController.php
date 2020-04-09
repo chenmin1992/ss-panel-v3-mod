@@ -59,6 +59,9 @@ class NodeController extends BaseController
         if ($node->sort == 11) {
             $res["data"]["v2conf"] = json_decode($node->v2conf);
         }
+        if ($node->sort == 12) {
+            $res["data"]["trojan_conf"] = json_decode($node->trojan_conf);
+        }
         return $this->echoJson($response, $res);
     }
 

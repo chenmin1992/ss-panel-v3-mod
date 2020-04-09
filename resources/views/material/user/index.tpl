@@ -50,6 +50,9 @@
 												<li>
 													<a class="waves-attach" data-toggle="tab" href="#all_v2ray"><i class="icon icon-lg">check</i>&nbsp;V2Ray</a>
 												</li>
+												<li>
+													<a class="waves-attach" data-toggle="tab" href="#all_trojan"><i class="icon icon-lg">format_size</i>&nbsp;Trojan</a>
+												</li>
 											</ul>
 										</nav>
 										<div class="card-inner">
@@ -220,6 +223,7 @@
 														执行完毕以后就可以到路由器的设置面板里随意选择 Shadowsocks 服务器进行连接了。</p>
 													</div>
 												</div>
+
                                                 <div class="tab-pane fade" id="all_v2ray">
                                                     <nav class="tab-nav margin-top-no">
                                                         <ul class="nav nav-list">
@@ -244,8 +248,8 @@
                                                         </ul>
                                                     </nav>
                                                     <div class="tab-pane fade active in" id="all_v2ray_info">
-                                                        {$v2ray_url_all_v1 = URL::getAllUrl($pre_user, 0, 3, 0)}
-                                                        {$v2ray_url_all_v2 = URL::getAllUrl($pre_user, 0, 4, 1)}
+                                                        {$v2ray_url_all_v1 = URL::getAllV2RayUrl($pre_user, 1, 0)}
+                                                        {$v2ray_url_all_v2 = URL::getAllV2RayUrl($pre_user, 2, 1)}
                                                         <dl class="dl-horizontal">
                                                             <p><dt>UUID</dt>
                                                             <dd>{$pre_user->get_v2ray_uuid()}</dd></p>
@@ -283,6 +287,65 @@
                                                         </p><br>
                                                         <p>V2Ray 订阅地址：<code>{$baseUrl}/link/{$ssr_sub_token}?v=2</code></p>
                                                     </div>
+
+                                                </div>
+
+                                                <div class="tab-pane fade" id="all_trojan">
+                                                    <nav class="tab-nav margin-top-no">
+                                                        <ul class="nav nav-list">
+                                                            <li class="active">
+                                                                <a class="waves-attach" data-toggle="tab" href="#all_trojan_info"><i class="icon icon-lg">info_outline</i>&nbsp;连接信息</a>
+                                                            </li>
+                                                            <li>
+                                                                <a class="waves-attach" data-toggle="tab" href="#all_trojan_windows"><i class="icon icon-lg">desktop_windows</i>&nbsp;Windows</a>
+                                                            </li>
+                                                            <li>
+                                                                <a class="waves-attach" data-toggle="tab" href="#all_trojan_mac"><i class="icon icon-lg">laptop_mac</i>&nbsp;MacOS</a>
+                                                            </li>
+                                                            <li>
+                                                                <a class="waves-attach" data-toggle="tab" href="#all_trojan_ios"><i class="icon icon-lg">laptop_mac</i>&nbsp;iOS</a>
+                                                            </li>
+                                                            <li>
+                                                                <a class="waves-attach" data-toggle="tab" href="#all_trojan_android"><i class="icon icon-lg">android</i>&nbsp;Android</a>
+                                                            </li>
+                                                            <!-- <li>
+                                                                <a class="waves-attach" data-toggle="tab" href="#all_trojan_router"><i class="icon icon-lg">router</i>&nbsp;路由器</a>
+                                                            </li> -->
+                                                        </ul>
+                                                    </nav>
+                                                    <div class="tab-pane fade active in" id="all_trojan_info">
+                                                        {$trojan_url_all = URL::getAllTrojanUrl($pre_user, 1)}
+                                                        <dl class="dl-horizontal">
+															<p><dt>密码</dt>
+															<dd>{$user->passwd}</dd></p>
+	                                                        <br>
+	                                                        <p> 订阅地址：<code>{$baseUrl}/link/{$ssr_sub_token}?v=2</code></p>
+                                                        </dl>
+                                                    </div>
+                                                    <div class="tab-pane fade" id="all_trojan_windows">
+                                                        <p><a href="/ssr-download/trojan-win.zip">下载</a>，解压，运行程序，然后您有三种方式导入所有节点<br>
+                                                            (1)下载<a href="/user/getpcconf?is_mu=0&is_ss=2">这个</a>，然后点击trojan图标 服务器 -- 添加自定义配置服务器，选择这个文件，<br>
+                                                            (2)点击<a class="copy-text" data-clipboard-text="{$trojan_url_all}">这个</a>，然后点击trojanN图标 服务器 -- 从剪贴板导入批量URL<br>
+                                                            (3)(推荐)点击trojanN图标 订阅 -- 订阅设置，添加，将订阅地址设置为下面的地址，改一个喜欢的备注，确定之后再更新订阅。<br>
+                                                            <br>
+                                                            然后参数设置 路由设置 预定义规则 选 ”绕过局域网及大陆地址”，点一下一键设置默认自定义路由规则，确定，右键trojanN图标，HTTP代理选”全局代理“，然后即可上网。</p>
+                                                    </div>
+                                                    <div class="tab-pane fade" id="all_trojan_mac">
+                                                        <p><a href="/ssr-download/trojan-mac.dmg">下载</a>，安装，运行程序，然后点击<a class="copy-text" data-clipboard-text="{$trojan_url_all}">这个</a>，trojanU图标上点击 从粘贴板导入<br>然后选择一个合适的服务器，选择Pac模式，更新一下PAC，然后Turn trojan-core On即可上网。</p>
+                                                    </div>
+                                                    <div class="tab-pane fade" id="all_trojan_ios">
+                                                        <p>推荐下载<a href="https://itunes.apple.com/us/app/shadowrocket/id932747118">Shadowrocket</a>，需要非大陆Apple ID，然后在 Safari 中点击<a href="{$trojan_url_all}">这个</a>，然后点击确定，就可以批量添加节点。</p>
+                                                    </div>
+                                                    <div class="tab-pane fade" id="all_trojan_android">
+                                                        <p><a href="/ssr-download/trojan-android.apk">下载</a>，安装，然后点击<a class="copy-text" data-clipboard-text="{$trojan_url_all}">这个</a>，右上角点击加号,选择从剪贴板导入，然后设置里的路由模式选择“绕过局域网及大陆地址”，返回，选择一个合适的服务器，右下角开启就可以上网了。
+                                                        </p>
+                                                    </div>
+                                                    <!-- <div class="tab-pane fade" id="all_trojan_router">
+                                                        <p>路由器 刷入<a target="_blank" href="http://opt.cn2qq.com/padavan/">这个固件</a>，连接互联网，依次进入 搭建Web环境 -- trojan -- 在“服务器订阅节点”填入下面订阅地址 -- 然后点击更新。<br>
+                                                           等待路由器更新订阅。<br>
+                                                           然后选一个节点，点击右边的 应用，再把最上边的 “trojan proxy 开关”打开，最后点击最下边的“应用本页面设置”，看日志里面是否启动正常，正常就可以设置设备的代理到路由器使用了。<br>
+                                                        </p>
+                                                    </div> -->
 
                                                 </div>
 											</div>

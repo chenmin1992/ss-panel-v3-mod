@@ -56,7 +56,8 @@ class NodeController extends AdminController
         $node->status = $request->getParam('status');
         $node->sort = $request->getParam('sort');
         $node->v2conf = $request->getParam('v2conf');
-        if ($node->sort == 0 || $node->sort == 1 || $node->sort == 10 || $node->sort == 11) {
+        $node->trojan_conf = $request->getParam('trojan_conf');
+        if ($node->sort == 0 || $node->sort == 1 || $node->sort == 10 || $node->sort == 11 || $node->sort == 12) {
             if ($request->getParam('node_ip') != '') {
                 $node->node_ip = $request->getParam('node_ip');
             } else {
@@ -114,8 +115,9 @@ class NodeController extends AdminController
         $node->type = $request->getParam('type');
         $node->sort = $request->getParam('sort');
         $node->v2conf = $request->getParam('v2conf');
+        $node->trojan_conf = $request->getParam('trojan_conf');
 
-        if ($node->sort == 0 || $node->sort == 1 || $node->sort == 10 || $node->sort == 11) {
+        if ($node->sort == 0 || $node->sort == 1 || $node->sort == 10 || $node->sort == 11 || $node->sort == 12) {
             if ($request->getParam('node_ip') != '') {
                 $node->node_ip = $request->getParam('node_ip');
             } else {
@@ -131,7 +133,7 @@ class NodeController extends AdminController
             $node->node_ip="";
         }
 
-        if ($node->sort == 0 || $node->sort == 10 || $node->sort == 11) {
+        if ($node->sort == 0 || $node->sort == 10 || $node->sort == 11 || $node->sort == 12) {
             Tools::updateRelayRuleIp($node);
         }
 
@@ -265,6 +267,9 @@ class NodeController extends AdminController
                   break;
                 case 11:
                   $sort = 'V2Ray';
+                  break;
+                case 12:
+                  $sort = 'Trojan';
                   break;
                 default:
                   $sort = '系统保留';

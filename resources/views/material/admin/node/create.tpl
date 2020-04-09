@@ -111,6 +111,7 @@
 													<option value="9">Shadowsocks 单端口多用户</option>
 													<option value="10">Shadowsocks 中转</option>
 													<option value="11">V2Ray</option>
+													<option value="12">Trojan</option>
 												</select>
 											</div>
 									</div>
@@ -462,13 +463,87 @@
 								<div class="card-inner">
 
                                     <div class="form-group form-group-label">
-                                        <label class="floating-label" for="listen">监听地址</label>
-                                        <input class="form-control" id="listen" type="text" name="listen">
+                                        <label class="floating-label" for="local_addr">监听地址/local_addr</label>
+                                        <input class="form-control" id="local_addr" type="text" name="local_addr" value="0.0.0.0">
+                                    </div>
+                                    <div class="form-group form-group-label">
+                                        <label class="floating-label" for="local_port">监听端口/local_port</label>
+                                        <input class="form-control" id="local_port" type="number" name="local_port" value="443">
                                     </div>
 
                                     <div class="form-group form-group-label">
-                                        <label class="floating-label" for="port">端口</label>
-                                        <input class="form-control" id="port" type="number" name="port">
+                                        <label class="floating-label" for="cert">证书/cert</label>
+                                        <select id="cert" class="form-control" name="cert">
+                                            <option value="0" selected>none</option>
+											{foreach $certs as $cert}
+                                            <option value="{$cert->id}">{$cert->name}</option>
+                                            {/foreach}
+                                        </select>
+                                    </div>
+                                    <div class="form-group form-group-label">
+                                        <div class="checkbox switch">
+                                            <label for="prefer_server_cipher">
+                                                <input checked class="access-hide" id="prefer_server_cipher" type="checkbox" name="prefer_server_cipher"><span class="switch-toggle"></span>优先服务端加密算法/prefer_server_cipher
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-label">
+                                        <div class="checkbox switch">
+                                            <label for="reuse_session">
+                                                <input checked class="access-hide" id="reuse_session" type="checkbox" name="reuse_session"><span class="switch-toggle"></span>重用会话/reuse_session
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-label">
+                                        <div class="checkbox switch">
+                                            <label for="session_ticket">
+                                                <input class="access-hide" id="session_ticket" type="checkbox" name="session_ticket"><span class="switch-toggle"></span>会话凭证/session_ticket
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-label">
+                                        <label class="floating-label" for="session_timeout">会话超时/session_timeout(秒)</label>
+                                        <input class="form-control" id="session_timeout" type="number" name="session_timeout" value="600">
+                                    </div>
+
+                                    <div class="form-group form-group-label">
+                                        <div class="checkbox switch">
+                                            <label for="prefer_ipv4">
+                                                <input checked class="access-hide" id="prefer_ipv4" type="checkbox" name="prefer_ipv4"><span class="switch-toggle"></span>优先IPv4/prefer_ipv4
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-label">
+                                        <div class="checkbox switch">
+                                            <label for="no_delay">
+                                                <input checked class="access-hide" id="no_delay" type="checkbox" name="no_delay"><span class="switch-toggle"></span>No Delay/no_delay
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-label">
+                                        <div class="checkbox switch">
+                                            <label for="keep_alive">
+                                                <input checked class="access-hide" id="keep_alive" type="checkbox" name="keep_alive"><span class="switch-toggle"></span>保持连接/keep_alive
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-label">
+                                        <div class="checkbox switch">
+                                            <label for="reuse_port">
+                                                <input checked class="access-hide" id="reuse_port" type="checkbox" name="reuse_port"><span class="switch-toggle"></span>重用端口/reuse_port
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-label">
+                                        <div class="checkbox switch">
+                                            <label for="fast_open">
+                                                <input checked class="access-hide" id="fast_open" type="checkbox" name="fast_open"><span class="switch-toggle"></span>快速打开/fast_open
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-label">
+                                        <label class="floating-label" for="fast_open_qlen">快速打开队列容量/fast_open_qlen</label>
+                                        <input class="form-control" id="fast_open_qlen" type="number" name="fast_open_qlen" value="100">
                                     </div>
 
 								</div>
@@ -523,6 +598,12 @@
             $('#v2in').removeClass('access-hide');
         } else {
             $('#v2in').addClass('access-hide');
+        }
+
+        if(this.value == '12') {
+            $('#trojan').removeClass('access-hide');
+        } else {
+            $('#trojan').addClass('access-hide');
         }
     });
 
@@ -705,6 +786,21 @@
 				inbs.push(inb);
 			});
 
+			var trojan_conf = {
+					"local_addr": $('#trojan').find("#local_addr").val(),
+					"local_port": parseInt($('#trojan').find("#local_port").val()),
+					"cert": parseInt($('#trojan').find("#cert").val()),
+					"prefer_server_cipher": $('#trojan').find("#prefer_server_cipher").is(":checked"),
+					"reuse_session": $('#trojan').find("#reuse_session").is(":checked"),
+					"session_ticket": $('#trojan').find("#session_ticket").is(":checked"),
+					"session_timeout": parseInt($('#trojan').find("#session_timeout").val()),
+					"prefer_ipv4": $('#trojan').find("#prefer_ipv4").is(":checked"),
+					"no_delay": $('#trojan').find("#no_delay").is(":checked"),
+					"keep_alive": $('#trojan').find("#keep_alive").is(":checked"),
+					"reuse_port": $('#trojan').find("#reuse_port").is(":checked"),
+					"fast_open": $('#trojan').find("#fast_open").is(":checked"),
+					"fast_open_qlen": parseInt($('#trojan').find("#fast_open_qlen").val())
+				};
 {/literal}
             $.ajax({
                 type: "POST",
@@ -728,7 +824,8 @@
 					bandwidthlimit_resetday: $("#bandwidthlimit_resetday").val(),
 					custom_rss: custom_rss,
 					mu_only: $("#mu_only").val(),
-					v2conf: JSON.stringify(inbs)
+					v2conf: JSON.stringify(inbs),
+					trojan_conf: JSON.stringify(trojan_conf)
                 },
                 success: function (data) {
                     if (data.ret) {

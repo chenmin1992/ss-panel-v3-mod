@@ -399,7 +399,7 @@ class UserController extends BaseController
                 }
 
 
-                if ($node->sort==0||$node->sort==7||$node->sort==8||$node->sort==10||$node->sort==11) {
+                if ($node->sort==0||$node->sort==7||$node->sort==8||$node->sort==10||$node->sort==11||$node->sort==12) {
                     $node_tempalive=$node->getOnlineUserCount();
                     $node_prealive[$node->id]=$node_tempalive;
                     if ($node->isNodeOnline() !== null) {
@@ -586,6 +586,12 @@ class UserController extends BaseController
             case 11:
                 if ((($user->class>=$node->node_class&&($user->node_group==$node->node_group||$node->node_group==0))||$user->is_admin)&&($node->node_bandwidth_limit==0||$node->node_bandwidth<$node->node_bandwidth_limit)) {
                     return $this->view()->assign('node', $node)->assign('user', $user)->registerClass("URL", "App\Utils\URL")->display('user/nodeinfov2ray.tpl');
+                }
+                break;
+
+            case 12:
+                if ((($user->class>=$node->node_class&&($user->node_group==$node->node_group||$node->node_group==0))||$user->is_admin)&&($node->node_bandwidth_limit==0||$node->node_bandwidth<$node->node_bandwidth_limit)) {
+                    return $this->view()->assign('node', $node)->assign('user', $user)->registerClass("URL", "App\Utils\URL")->display('user/nodeinfotrojan.tpl');
                 }
                 break;
             default:

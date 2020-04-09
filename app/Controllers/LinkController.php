@@ -253,7 +253,7 @@ class LinkController extends BaseController
                 $newResponse = $response->withHeader('Content-type', ' application/octet-stream; charset=utf-8')->withHeader('Cache-Control', 'no-store, no-cache, must-revalidate')->withHeader('Content-Disposition', ' attachment; filename='.$token.'.sh');//->getBody()->write($builder->output());
                 $newResponse->getBody()->write(LinkController::GetRouter(User::where("id", "=", $Elink->userid)->first(), $Elink->geo, $is_ss));
                 return $newResponse;
-            case 11:
+            case 11: // 所有可订阅的链接
                 $user=User::where("id", $Elink->userid)->first();
                 if ($user == null) {
                     return null;
@@ -264,13 +264,13 @@ class LinkController extends BaseController
                     $mu = (int)$request->getQueryParams()["mu"];
                 }
 
-                $v = 4;
+                $v = 2;
                 if (!empty($request->getQueryParams()["v"])) {
                     $v = (int)$request->getQueryParams()["v"] + 2;
                 }
 
                 $newResponse = $response->withHeader('Content-type', ' application/octet-stream; charset=utf-8')->withHeader('Cache-Control', 'no-store, no-cache, must-revalidate')->withHeader('Content-Disposition', ' attachment; filename='.$token.'.txt');
-                $newResponse->getBody()->write(LinkController::GetSSRSub(User::where("id", "=", $Elink->userid)->first(), $mu, $v));
+                $newResponse->getBody()->write(LinkController::GetSub(User::where("id", "=", $Elink->userid)->first(), $mu, $v));
                 return $newResponse;
             default:
                 break;
@@ -1751,8 +1751,8 @@ FINAL,Proxy';
         return $bash;
     }
 
-    public static function GetSSRSub($user, $mu = 0, $v = 4)
+    public static function GetSub($user, $mu = 0, $is_ss = 0, $v = 2)
     {
-        return Tools::base64_url_encode(URL::getAllUrl($user, $mu, 0, 1)."\n".URL::getAllUrl($user, 0, $v, 1));
+        return Tools::base64_url_encode(URL::getAllUrl($user, $mu, 0, $v, 1));
     }
 }

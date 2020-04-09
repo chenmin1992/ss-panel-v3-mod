@@ -313,7 +313,7 @@ $app->group('/mu', function () {
     $this->post('/nodes/{id}/info', 'App\Controllers\Mu\NodeController:info');
 })->add(new Mu());
 
-// mu
+// mod_mu
 $app->group('/mod_mu', function () {
     $this->get('/nodes/{id}/info', 'App\Controllers\Mod_Mu\NodeController:get_info');
     $this->get('/users', 'App\Controllers\Mod_Mu\UserController:index');
