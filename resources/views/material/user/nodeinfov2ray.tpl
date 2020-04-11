@@ -48,7 +48,7 @@
                                             <div class="tab-content">
                                                 {foreach from=$node->v2conf|json_decode key=index item=inbound}
                                                 <div class="tab-pane fade {if $index==0}active in{/if}" id="info-{$index}">
-                                                    {$v2ray_item = URL::getV2rayItem($user, $node, $inbound, 4)}
+                                                    {$v2ray_item = URL::getV2rayItem($user, $node, $inbound, 2)}
                                                     <p>服务器地址：{$v2ray_item['add']}<br>
                                                     服务器端口：{$v2ray_item['port']}<br>
                                                     UUID：{$v2ray_item['id']}<br>
@@ -103,7 +103,7 @@
                                         <div class="tab-content" id="v2ray_json">
                                             {foreach from=$node->v2conf|json_decode key=index item=inbound}
                                             <div class="tab-pane fade {if $index==0}active in{/if}" id="json-{$index}">
-                                                <textarea class="form-control" rows="15">{json_encode(URL::genV2rayClientJson(URL::getV2rayItem($user, $node, $inbound, 3)), JSON_PRETTY_PRINT)}</textarea>
+                                                <textarea class="form-control" rows="15">{json_encode(URL::genV2rayClientJson(URL::getV2rayItem($user, $node, $inbound, 1)), JSON_PRETTY_PRINT)}</textarea>
                                             </div>
                                             {/foreach}
                                         </div>
@@ -131,8 +131,8 @@
                                         <div class="tab-content" id="v2ray_url">
                                             {foreach from=$node->v2conf|json_decode key=index item=inbound}
                                             <div class="tab-pane fade {if $index==0}active in{/if}" id="link-{$index}">
-                                                <p><a href="{URL::getItemUrl(URL::getV2rayItem($user, $node, $inbound, 4), 4)}"/>Android 手机上用默认浏览器打开点我就可以直接添加了(给 V2Ray APP)</a></p>
-                                                <p><a href="{URL::getItemUrl(URL::getV2rayItem($user, $node, $inbound, 3), 3)}"/>iOS 上用 Safari 打开点我就可以直接添加了(给 Shadowrocket)</a></p>
+                                                <p><a href="{URL::getV2RayItemUrl(URL::getV2rayItem($user, $node, $inbound, 2), 2)}"/>Android 手机上用默认浏览器打开点我就可以直接添加了(给 V2Ray APP)</a></p>
+                                                <p><a href="{URL::getV2RayItemUrl(URL::getV2rayItem($user, $node, $inbound, 1), 1)}"/>iOS 上用 Safari 打开点我就可以直接添加了(给 Shadowrocket)</a></p>
                                             </div>
                                             {/foreach}
                                         </div>
@@ -172,12 +172,12 @@
                                                 </nav>
                                                 <div class="tab-pane fade active in" id="qr-{$index}-v2">
                                                     <div class="text-center">
-                                                        <div data="{URL::getItemUrl(URL::getV2rayItem($user, $node, $inbound, 4), 4)}" id="v2ray-qr"></div>
+                                                        <div data="{URL::getV2RayItemUrl(URL::getV2rayItem($user, $node, $inbound, 2), 2)}" id="v2ray-qr"></div>
                                                     </div>
                                                 </div>
                                                 <div class="tab-pane fade" id="qr-{$index}-v1">
                                                     <div class="text-center">
-                                                        <div data="{URL::getItemUrl(URL::getV2rayItem($user, $node, $inbound, 3), 3)}" id="v2ray-qr"></div>
+                                                        <div data="{URL::getV2RayItemUrl(URL::getV2rayItem($user, $node, $inbound, 1), 1)}" id="v2ray-qr"></div>
                                                     </div>
                                                 </div>
                                             </div>
