@@ -61,7 +61,7 @@ class NodeController extends AdminController
             if ($request->getParam('node_ip') != '') {
                 $node->node_ip = $request->getParam('node_ip');
             } else {
-                $node->node_ip = gethostbyname($request->getParam('server'));
+                $node->node_ip = Tools::resolveAll($request->getParam('server'));
             }
         } else {
             $node->node_ip="";

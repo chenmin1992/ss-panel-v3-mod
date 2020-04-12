@@ -430,4 +430,24 @@ class Tools
     {
         return str_replace("::ffff:", "", $rawIp);
     }
+
+    public static function resolveAll($server)
+    {
+        $records=dns_get_record($server, DNS_ALL);
+        $ips='';
+        foreach($records as $record) {
+            if($record->type=='A') {
+                $ips.=$record->ip.',';
+            }
+        }
+        foreach($records as $record) {
+            if($record->type=='AAAA') {
+                $ips.=$record->ipv6.',';
+            }
+        }
+        if (strlen($ips)>0) {
+            $ips=substr($ips, 0, -1);
+        }
+        return $ips;
+    }
 }

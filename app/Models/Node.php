@@ -154,20 +154,19 @@ class Node extends Model
 
     public function changeNodeIp($server_name)
     {
-        $ip = gethostbyname($server_name);
-        $node_id = $this->attributes['id'];
-
-        if ($ip == "") {
+        $ips = Tools::resolveAll($server_name);
+        if ($ips == "") {
             return false;
         }
+        $this->attributes['node_ip'] = $ips;
 
+        $node_id = $this->attributes['id'];
         $relay_rules = Relay::where('dist_node_id', $node_id)->get();
         foreach ($relay_rules as $relay_rule) {
-            $relay_rule->dist_ip = $ip;
+            $relay_rule->dist_ip = $this->getNodeIp();
             $relay_rule->save();
         }
 
-        $this->attributes['node_ip'] = $ip;
         return true;
     }
 

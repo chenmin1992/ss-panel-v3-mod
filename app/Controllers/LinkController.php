@@ -292,41 +292,41 @@ class LinkController extends BaseController
     public static function GetPcConf($user, $is_mu = 0, $is_ss = 0)
     {
         $string='
-	{
-	"index" : 0,
-	"random" : false,
-	"sysProxyMode" : 0,
-	"shareOverLan" : false,
-	"bypassWhiteList" : false,
-	"localPort" : 1080,
-	"localAuthPassword" : "'.Tools::genRandomChar(26).'",
-	"dns_server" : "",
-	"reconnectTimes" : 4,
-	"randomAlgorithm" : 0,
-	"TTL" : 60,
-	"connect_timeout" : 5,
-	"proxyRuleMode" : 1,
-	"proxyEnable" : false,
-	"pacDirectGoProxy" : false,
-	"proxyType" : 0,
-	"proxyHost" : "",
-	"proxyPort" : 0,
-	"proxyAuthUser" : "",
-	"proxyAuthPass" : "",
-	"proxyUserAgent" : "",
-	"authUser" : "",
-	"authPass" : "",
-	"autoBan" : false,
-	"sameHostForSameTarget" : true,
-	"keepVisitTime" : 180,
-	"isHideTips" : true,
-	"token" : {
+{
+    "index" : 0,
+    "random" : false,
+    "sysProxyMode" : 0,
+    "shareOverLan" : false,
+    "bypassWhiteList" : false,
+    "localPort" : 1080,
+    "localAuthPassword" : "'.Tools::genRandomChar(26).'",
+    "dns_server" : "",
+    "reconnectTimes" : 4,
+    "randomAlgorithm" : 0,
+    "TTL" : 60,
+    "connect_timeout" : 5,
+    "proxyRuleMode" : 1,
+    "proxyEnable" : false,
+    "pacDirectGoProxy" : false,
+    "proxyType" : 0,
+    "proxyHost" : "",
+    "proxyPort" : 0,
+    "proxyAuthUser" : "",
+    "proxyAuthPass" : "",
+    "proxyUserAgent" : "",
+    "authUser" : "",
+    "authPass" : "",
+    "autoBan" : false,
+    "sameHostForSameTarget" : true,
+    "keepVisitTime" : 180,
+    "isHideTips" : true,
+    "token" : {
 
-	},
-	"portMap" : {
+    },
+    "portMap" : {
 
-	}
-	}
+    }
+}
 		';
 
 
@@ -370,15 +370,10 @@ class LinkController extends BaseController
 
         return '
 [General]
-
 skip-proxy = 192.168.0.0/16, 10.0.0.0/8, 172.16.0.0/12, localhost, *.local
-
 bypass-tun = 192.168.0.0/16, 10.0.0.0/8, 172.16.0.0/12
-
 dns-server = 119.29.29.29, 223.5.5.5, 114.114.114.114
 loglevel = notify
-
-
 
 [Proxy]
 DIRECT = direct
@@ -387,77 +382,41 @@ DIRECT = direct
 [Proxy Group]
 Proxy = select,DIRECT'.$proxy_name.'
 
-
 [Rule]
-
 DOMAIN-KEYWORD,adsmogo,REJECT
-
 DOMAIN-SUFFIX,acs86.com,REJECT
-
 DOMAIN-SUFFIX,adcome.cn,REJECT
-
 DOMAIN-SUFFIX,adinfuse.com,REJECT
-
 DOMAIN-SUFFIX,admaster.com.cn,REJECT
-
 DOMAIN-SUFFIX,admob.com,REJECT
-
 DOMAIN-SUFFIX,adsage.cn,REJECT
-
 DOMAIN-SUFFIX,adsage.com,REJECT
-
 DOMAIN-SUFFIX,adsmogo.org,REJECT
-
 DOMAIN-SUFFIX,ads.mobclix.com,REJECT
-
 DOMAIN-SUFFIX,adview.cn,REJECT
-
 DOMAIN-SUFFIX,adwhirl.com,REJECT
-
 DOMAIN-SUFFIX,adwo.com,REJECT
-
 DOMAIN-SUFFIX,appads.com,REJECT
-
 DOMAIN-SUFFIX,domob.cn,REJECT
-
 DOMAIN-SUFFIX,domob.com.cn,REJECT
-
 DOMAIN-SUFFIX,domob.org,REJECT
-
 DOMAIN-SUFFIX,doubleclick.net,REJECT
-
 DOMAIN-SUFFIX,duomeng.cn,REJECT
-
 DOMAIN-SUFFIX,duomeng.net,REJECT
-
 DOMAIN-SUFFIX,duomeng.org,REJECT
-
 DOMAIN-SUFFIX,googeadsserving.cn,REJECT
-
 DOMAIN-SUFFIX,guomob.com,REJECT
-
 DOMAIN-SUFFIX,immob.cn,REJECT
-
 DOMAIN-SUFFIX,inmobi.com,REJECT
-
 DOMAIN-SUFFIX,mobads.baidu.com,REJECT
-
 DOMAIN-SUFFIX,mobads-logs.baidu.com,REJECT
-
 DOMAIN-SUFFIX,smartadserver.com,REJECT
-
 DOMAIN-SUFFIX,tapjoyads.com,REJECT
-
 DOMAIN-SUFFIX,umeng.co,REJECT
-
 DOMAIN-SUFFIX,umeng.com,REJECT
-
 DOMAIN-SUFFIX,umtrack.com,REJECT
-
 DOMAIN-SUFFIX,uyunad.com,REJECT
-
 DOMAIN-SUFFIX,youmi.net,REJECT
-
 GEOIP,AD,Proxy
 GEOIP,AE,Proxy
 GEOIP,AF,Proxy
@@ -709,23 +668,14 @@ GEOIP,ZA,Proxy
 GEOIP,ZM,Proxy
 GEOIP,ZW,Proxy
 IP-CIDR,91.108.4.0/22,Proxy,no-resolve
-
 IP-CIDR,91.108.56.0/22,Proxy,no-resolve
-
 IP-CIDR,109.239.140.0/24,Proxy,no-resolve
-
 IP-CIDR,149.154.160.0/20,Proxy,no-resolve
-
 IP-CIDR,10.0.0.0/8,DIRECT
-
 IP-CIDR,127.0.0.0/8,DIRECT
-
 IP-CIDR,172.16.0.0/12,DIRECT
-
 IP-CIDR,192.168.0.0/16,DIRECT
-
 GEOIP,CN,DIRECT
-
 FINAL,Proxy';
     }
 
@@ -957,92 +907,49 @@ FINAL,DIRECT
     {
         return '
 [General]
-
 skip-proxy = 192.168.0.0/16, 10.0.0.0/8, 172.16.0.0/12, localhost, *.local
-
 bypass-tun = 192.168.0.0/16, 10.0.0.0/8, 172.16.0.0/12
-
 dns-server = 119.29.29.29, 223.5.5.5, 114.114.114.114
 loglevel = notify
 
-
-
 [Proxy]
-
 Proxy = custom,'.$server.','.$port.','.$method.','.$passwd.','.Config::get('baseUrl').'/downloads/SSEncrypt.module
 
-
-
 [Rule]
-
 DOMAIN-KEYWORD,adsmogo,REJECT
-
 DOMAIN-SUFFIX,acs86.com,REJECT
-
 DOMAIN-SUFFIX,adcome.cn,REJECT
-
 DOMAIN-SUFFIX,adinfuse.com,REJECT
-
 DOMAIN-SUFFIX,admaster.com.cn,REJECT
-
 DOMAIN-SUFFIX,admob.com,REJECT
-
 DOMAIN-SUFFIX,adsage.cn,REJECT
-
 DOMAIN-SUFFIX,adsage.com,REJECT
-
 DOMAIN-SUFFIX,adsmogo.org,REJECT
-
 DOMAIN-SUFFIX,ads.mobclix.com,REJECT
-
 DOMAIN-SUFFIX,adview.cn,REJECT
-
 DOMAIN-SUFFIX,adwhirl.com,REJECT
-
 DOMAIN-SUFFIX,adwo.com,REJECT
-
 DOMAIN-SUFFIX,appads.com,REJECT
-
 DOMAIN-SUFFIX,domob.cn,REJECT
-
 DOMAIN-SUFFIX,domob.com.cn,REJECT
-
 DOMAIN-SUFFIX,domob.org,REJECT
-
 DOMAIN-SUFFIX,doubleclick.net,REJECT
-
 DOMAIN-SUFFIX,duomeng.cn,REJECT
-
 DOMAIN-SUFFIX,duomeng.net,REJECT
-
 DOMAIN-SUFFIX,duomeng.org,REJECT
-
 DOMAIN-SUFFIX,googeadsserving.cn,REJECT
-
 DOMAIN-SUFFIX,guomob.com,REJECT
-
 DOMAIN-SUFFIX,immob.cn,REJECT
-
 DOMAIN-SUFFIX,inmobi.com,REJECT
-
 DOMAIN-SUFFIX,mobads.baidu.com,REJECT
-
 DOMAIN-SUFFIX,mobads-logs.baidu.com,REJECT
-
 DOMAIN-SUFFIX,smartadserver.com,REJECT
-
 DOMAIN-SUFFIX,tapjoyads.com,REJECT
-
 DOMAIN-SUFFIX,umeng.co,REJECT
-
 DOMAIN-SUFFIX,umeng.com,REJECT
-
 DOMAIN-SUFFIX,umtrack.com,REJECT
-
 DOMAIN-SUFFIX,uyunad.com,REJECT
-
 DOMAIN-SUFFIX,youmi.net,REJECT
-
 GEOIP,AD,Proxy
 GEOIP,AE,Proxy
 GEOIP,AF,Proxy
@@ -1294,92 +1201,83 @@ GEOIP,ZA,Proxy
 GEOIP,ZM,Proxy
 GEOIP,ZW,Proxy
 IP-CIDR,91.108.4.0/22,Proxy,no-resolve
-
 IP-CIDR,91.108.56.0/22,Proxy,no-resolve
-
 IP-CIDR,109.239.140.0/24,Proxy,no-resolve
-
 IP-CIDR,149.154.160.0/20,Proxy,no-resolve
-
 IP-CIDR,10.0.0.0/8,DIRECT
-
 IP-CIDR,127.0.0.0/8,DIRECT
-
 IP-CIDR,172.16.0.0/12,DIRECT
-
 IP-CIDR,192.168.0.0/16,DIRECT
-
 GEOIP,CN,DIRECT
-
 FINAL,Proxy';
     }
 
     private static function GetApn($apn, $server, $port)
     {
         return '
-		<?xml version="1.0" encoding="UTF-8"?>
-		<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-		<plist version="1.0">
-		<dict>
-			<key>PayloadContent</key>
-			<array>
-				<dict>
-					<key>PayloadContent</key>
-					<array>
-						<dict>
-							<key>DefaultsData</key>
-							<dict>
-								<key>apns</key>
-								<array>
-									<dict>
-										<key>apn</key>
-										<string>'.$apn.'</string>
-										<key>proxy</key>
-										<string>'.$server.'</string>
-										<key>proxyPort</key>
-										<integer>'.$port.'</integer>
-									</dict>
-								</array>
-							</dict>
-							<key>DefaultsDomainName</key>
-							<string>com.apple.managedCarrier</string>
-						</dict>
-					</array>
-					<key>PayloadDescription</key>
-					<string>提供对营运商“接入点名称”的自定义。</string>
-					<key>PayloadDisplayName</key>
-					<string>APN</string>
-					<key>PayloadIdentifier</key>
-					<string>com.tony.APNUNI'.$server.'.</string>
-					<key>PayloadOrganization</key>
-					<string>Tony</string>
-					<key>PayloadType</key>
-					<string>com.apple.apn.managed</string>
-					<key>PayloadUUID</key>
-					<string>7AC1FC00-7670-41CA-9EE1-4A5882DBD'.rand(100, 999).'D</string>
-					<key>PayloadVersion</key>
-					<integer>1</integer>
-				</dict>
-			</array>
-			<key>PayloadDescription</key>
-			<string>APN配置文件</string>
-			<key>PayloadDisplayName</key>
-			<string>APN快速配置 - '.$server.' ('.$apn.')</string>
-			<key>PayloadIdentifier</key>
-			<string>com.tony.APNUNI'.$server.'</string>
-			<key>PayloadOrganization</key>
-			<string>Tony</string>
-			<key>PayloadRemovalDisallowed</key>
-			<false/>
-			<key>PayloadType</key>
-			<string>Configuration</string>
-			<key>PayloadUUID</key>
-			<string>4C355D66-E72E-4DC8-864F-62C416015'.rand(100, 999).'D</string>
-			<key>PayloadVersion</key>
-			<integer>1</integer>
-		</dict>
-		</plist>
-		';
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>PayloadContent</key>
+    <array>
+        <dict>
+            <key>PayloadContent</key>
+            <array>
+                <dict>
+                    <key>DefaultsData</key>
+                    <dict>
+                        <key>apns</key>
+                        <array>
+                            <dict>
+                                <key>apn</key>
+                                <string>'.$apn.'</string>
+                                <key>proxy</key>
+                                <string>'.$server.'</string>
+                                <key>proxyPort</key>
+                                <integer>'.$port.'</integer>
+                            </dict>
+                        </array>
+                    </dict>
+                    <key>DefaultsDomainName</key>
+                    <string>com.apple.managedCarrier</string>
+                </dict>
+            </array>
+            <key>PayloadDescription</key>
+            <string>提供对营运商“接入点名称”的自定义。</string>
+            <key>PayloadDisplayName</key>
+            <string>APN</string>
+            <key>PayloadIdentifier</key>
+            <string>com.tony.APNUNI'.$server.'.</string>
+            <key>PayloadOrganization</key>
+            <string>Tony</string>
+            <key>PayloadType</key>
+            <string>com.apple.apn.managed</string>
+            <key>PayloadUUID</key>
+            <string>7AC1FC00-7670-41CA-9EE1-4A5882DBD'.rand(100, 999).'D</string>
+            <key>PayloadVersion</key>
+            <integer>1</integer>
+        </dict>
+    </array>
+    <key>PayloadDescription</key>
+    <string>APN配置文件</string>
+    <key>PayloadDisplayName</key>
+    <string>APN快速配置 - '.$server.' ('.$apn.')</string>
+    <key>PayloadIdentifier</key>
+    <string>com.tony.APNUNI'.$server.'</string>
+    <key>PayloadOrganization</key>
+    <string>Tony</string>
+    <key>PayloadRemovalDisallowed</key>
+    <false/>
+    <key>PayloadType</key>
+    <string>Configuration</string>
+    <key>PayloadUUID</key>
+    <string>4C355D66-E72E-4DC8-864F-62C416015'.rand(100, 999).'D</string>
+    <key>PayloadVersion</key>
+    <integer>1</integer>
+</dict>
+</plist>
+';
     }
 
 

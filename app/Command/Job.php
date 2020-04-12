@@ -37,9 +37,8 @@ class Job
     {
         $nodes = Node::all();
         foreach ($nodes as $node) {
-            if ($node->sort==0) {
-                $ip=gethostbyname($node->server);
-                $node->node_ip=$ip;
+            if ($node->sort==0 || $node->sort==11 || $node->sort==12) {
+                $node->node_ip=Tools::resolveAll($node->server);
                 $node->save();
             }
         }
@@ -116,10 +115,7 @@ class Job
         foreach ($nodes as $node) {
             if ($node->sort==1) {
                 $ip=gethostbyname($node->server);
-                $node->node_ip=$ip;
-                $node->save();
-
-                Radius::AddNas($node->node_ip, $node->server);
+                Radius::AddNas($ip, $node->server);
             }
         }
     }
@@ -128,7 +124,7 @@ class Job
     {
         $nodes = Node::all();
         foreach ($nodes as $node) {
-            if ($node->sort == 0 || $node->sort == 10 || $node->sort == 11) {
+            if ($node->sort == 0 || $node->sort == 10 || $node->sort == 11 || $node->sort == 12) {
                 if (date("d")==$node->bandwidthlimit_resetday) {
                     $node->node_bandwidth=0;
                     $node->save();
@@ -496,7 +492,7 @@ class Job
                         }
                     }
 
-                    if (Config::get('enable_cloudxns')=='true' && ($node->sort==0 || $node->sort==10 || $node->sort==11)) {
+                    if (Config::get('enable_cloudxns')=='true' && ($node->sort==0 || $node->sort==10 || $node->sort==11 || $node->sort==12)) {
                         $api=new Api();
                         $api->setApiKey(Config::get("cloudxns_apikey"));//修改成自己API KEY
                         $api->setSecretKey(Config::get("cloudxns_apisecret"));//修改成自己的SECERET KEY
@@ -546,7 +542,7 @@ class Job
 
 
             foreach ($nodes as $node) {
-                if (time()-$node->node_heartbeat<60&&file_exists(BASE_PATH."/storage/".$node->id.".offline")&&$node->node_heartbeat!=0&&($node->sort==0||$node->sort==7||$node->sort==8||$node->sort==10||$node->sort==11)) {
+                if (time()-$node->node_heartbeat<60&&file_exists(BASE_PATH."/storage/".$node->id.".offline")&&$node->node_heartbeat!=0&&($node->sort==0||$node->sort==7||$node->sort==8||$node->sort==10||$node->sort==11||$node->sort==12)) {
                     foreach ($adminUser as $user) {
                         echo "Send offline mail to user: ".$user->id;
                         $subject = Config::get('appName')."-系统提示";
@@ -563,7 +559,7 @@ class Job
                     }
 
 
-                    if (Config::get('enable_cloudxns')=='true'&& ($node->sort==0 || $node->sort==10 || $node->sort==11)) {
+                    if (Config::get('enable_cloudxns')=='true'&& ($node->sort==0 || $node->sort==10 || $node->sort==11 || $node->sort==12)) {
                         $api=new Api();
                         $api->setApiKey(Config::get("cloudxns_apikey"));//修改成自己API KEY
                         $api->setSecretKey(Config::get("cloudxns_apisecret"));//修改成自己的SECERET KEY
