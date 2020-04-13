@@ -7,6 +7,7 @@ use App\Models\Node;
 use App\Models\Relay;
 use App\Services\Config;
 use DateTime;
+use GeoIp2\Database\Reader;
 
 class Tools
 {
@@ -449,5 +450,12 @@ class Tools
             $ips=substr($ips, 0, -1);
         }
         return $ips;
+    }
+
+    public static function getGeoLocation($ip)
+    {
+        $reader = new Reader('/tmp/GeoLite2-City.mmdb');
+        $city = $reader->city($ip);
+        return $city->country->names['zh-CN'] . ' ' . $city->city->names['zh-CN'];
     }
 }

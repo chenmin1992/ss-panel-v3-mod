@@ -216,7 +216,7 @@ class Job
 
         #https://github.com/shuax/QQWryUpdate/blob/master/update.php
 
-        $copywrite = file_get_contents("https://github.com/esdeathlove/qqwry-download/raw/master/copywrite.rar");
+        $copywrite = file_get_contents("https://github.com/chenmin1992/qqwry-download/raw/master/copywrite.rar");
 
         $adminUser = User::where("is_admin", "=", "1")->get();
 
@@ -225,7 +225,7 @@ class Job
 
         if ($newmd5 != $oldmd5) {
             file_put_contents(BASE_PATH."/storage/qqwry.md5", $newmd5);
-            $qqwry = file_get_contents("https://github.com/esdeathlove/qqwry-download/raw/master/qqwry.rar");
+            $qqwry = file_get_contents("https://github.com/chenmin1992/qqwry-download/raw/master/qqwry.rar");
             if ($qqwry != "") {
                 $key = unpack("V6", $copywrite)[6];
                 for ($i=0; $i<0x200; $i++) {
@@ -614,8 +614,8 @@ class Job
                             $i++;
                         } else {
                             $location=$iplocation->getlocation($userlog->ip);
-                            $nodes=Node::where("node_ip", "LIKE", $ip.'%')->first();
-                            $nodes2=Node::where("node_ip", "LIKE", $userlog->ip.'%')->first();
+                            $nodes=Node::where("node_ip", "LIKE", '%'.$ip.'%')->first();
+                            $nodes2=Node::where("node_ip", "LIKE", '%'.$userlog->ip.'%')->first();
                             if ($Userlocation!=$location['country']&&$nodes==null&&$nodes2==null) {
                                 $user=User::where("id", "=", $userlog->userid)->first();
                                 echo "Send warn mail to user: ".$user->id."-".iconv('gbk', 'utf-8//IGNORE', $Userlocation)."-".iconv('gbk', 'utf-8//IGNORE', $location['country']);
@@ -792,6 +792,31 @@ class Job
             if ($user->enable==1&&(strtotime($user->expire_in)>time()||strtotime($user->expire_in)<644447105)&&$user->transfer_enable>$user->u+$user->d) {
                 $sinuser->delete();
                 Radius::Add($user, $user->passwd);
+            }
+        }
+    }
+
+    public static function hideV2ray() {
+        $white_networks = array('h2', 'ws', 'domainsocket');
+        $nodes = Node::all();
+        foreach ($nodes as $node) {
+            if ($node->sort == 11) {
+                $ins = json_decode($node->v2conf);
+                $need = false;
+                foreach ($ins as $in) {
+                    if (!in_array($in->network, $white_networks)) {
+                        if ($in->listen == '::') {
+                            $in->listen = '::1';
+                        } else {
+                            $in->listen = '127.0.0.1';
+                        }
+                        $need = true;
+                    }
+                }
+                if ($need) {
+                    $node->v2conf = json_encode($ins);
+                    $node->save();
+                }
             }
         }
     }

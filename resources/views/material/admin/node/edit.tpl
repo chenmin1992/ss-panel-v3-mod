@@ -765,19 +765,19 @@
 			});
 
 			var trojan_conf = {
-					"local_addr": $('#trojan').find("#local_addr").val(),
-					"local_port": parseInt($('#trojan').find("#local_port").val()),
-					"cert": parseInt($('#trojan').find("#cert").val()),
-					"prefer_server_cipher": $('#trojan').find("#prefer_server_cipher").is(":checked"),
-					"reuse_session": $('#trojan').find("#reuse_session").is(":checked"),
-					"session_ticket": $('#trojan').find("#session_ticket").is(":checked"),
-					"session_timeout": parseInt($('#trojan').find("#session_timeout").val()),
-					"prefer_ipv4": $('#trojan').find("#prefer_ipv4").is(":checked"),
-					"no_delay": $('#trojan').find("#no_delay").is(":checked"),
-					"keep_alive": $('#trojan').find("#keep_alive").is(":checked"),
-					"reuse_port": $('#trojan').find("#reuse_port").is(":checked"),
-					"fast_open": $('#trojan').find("#fast_open").is(":checked"),
-					"fast_open_qlen": parseInt($('#trojan').find("#fast_open_qlen").val())
+					"local_addr": $("#trojan #local_addr").val(),
+					"local_port": parseInt($("#trojan #local_port").val()),
+					"cert": parseInt($("#trojan #cert").val()),
+					"prefer_server_cipher": $("#trojan #prefer_server_cipher").is(":checked"),
+					"reuse_session": $("#trojan #reuse_session").is(":checked"),
+					"session_ticket": $("#trojan #session_ticket").is(":checked"),
+					"session_timeout": parseInt($("#trojan #session_timeout").val()),
+					"prefer_ipv4": $("#trojan #prefer_ipv4").is(":checked"),
+					"no_delay": $("#trojan #no_delay").is(":checked"),
+					"keep_alive": $("#trojan #keep_alive").is(":checked"),
+					"reuse_port": $("#trojan #reuse_port").is(":checked"),
+					"fast_open": $("#trojan #fast_open").is(":checked"),
+					"fast_open_qlen": parseInt($("#trojan #fast_open_qlen").val())
 				};
 {/literal}
 			$.ajax({

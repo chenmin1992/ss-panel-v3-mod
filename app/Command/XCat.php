@@ -74,6 +74,8 @@ class XCat
                 return Job::updatedownload();
             case("cleanRelayRule"):
                 return $this->cleanRelayRule();
+            case("hideV2ray"):
+                return Job::hideV2ray();
             default:
                 return $this->defaultAction();
         }
