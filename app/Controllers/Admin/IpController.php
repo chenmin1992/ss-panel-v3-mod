@@ -14,6 +14,7 @@ use App\Services\Auth;
 
 use Ozdemir\Datatables\Datatables;
 use App\Utils\DatatablesHelper;
+use GeoIp2\Database\Reader;
 
 class IpController extends AdminController
 {
@@ -161,13 +162,13 @@ class IpController extends AdminController
     {
         $datatables = new Datatables(new DatatablesHelper());
         $datatables->query('Select alive_ip.id,alive_ip.userid,user.user_name,alive_ip.nodeid,ss_node.name as node_name,alive_ip.ip,alive_ip.ip as location,alive_ip.datetime,alive_ip.id as is_node from alive_ip,user,ss_node WHERE alive_ip.userid = user.id and alive_ip.nodeid = ss_node.id and `datetime` > UNIX_TIMESTAMP() - 60');
-        // $datatables->query('Select alive_ip.id,alive_ip.userid,user.user_name,alive_ip.nodeid,ss_node.name as node_name,alive_ip.ip,alive_ip.ip as location,alive_ip.datetime,alive_ip.id as is_node from alive_ip,user,ss_node WHERE alive_ip.userid = user.id and alive_ip.nodeid = ss_node.id');
 
         $datatables->edit('datetime', function ($data) {
             return date('Y-m-d H:i:s', $data['datetime']);
         });
 
         $iplocation = new QQWry();
+        $reader = new Reader('/tmp/GeoLite2-City.mmdb');
 
         $datatables->edit('ip', function ($data){
             return Tools::getRealIp($data['ip']);
@@ -184,9 +185,14 @@ class IpController extends AdminController
 
         $datatables->edit('location', function ($data) use ($iplocation) {
             $location=$iplocation->getlocation(Tools::getRealIp($data['location']));
-            return iconv('gbk', 'utf-8//IGNORE', $location['country'].$location['area']);
-            // return Tools::getGeoLocation(Tools::getRealIp($data['location']));
+            $geo=iconv('gbk', 'utf-8//IGNORE', $location['country'].$location['area']);
+            if ( $geo == 'IANA保留地址') {
+                $record = $reader->city(Tools::getRealIp($data['location']));
+                $geo=$record->country->names['zh-CN'].$record->city->names['zh-CN'];
+            }
+            return $geo;
         });
+        $reader->close();
 
         $body = $response->getBody();
         $body->write($datatables->generate());

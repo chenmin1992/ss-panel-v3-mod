@@ -23,6 +23,7 @@ use App\Models\DetectLog;
 use App\Models\DetectRule;
 
 use voku\helper\AntiXSS;
+use GeoIp2\Database\Reader;
 
 use App\Models\User;
 use App\Models\Code;
@@ -648,6 +649,7 @@ class UserController extends BaseController
         $paybacks->setPath('/user/profile');
 
         $iplocation = new QQWry();
+        $reader = new Reader('/tmp/GeoLite2-City.mmdb');
 
         $userip=array();
 
@@ -684,11 +686,15 @@ class UserController extends BaseController
                     //$useripcount[$single->userid]=$useripcount[$single->userid]+1;
                     $location=$iplocation->getlocation($single->ip);
                     $userip[$single->ip]=iconv('gbk', 'utf-8//IGNORE', $location['country'].$location['area']);
+                    if ( $userip[$single->ip] == 'IANA保留地址') {
+                        $record = $reader->city($single->ip);
+                        $userip[$single->ip]=$record->country->names['zh-CN'].$record->city->names['zh-CN'];
+                    }
                 }
             }
         }
 
-
+        $reader->close();
 
         return $this->view()->assign("userip",$userip)->assign("userloginip", $userloginip)->assign("paybacks", $paybacks)->display('user/profile.tpl');
     }
