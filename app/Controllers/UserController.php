@@ -649,7 +649,7 @@ class UserController extends BaseController
         $paybacks->setPath('/user/profile');
 
         $iplocation = new QQWry();
-        $reader = new Reader('/tmp/GeoLite2-City.mmdb');
+        $reader = new Reader(BASE_PATH."/storage/GeoLite2-City.mmdb");
 
         $userip=array();
 
@@ -665,7 +665,12 @@ class UserController extends BaseController
                 if (!isset($userloginip[$single->ip])) {
                     //$useripcount[$single->userid]=$useripcount[$single->userid]+1;
                     $location=$iplocation->getlocation($single->ip);
-                    $userloginip[$single->ip]=iconv('gbk', 'utf-8//IGNORE', $location['country'].$location['area']);
+                    if ( $location['country'] == 'IANA') {
+                        $record = $reader->city($single->ip);
+                        $userloginip[$single->ip]=$record->country->names['zh-CN'].$record->city->names['zh-CN'];
+                    } else {
+                        $userloginip[$single->ip]=iconv('gbk', 'utf-8//IGNORE', $location['country'].$location['area']);
+                    }
                 }
             }
         }
@@ -685,10 +690,11 @@ class UserController extends BaseController
                 {
                     //$useripcount[$single->userid]=$useripcount[$single->userid]+1;
                     $location=$iplocation->getlocation($single->ip);
-                    $userip[$single->ip]=iconv('gbk', 'utf-8//IGNORE', $location['country'].$location['area']);
-                    if ( $userip[$single->ip] == 'IANA保留地址') {
+                    if ( $location['country'] == 'IANA') {
                         $record = $reader->city($single->ip);
                         $userip[$single->ip]=$record->country->names['zh-CN'].$record->city->names['zh-CN'];
+                    } else {
+                        $userip[$single->ip]=iconv('gbk', 'utf-8//IGNORE', $location['country'].$location['area']);
                     }
                 }
             }

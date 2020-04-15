@@ -15,6 +15,7 @@ use App\Services\Config;
 
 use App\Utils\GA;
 use App\Utils\QRcode;
+use App\Utils\QQWry;
 
 class XCat
 {
@@ -83,7 +84,8 @@ class XCat
 
     public function defaultAction()
     {
-        echo "Memo";
+        $iplocation = new QQWry();
+        print_r($iplocation->getlocation('112.42.162.52'));
     }
 
     public function cleanRelayRule()
@@ -205,25 +207,9 @@ class XCat
     public function initQQWry()
     {
         echo("downloading....");
-        $copywrite = file_get_contents("https://github.com/chenmin1992/qqwry-download/raw/master/copywrite.rar");
-        $newmd5 = md5($copywrite);
-        file_put_contents(BASE_PATH."/storage/qqwry.md5", $newmd5);
-        $qqwry = file_get_contents("https://github.com/chenmin1992/qqwry-download/raw/master/qqwry.rar");
-        if ($qqwry != "") {
-            $key = unpack("V6", $copywrite)[6];
-            for ($i=0; $i<0x200; $i++) {
-                $key *= 0x805;
-                $key ++;
-                $key = $key & 0xFF;
-                $qqwry[$i] = chr(ord($qqwry[$i]) ^ $key);
-            }
-            $qqwry = gzuncompress($qqwry);
-            $fp = fopen(BASE_PATH."/storage/qqwry.dat", "wb");
-            if ($fp) {
-                fwrite($fp, $qqwry);
-                fclose($fp);
-            }
-            echo("finish....");
-        }
+        file_put_contents(BASE_PATH."/storage/qqwry.dat", file_get_contents("https://github.com/chenmin1992/qqwry-download/raw/cm/qqwry.dat"));
+        file_put_contents(BASE_PATH."/storage/qqwry.dat.md5", file_get_contents("https://github.com/chenmin1992/qqwry-download/raw/cm/qqwry.dat.md5"));
+        file_put_contents(BASE_PATH."/storage/GeoLite2-City.mmdb", file_get_contents("https://github.com/chenmin1992/qqwry-download/raw/cm/GeoLite2-City.mmdb"));
+        file_put_contents(BASE_PATH."/storage/GeoLite2-City.mmdb.md5", file_get_contents("https://github.com/chenmin1992/qqwry-download/raw/cm/GeoLite2-City.mmdb.md5"));
     }
 }

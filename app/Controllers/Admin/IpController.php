@@ -168,7 +168,7 @@ class IpController extends AdminController
         });
 
         $iplocation = new QQWry();
-        $reader = new Reader('/tmp/GeoLite2-City.mmdb');
+        $reader = new Reader(BASE_PATH."/storage/GeoLite2-City.mmdb");
 
         $datatables->edit('ip', function ($data){
             return Tools::getRealIp($data['ip']);
@@ -185,12 +185,11 @@ class IpController extends AdminController
 
         $datatables->edit('location', function ($data) use ($iplocation) {
             $location=$iplocation->getlocation(Tools::getRealIp($data['location']));
-            $geo=iconv('gbk', 'utf-8//IGNORE', $location['country'].$location['area']);
-            if ( $geo == 'IANA保留地址') {
+            if ( $location['country'] == 'IANA') {
                 $record = $reader->city(Tools::getRealIp($data['location']));
-                $geo=$record->country->names['zh-CN'].$record->city->names['zh-CN'];
+                return $record->country->names['zh-CN'].$record->city->names['zh-CN'];
             }
-            return $geo;
+            return iconv('gbk', 'utf-8//IGNORE', $location['country'].$location['area']);
         });
         $reader->close();
 

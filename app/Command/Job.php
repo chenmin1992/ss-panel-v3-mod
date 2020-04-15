@@ -214,51 +214,52 @@ class Job
 
 
 
-        #https://github.com/shuax/QQWryUpdate/blob/master/update.php
-
-        $copywrite = file_get_contents("https://github.com/chenmin1992/qqwry-download/raw/master/copywrite.rar");
-
-        $adminUser = User::where("is_admin", "=", "1")->get();
-
-        $newmd5 = md5($copywrite);
-        $oldmd5 = file_get_contents(BASE_PATH."/storage/qqwry.md5");
-
-        if ($newmd5 != $oldmd5) {
-            file_put_contents(BASE_PATH."/storage/qqwry.md5", $newmd5);
-            $qqwry = file_get_contents("https://github.com/chenmin1992/qqwry-download/raw/master/qqwry.rar");
-            if ($qqwry != "") {
-                $key = unpack("V6", $copywrite)[6];
-                for ($i=0; $i<0x200; $i++) {
-                    $key *= 0x805;
-                    $key ++;
-                    $key = $key & 0xFF;
-                    $qqwry[$i] = chr(ord($qqwry[$i]) ^ $key);
-                }
-                $qqwry = gzuncompress($qqwry);
-                rename(BASE_PATH."/storage/qqwry.dat", BASE_PATH."/storage/qqwry.dat.bak");
-                $fp = fopen(BASE_PATH."/storage/qqwry.dat", "wb");
-                if ($fp) {
-                    fwrite($fp, $qqwry);
-                    fclose($fp);
-                }
-            }
-        }
-
-        $iplocation = new QQWry();
-        $location=$iplocation->getlocation("8.8.8.8");
-        $Userlocation = $location['country'];
-        if (iconv('gbk', 'utf-8//IGNORE', $Userlocation)!="美国") {
-            unlink(BASE_PATH."/storage/qqwry.dat");
-            rename(BASE_PATH."/storage/qqwry.dat.bak", BASE_PATH."/storage/qqwry.dat");
-        }
-
-
-
         if (Config::get('enable_auto_backup') == 'true') {
             Job::backup();
         }
 
+        Job::updateQQWry();
+
         Job::updatedownload();
+    }
+
+    public static function updateQQWry()
+    {
+        #https://github.com/shuax/QQWryUpdate/blob/master/update.php
+
+        $newmd5 = file_get_contents("https://github.com/chenmin1992/qqwry-download/raw/cm/qqwry.dat.md5");
+        $oldmd5 = file_get_contents(BASE_PATH."/storage/qqwry.dat.md5");
+
+        if ($newmd5 != $oldmd5) {
+            rename(BASE_PATH."/storage/qqwry.dat", BASE_PATH."/storage/qqwry.dat.bak");
+            file_put_contents(BASE_PATH."/storage/qqwry.dat", file_get_contents("https://github.com/chenmin1992/qqwry-download/raw/cm/qqwry.dat"));
+        }
+
+        $iplocation = new QQWry();
+        $location=$iplocation->getlocation("8.8.8.8");
+        if (iconv('gbk', 'utf-8//IGNORE', $location['country'])!="美国") {
+            unlink(BASE_PATH."/storage/qqwry.dat");
+            rename(BASE_PATH."/storage/qqwry.dat.bak", BASE_PATH."/storage/qqwry.dat");
+        } else {
+            file_put_contents(BASE_PATH."/storage/qqwry.dat.md5", $newmd5);
+        }
+
+        $newmd5 = file_get_contents("https://github.com/chenmin1992/qqwry-download/raw/cm/GeoLite2-City.mmdb.md5");
+        $oldmd5 = file_get_contents(BASE_PATH."/storage/GeoLite2-City.mmdb.md5");
+
+        if ($newmd5 != $oldmd5) {
+            rename(BASE_PATH."/storage/GeoLite2-City.mmdb", BASE_PATH."/storage/GeoLite2-City.mmdb.bak");
+            file_put_contents(BASE_PATH."/storage/GeoLite2-City.mmdb", file_get_contents("https://github.com/chenmin1992/qqwry-download/raw/cm/GeoLite2-City.mmdb"));
+        }
+
+        $reader = new Reader(BASE_PATH."/storage/GeoLite2-City.mmdb");
+        $record = $reader->city("8.8.8.8");
+        if ($record->country->names['zh-CN']!="美国") {
+            unlink(BASE_PATH."/storage/GeoLite2-City.mmdb");
+            rename(BASE_PATH."/storage/GeoLite2-City.mmdb.bak", BASE_PATH."/storage/GeoLite2-City.mmdb");
+        } else {
+            file_put_contents(BASE_PATH."/storage/GeoLite2-City.mmdb.md5", $newmd5);
+        }
     }
 
     public static function updatedownload()

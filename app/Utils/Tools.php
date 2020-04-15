@@ -454,8 +454,8 @@ class Tools
 
     public static function getGeoLocation($ip)
     {
-        $reader = new Reader('/tmp/GeoLite2-City.mmdb');
-        $city = $reader->city($ip);
-        return $city->country->names['zh-CN'] . ' ' . $city->city->names['zh-CN'];
+        $reader = new Reader(BASE_PATH."/storage/GeoLite2-City.mmdb");
+        $record = $reader->city($ip);
+        return $record->country->names['zh-CN'] . ' ' . $record->city->names['zh-CN'];
     }
 }
