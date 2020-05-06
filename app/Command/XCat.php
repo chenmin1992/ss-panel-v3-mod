@@ -84,8 +84,7 @@ class XCat
 
     public function defaultAction()
     {
-        $iplocation = new QQWry();
-        print_r($iplocation->getlocation('112.42.162.52'));
+        print_r(Tools::getGeoLocation('49.88.112.118'));
     }
 
     public function cleanRelayRule()

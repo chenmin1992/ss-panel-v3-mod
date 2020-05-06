@@ -30,6 +30,7 @@ use App\Utils\Telegram;
 use CloudXNS\Api;
 use App\Models\Disconnect;
 use App\Models\UnblockIp;
+use GeoIp2\Database\Reader;
 
 class Job
 {
@@ -218,9 +219,9 @@ class Job
             Job::backup();
         }
 
-        Job::updateQQWry();
-
         Job::updatedownload();
+
+        Job::updateQQWry();
     }
 
     public static function updateQQWry()
@@ -233,15 +234,16 @@ class Job
         if ($newmd5 != $oldmd5) {
             rename(BASE_PATH."/storage/qqwry.dat", BASE_PATH."/storage/qqwry.dat.bak");
             file_put_contents(BASE_PATH."/storage/qqwry.dat", file_get_contents("https://github.com/chenmin1992/qqwry-download/raw/cm/qqwry.dat"));
-        }
 
-        $iplocation = new QQWry();
-        $location=$iplocation->getlocation("8.8.8.8");
-        if (iconv('gbk', 'utf-8//IGNORE', $location['country'])!="美国") {
-            unlink(BASE_PATH."/storage/qqwry.dat");
-            rename(BASE_PATH."/storage/qqwry.dat.bak", BASE_PATH."/storage/qqwry.dat");
-        } else {
-            file_put_contents(BASE_PATH."/storage/qqwry.dat.md5", $newmd5);
+            $iplocation = new QQWry();
+            $location=$iplocation->getlocation("8.8.8.8");
+            if (iconv('gbk', 'utf-8//IGNORE', $location['country'])!="美国") {
+                unlink(BASE_PATH."/storage/qqwry.dat");
+                rename(BASE_PATH."/storage/qqwry.dat.bak", BASE_PATH."/storage/qqwry.dat");
+                echo "Can not update qqwry.dat";
+            } else {
+                file_put_contents(BASE_PATH."/storage/qqwry.dat.md5", $newmd5);
+            }
         }
 
         $newmd5 = file_get_contents("https://github.com/chenmin1992/qqwry-download/raw/cm/GeoLite2-City.mmdb.md5");
@@ -250,15 +252,16 @@ class Job
         if ($newmd5 != $oldmd5) {
             rename(BASE_PATH."/storage/GeoLite2-City.mmdb", BASE_PATH."/storage/GeoLite2-City.mmdb.bak");
             file_put_contents(BASE_PATH."/storage/GeoLite2-City.mmdb", file_get_contents("https://github.com/chenmin1992/qqwry-download/raw/cm/GeoLite2-City.mmdb"));
-        }
 
-        $reader = new Reader(BASE_PATH."/storage/GeoLite2-City.mmdb");
-        $record = $reader->city("8.8.8.8");
-        if ($record->country->names['zh-CN']!="美国") {
-            unlink(BASE_PATH."/storage/GeoLite2-City.mmdb");
-            rename(BASE_PATH."/storage/GeoLite2-City.mmdb.bak", BASE_PATH."/storage/GeoLite2-City.mmdb");
-        } else {
-            file_put_contents(BASE_PATH."/storage/GeoLite2-City.mmdb.md5", $newmd5);
+            $reader = new Reader(BASE_PATH."/storage/GeoLite2-City.mmdb");
+            $record = $reader->city("8.8.8.8");
+            if ($record->country->names['zh-CN']!="美国") {
+                unlink(BASE_PATH."/storage/GeoLite2-City.mmdb");
+                rename(BASE_PATH."/storage/GeoLite2-City.mmdb.bak", BASE_PATH."/storage/GeoLite2-City.mmdb");
+                echo "Can not update GeoLite2-City.mmdb";
+            } else {
+                file_put_contents(BASE_PATH."/storage/GeoLite2-City.mmdb.md5", $newmd5);
+            }
         }
     }
 
@@ -601,6 +604,7 @@ class Job
         //登录地检测
         if (Config::get("login_warn")=="true") {
             $iplocation = new QQWry();
+            $reader = new Reader(BASE_PATH."/storage/GeoLite2-City.mmdb");
             $Logs = LoginIp::where("datetime", ">", time()-60)->get();
             foreach ($Logs as $log) {
                 $UserLogs=LoginIp::where("userid", "=", $log->userid)->orderBy("id", "desc")->take(2)->get();
@@ -611,18 +615,29 @@ class Job
                         if ($i == 0) {
                             $location=$iplocation->getlocation($userlog->ip);
                             $ip=$userlog->ip;
-                            $Userlocation = $location['country'];
+                            if ($location['country'] == 'IANA') {
+                                $record = $reader->city($ip);
+                                $Userlocation = $record->city->names['zh-CN'];
+                            } else {
+                                $Userlocation = iconv('gbk', 'utf-8//IGNORE', $location['country']);
+                            }
                             $i++;
                         } else {
                             $location=$iplocation->getlocation($userlog->ip);
+                            if ($location['country'] == 'IANA') {
+                                $record = $reader->city($ip);
+                                $Lastlocation = $record->city->names['zh-CN'];
+                            } else {
+                                $Lastlocation = iconv('gbk', 'utf-8//IGNORE', $location['country']);
+                            }
                             $nodes=Node::where("node_ip", "LIKE", '%'.$ip.'%')->first();
                             $nodes2=Node::where("node_ip", "LIKE", '%'.$userlog->ip.'%')->first();
-                            if ($Userlocation!=$location['country']&&$nodes==null&&$nodes2==null) {
+                            if (str_replace('市', '', $Userlocation)!=str_replace('市', '', $Lastlocation)&&$nodes==null&&$nodes2==null) {
                                 $user=User::where("id", "=", $userlog->userid)->first();
-                                echo "Send warn mail to user: ".$user->id."-".iconv('gbk', 'utf-8//IGNORE', $Userlocation)."-".iconv('gbk', 'utf-8//IGNORE', $location['country']);
+                                echo "Send warn mail to user: ".$user->id."-".$Userlocation."-".$Lastlocation;
                                 $subject = Config::get('appName')."-系统警告";
                                 $to = $user->email;
-                                $text = "您好，系统发现您的账号在 ".iconv('gbk', 'utf-8//IGNORE', $Userlocation)."(".$ip.") 有异常登录，请您自己自行核实登录行为。有异常请及时修改密码。" ;
+                                $text = "您好，系统发现您的账号在 ".$Userlocation."(".$ip.") 有异常登录，请您自己自行核实登录行为。有异常请及时修改密码。" ;
                                 try {
                                     Mail::send($to, $subject, 'news/warn.tpl', [
                                         "user" => $user,"text" => $text
@@ -636,6 +651,7 @@ class Job
                     }
                 }
             }
+            $reader->close();
         }
 
 

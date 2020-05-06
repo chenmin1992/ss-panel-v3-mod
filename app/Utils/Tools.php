@@ -7,7 +7,7 @@ use App\Models\Node;
 use App\Models\Relay;
 use App\Services\Config;
 use DateTime;
-use GeoIp2\Database\Reader;
+use IP2Location\Database;
 
 class Tools
 {
@@ -454,8 +454,8 @@ class Tools
 
     public static function getGeoLocation($ip)
     {
-        $reader = new Reader(BASE_PATH."/storage/GeoLite2-City.mmdb");
-        $record = $reader->city($ip);
-        return $record->country->names['zh-CN'] . ' ' . $record->city->names['zh-CN'];
+        $db = new \IP2Location\Database(BASE_PATH.'/storage/IP2LOCATION-LITE-DB11.IPV6.BIN', \IP2Location\Database::FILE_IO);
+        $record = $db->lookup($ip, \IP2Location\Database::ALL);
+        return $record;
     }
 }
