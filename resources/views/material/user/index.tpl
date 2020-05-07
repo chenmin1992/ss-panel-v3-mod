@@ -39,7 +39,8 @@
 									<div class="card-inner margin-bottom-no">
 										<p class="card-heading">连接信息 以及 All-in-One(快速配置指导)</p>
 										<p>您可以在这里查看您的连接信息。<br>同时，这里为您提供了自动化地配置文件生成，包含了所有 Shadowsocks 服务器的信息，方便您在诸多的服务器中快速添加，快速切换。</p>
-										<p> Clash 配置地址：<code>{$baseUrl}/link/{$clash_sub_token}</code></p>
+										<p>所有订阅链接支持点击后复制到剪贴板</p>
+										<p>Clash 配置地址：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$clash_sub_token}"><code>{$baseUrl}/link/{$clash_sub_token}</code></a></p>
 										<nav class="tab-nav margin-top-no">
 											<ul class="nav nav-list">
 												<li {if $ssr_prefer}class="active"{/if}>
@@ -120,8 +121,8 @@
 															然后选择一个合适的服务器，系统代理模式选”全局模式”，代理规则选“绕过局域网和大陆”，然后即可上网。</p>
 
 														<p>SSR 订阅地址：<br>
-															普通端口地址：<code>{$baseUrl}/link/{$ssr_sub_token}?mu=0</code><br>
-															单端口多用户端口地址：<code>{$baseUrl}/link/{$ssr_sub_token}?mu=1</code>
+															普通端口地址：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$ssr_sub_token}?mu=0"><code>{$baseUrl}/link/{$ssr_sub_token}?mu=0</code></a><br>
+															单端口多用户端口地址：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$ssr_sub_token}?mu=1"><code>{$baseUrl}/link/{$ssr_sub_token}?mu=1</code></a>
 														</p>
 													</div>
 													<div class="tab-pane fade" id="all_ssr_mac">
@@ -130,15 +131,15 @@
 													<div class="tab-pane fade" id="all_ssr_ios">
 														<p>推荐下载<a href="https://itunes.apple.com/cn/app/shadowrocket/id932747118?mt=8">Shadowrocket</a>，然后在 Safari 中点击<a href="{$ssr_url_all}">这个（普通端口）</a>或者<a href="{$ssr_url_all_mu}">这个（单端口多用户）</a>，然后点击确定，就可以批量添加节点。</p>
 														<p>SSR 订阅地址：<br>
-															普通端口地址：<code>{$baseUrl}/link/{$ssr_sub_token}?mu=0</code><br>
-															单端口多用户端口地址：<code>{$baseUrl}/link/{$ssr_sub_token}?mu=1</code>
+															普通端口地址：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$ssr_sub_token}?mu=0"><code>{$baseUrl}/link/{$ssr_sub_token}?mu=0</code></a><br>
+															单端口多用户端口地址：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$ssr_sub_token}?mu=1"><code>{$baseUrl}/link/{$ssr_sub_token}?mu=1</code></a>
 														</p>
 													</div>
 													<div class="tab-pane fade" id="all_ssr_android">
 														<p><a href="/ssr-download/ssr-android.apk">下载</a>，安装，然后在手机上默认浏览器中点击<a href="{$ssr_url_all}">这个链接（普通端口）</a>或者<a href="{$ssr_url_all_mu}">这个链接（单端口多用户）</a>，然后点击确定，批量添加完节点，然后路由选择绕过大陆，右上角开启就可以上网了。同时提供一个 ACL 地址，<a href="/link/{$acl_token}">长按复制地址</a>到客户端里应用即可。</p>
 														<p>SSR 订阅地址，您可以在节点列表处添加订阅来自动更新节点：<br>
-															普通端口地址：<code>{$baseUrl}/link/{$ssr_sub_token}?mu=0</code><br>
-															单端口多用户端口地址：<code>{$baseUrl}/link/{$ssr_sub_token}?mu=1</code>
+															普通端口地址：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$ssr_sub_token}?mu=0"><code>{$baseUrl}/link/{$ssr_sub_token}?mu=0</code></a><br>
+															单端口多用户端口地址：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$ssr_sub_token}?mu=1"><code>{$baseUrl}/link/{$ssr_sub_token}?mu=1</code></a>
 														</p>
 													</div>
 													<div class="tab-pane fade" id="all_ssr_router">
@@ -264,29 +265,29 @@
                                                             <br>
                                                             然后参数设置 路由设置 预定义规则 选 ”绕过局域网及大陆地址”，点一下一键设置默认自定义路由规则，确定，右键v2rayN图标，HTTP代理选”全局代理“，然后即可上网。</p>
                                                         <br>
-                                                        <p>V2Ray 订阅地址：<code>{$baseUrl}/link/{$ssr_sub_token}?v=2</code></p>
+                                                        <p>V2Ray 订阅地址：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$ssr_sub_token}?v=2"><code>{$baseUrl}/link/{$ssr_sub_token}?v=2</code></a></p>
                                                     </div>
                                                     <div class="tab-pane fade" id="all_v2ray_mac">
                                                         <p><a href="/ssr-download/v2ray-mac.dmg">下载</a>，安装，运行程序，然后点击<a class="copy-text" data-clipboard-text="{$v2ray_url_all_v2}">这个</a>，V2rayU图标上点击 从粘贴板导入<br>然后选择一个合适的服务器，选择Pac模式，更新一下PAC，然后Turn v2ray-core On即可上网。</p>
                                                         <br>
-                                                        <p>V2Ray 订阅地址：<code>{$baseUrl}/link/{$ssr_sub_token}?v=2</code></p>
+                                                        <p>V2Ray 订阅地址：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$ssr_sub_token}?v=2"><code>{$baseUrl}/link/{$ssr_sub_token}?v=2</code></a></p>
                                                     </div>
                                                     <div class="tab-pane fade" id="all_v2ray_ios">
                                                         <p>推荐下载<a href="https://itunes.apple.com/us/app/shadowrocket/id932747118">Shadowrocket</a>，需要非大陆Apple ID，然后在 Safari 中点击<a href="{$v2ray_url_all_v1}">这个</a>，然后点击确定，就可以批量添加节点。</p>
                                                         <br>
-                                                        <p>V2Ray 订阅地址：<code>{$baseUrl}/link/{$ssr_sub_token}?v=1</code></p>
+                                                        <p>V2Ray 订阅地址：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$ssr_sub_token}?v=1"><code>{$baseUrl}/link/{$ssr_sub_token}?v=1</code></a></p>
                                                     </div>
                                                     <div class="tab-pane fade" id="all_v2ray_android">
                                                         <p><a href="/ssr-download/v2ray-android.apk">下载</a>，安装，然后点击<a class="copy-text" data-clipboard-text="{$v2ray_url_all_v2}">这个</a>，右上角点击加号,选择从剪贴板导入，然后设置里的路由模式选择“绕过局域网及大陆地址”，返回，选择一个合适的服务器，右下角开启就可以上网了。
                                                         </p><br>
-                                                        <p>V2Ray 订阅地址：<code>{$baseUrl}/link/{$ssr_sub_token}?v=2</code></p>
+                                                        <p>V2Ray 订阅地址：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$ssr_sub_token}?v=2"><code>{$baseUrl}/link/{$ssr_sub_token}?v=2</code></a></p>
                                                     </div>
                                                     <div class="tab-pane fade" id="all_v2ray_router">
                                                         <p>路由器 刷入<a target="_blank" href="http://opt.cn2qq.com/padavan/">这个固件</a>，连接互联网，依次进入 搭建Web环境 -- v2ray -- 在“服务器订阅节点”填入下面订阅地址 -- 然后点击更新。<br>
                                                            等待路由器更新订阅。<br>
                                                            然后选一个节点，点击右边的 应用，再把最上边的 “v2ray proxy 开关”打开，最后点击最下边的“应用本页面设置”，看日志里面是否启动正常，正常就可以设置设备的代理到路由器使用了。<br>
                                                         </p><br>
-                                                        <p>V2Ray 订阅地址：<code>{$baseUrl}/link/{$ssr_sub_token}?v=2</code></p>
+                                                        <p>V2Ray 订阅地址：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$ssr_sub_token}?v=2"><code>{$baseUrl}/link/{$ssr_sub_token}?v=2</code></a></p>
                                                     </div>
 
                                                 </div>
@@ -319,7 +320,7 @@
                                                         <dl class="dl-horizontal">
 															<p><dt>密码</dt>
 															<dd>{$user->passwd}</dd></p>
-	                                                        <p> 订阅地址：<code>{$baseUrl}/link/{$ssr_sub_token}?v=2</code></p>
+	                                                        <p>Trojan 订阅地址：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$ssr_sub_token}?v=2"><code>{$baseUrl}/link/{$ssr_sub_token}?v=2</code></a></p>
 	                                                        <p> 注：Trojan的客户端现在都不是很稳定，建议使用 Clash </p>
                                                         </dl>
                                                     </div>
@@ -341,12 +342,6 @@
                                                         <p><a href="/ssr-download/trojan-android.apk">下载</a>，安装，然后点击<a class="copy-text" data-clipboard-text="{$trojan_url_all}">这个</a>，右上角点击加号,选择从剪贴板导入，然后设置里的路由模式选择“绕过局域网及大陆地址”，返回，选择一个合适的服务器，右下角开启就可以上网了。
                                                         </p>
                                                     </div>
-                                                    <!-- <div class="tab-pane fade" id="all_trojan_router">
-                                                        <p>路由器 刷入<a target="_blank" href="http://opt.cn2qq.com/padavan/">这个固件</a>，连接互联网，依次进入 搭建Web环境 -- trojan -- 在“服务器订阅节点”填入下面订阅地址 -- 然后点击更新。<br>
-                                                           等待路由器更新订阅。<br>
-                                                           然后选一个节点，点击右边的 应用，再把最上边的 “trojan proxy 开关”打开，最后点击最下边的“应用本页面设置”，看日志里面是否启动正常，正常就可以设置设备的代理到路由器使用了。<br>
-                                                        </p>
-                                                    </div> -->
 
                                                 </div>
 											</div>

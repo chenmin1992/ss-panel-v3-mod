@@ -301,6 +301,36 @@ class Job
         if(strlen($data) > 0) {
             file_put_contents(BASE_PATH.'/storage/clash_rules.yaml', substr($data, 0, -1));
         }
+
+
+        $rules_url = 'https://github.com/h2y/Shadowrocket-ADBlock-Rules/raw/master/sr_top500_whitelist.conf';
+        $rules = explode("\n", file_get_contents($rules_url));
+        $started = false;
+        $data = '';
+        foreach ($rules as $index => $line) {
+            $rule = str_replace(' ', '', $line);
+            if(!$started && strtoupper($rule) == '[RULE]') {
+                $started = true;
+                continue;
+            } elseif($started) {
+                if(substr($rule, 0, 1) == '#' or empty($rule)) {
+                    continue;
+                } elseif (strtoupper(substr($rule, 0, 5)) == 'FINAL') {
+                    $data .= str_replace('FINAL', 'MATCH', strtoupper($rule))."\n";
+                    break;
+                } else {
+                    $rs = explode(',', $rule);
+                    if(count($rs) > 2) {
+                        $rs[2] = strtoupper($rs[2]);
+                        $rule = implode(',', $rs);
+                        $data .= $rule."\n";
+                    }
+                }
+            }
+        }
+        if(strlen($data) > 0) {
+            file_put_contents(BASE_PATH.'/storage/clash_rules_small.yaml', substr($data, 0, -1));
+        }
     }
 
     public static function CheckJob()

@@ -309,13 +309,13 @@ class LinkController extends BaseController
                     $mu = (int)$request->getQueryParams()["mu"];
                 }
 
-                $is_ss = 0;
-                if (!empty($request->getQueryParams()["is_ss"])) {
-                    $is_ss = (int)$request->getQueryParams()["is_ss"];
+                $small = 0;
+                if (!empty($request->getQueryParams()["small"])) {
+                    $small = (int)$request->getQueryParams()["small"];
                 }
 
                 $newResponse = $response->withHeader('Content-type', ' application/octet-stream; charset=utf-8')->withHeader('Cache-Control', 'no-store, no-cache, must-revalidate')->withHeader('Content-Disposition', ' attachment; filename='.$domainname.'.yaml');
-                $newResponse->getBody()->write(LinkController::GetClash(User::where("id", "=", $Elink->userid)->first(), $mu, $is_ss));
+                $newResponse->getBody()->write(LinkController::GetClash(User::where("id", "=", $Elink->userid)->first(), $mu, $small));
                 return $newResponse;
             default:
                 break;
@@ -1700,7 +1700,7 @@ FINAL,Proxy';
         return base64_encode(URL::getAllUrl($user, $mu, $is_ss, $v, 1));
     }
 
-    public static function GetClash($user, $mu = 0, $is_ss = 0)
+    public static function GetClash($user, $mu = 0, $small = 0)
     {
         $root_conf = [
             "port" => 7890,
@@ -1748,7 +1748,7 @@ FINAL,Proxy';
             ],
             "rules" => []
         ];
-        $items = URL::getAllItems($user, $mu, $is_ss, 1);
+        $items = URL::getAllItems($user, $mu, 0, 1);
         foreach ($items as $index => $item) {
             if(array_key_exists('protocol_param', $item)) { //SS
                 $ss = [
@@ -1857,7 +1857,11 @@ FINAL,Proxy';
                 }
             }
         }
-        $root_conf['rules'] = array_merge($root_conf['rules'], explode("\n", file_get_contents(BASE_PATH.'/storage/clash_rules.yaml')));
+        if($small == 1) {
+            $root_conf['rules'] = array_merge($root_conf['rules'], explode("\n", file_get_contents(BASE_PATH.'/storage/clash_rules_small.yaml')));
+        } else {
+            $root_conf['rules'] = array_merge($root_conf['rules'], explode("\n", file_get_contents(BASE_PATH.'/storage/clash_rules.yaml')));
+        }
         return yaml_emit($root_conf, YAML_UTF8_ENCODING, YAML_CRLN_BREAK);
     }
 }
