@@ -69,6 +69,8 @@ class UserController extends BaseController
 
         $ssr_sub_token = LinkController::GenerateSSRSubCode($this->user->id, 0);
 
+        $clash_sub_token = LinkController::GenerateClashSubCode($this->user->id, 0);
+
         $uid = time().rand(1, 10000) ;
         if (Config::get('enable_geetest_checkin') == 'true') {
             $GtSdk = Geetest::get($uid);
@@ -79,7 +81,8 @@ class UserController extends BaseController
         $Ann = Ann::orderBy('date', 'desc')->first();
 
 
-        return $this->view()->assign("ssr_sub_token", $ssr_sub_token)->assign("router_token", $router_token)
+        return $this->view()->assign("clash_sub_token", $clash_sub_token)
+                ->assign("ssr_sub_token", $ssr_sub_token)->assign("router_token", $router_token)
                 ->assign("router_token_without_mu", $router_token_without_mu)->assign("acl_token", $acl_token)
                 ->assign('ann', $Ann)->assign('geetest_html', $GtSdk)->assign("ios_token", $ios_token)
                 ->assign('enable_duoshuo', Config::get('enable_duoshuo'))->assign('duoshuo_shortname', Config::get('duoshuo_shortname'))

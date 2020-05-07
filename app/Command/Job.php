@@ -222,6 +222,8 @@ class Job
         Job::updatedownload();
 
         Job::updateQQWry();
+
+        Job::updateClashRules();
     }
 
     public static function updateQQWry()
@@ -230,7 +232,6 @@ class Job
 
         $newmd5 = file_get_contents("https://github.com/chenmin1992/qqwry-download/raw/cm/qqwry.dat.md5");
         $oldmd5 = file_get_contents(BASE_PATH."/storage/qqwry.dat.md5");
-
         if ($newmd5 != $oldmd5) {
             rename(BASE_PATH."/storage/qqwry.dat", BASE_PATH."/storage/qqwry.dat.bak");
             file_put_contents(BASE_PATH."/storage/qqwry.dat", file_get_contents("https://github.com/chenmin1992/qqwry-download/raw/cm/qqwry.dat"));
@@ -248,7 +249,6 @@ class Job
 
         $newmd5 = file_get_contents("https://github.com/chenmin1992/qqwry-download/raw/cm/GeoLite2-City.mmdb.md5");
         $oldmd5 = file_get_contents(BASE_PATH."/storage/GeoLite2-City.mmdb.md5");
-
         if ($newmd5 != $oldmd5) {
             rename(BASE_PATH."/storage/GeoLite2-City.mmdb", BASE_PATH."/storage/GeoLite2-City.mmdb.bak");
             file_put_contents(BASE_PATH."/storage/GeoLite2-City.mmdb", file_get_contents("https://github.com/chenmin1992/qqwry-download/raw/cm/GeoLite2-City.mmdb"));
@@ -269,6 +269,38 @@ class Job
     {
         system('cd '.BASE_PATH."/public/ssr-download/ && git pull", $ret);
         echo $ret;
+    }
+
+    public static function updateClashRules()
+    {
+        $rules_url = 'https://github.com/h2y/Shadowrocket-ADBlock-Rules/raw/master/sr_top500_banlist_ad.conf';
+        $rules = explode("\n", file_get_contents($rules_url));
+        $started = false;
+        $data = '';
+        foreach ($rules as $index => $line) {
+            $rule = str_replace(' ', '', $line);
+            if(!$started && strtoupper($rule) == '[RULE]') {
+                $started = true;
+                continue;
+            } elseif($started) {
+                if(substr($rule, 0, 1) == '#' or empty($rule)) {
+                    continue;
+                } elseif (strtoupper(substr($rule, 0, 5)) == 'FINAL') {
+                    $data .= str_replace('FINAL', 'MATCH', strtoupper($rule))."\n";
+                    break;
+                } else {
+                    $rs = explode(',', $rule);
+                    if(count($rs) > 2) {
+                        $rs[2] = strtoupper($rs[2]);
+                        $rule = implode(',', $rs);
+                        $data .= $rule."\n";
+                    }
+                }
+            }
+        }
+        if(strlen($data) > 0) {
+            file_put_contents(BASE_PATH.'/storage/clash_rules.yaml', substr($data, 0, -1));
+        }
     }
 
     public static function CheckJob()

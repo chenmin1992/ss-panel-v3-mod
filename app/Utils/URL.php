@@ -137,7 +137,11 @@ class URL
         return $new_user;
     }
 
-    public static function getAllItems($user, $is_mu = 0, $is_ss = 0) {
+    public static function getAllItems($user, $is_mu = 0, $is_ss = 0, $v = 2) {
+        return array_merge(URL::getAllSSRItems($user, $is_mu, $is_ss), URL::getAllV2RayItems($user, $v), URL::getAllTrojanItems($user));
+    }
+
+    public static function getAllSSRItems($user, $is_mu = 0, $is_ss = 0) {
         $return_array = array();
         if ($user->is_admin) {
             $nodes=Node::where(
@@ -315,22 +319,16 @@ class URL
     }
 
     public static function getAllUrl($user, $is_mu, $is_ss = 0, $v = 2, $enter = 0) {
+        return URL::getAllSSRUrl($user, $is_mu, $is_ss, $enter).URL::getAllV2RayUrl($user, $v, $enter).URL::getAllTrojanUrl($user, $enter);
+    }
+
+    public static function getAllSSRUrl($user, $is_mu, $is_ss = 0, $enter = 0) {
         $return_url = '';
-        $items = URL::getAllItems($user, $is_mu, $is_ss);
+        $items = URL::getAllSSRItems($user, $is_mu, $is_ss);
         foreach($items as $item) {
             $return_url .= URL::getItemUrl($item, $is_ss).($enter == 0 ? ' ' : "\n");
         }
-
-        $items = URL::getAllV2RayItems($user, $v);
-        foreach($items as $item) {
-            $return_url .= URL::getV2RayItemUrl($item, $v).($enter == 0 ? ' ' : "\n");
-        }
-
-        $items = URL::getAllTrojanItems($user);
-        foreach($items as $item) {
-            $return_url .= URL::getTrojanItemUrl($item).($enter == 0 ? ' ' : "\n");
-        }
-        return substr($return_url, 0, -1);
+        return $return_url;
     }
 
     public static function getAllV2RayUrl($user, $v = 2, $enter = 0) {
@@ -339,7 +337,7 @@ class URL
         foreach($items as $item) {
             $return_url .= URL::getV2RayItemUrl($item, $v).($enter == 0 ? ' ' : "\n");
         }
-        return substr($return_url, 0, -1);
+        return $return_url;
     }
 
     public static function getAllTrojanUrl($user, $enter = 0) {
@@ -348,7 +346,7 @@ class URL
         foreach($items as $item) {
             $return_url .= URL::getTrojanItemUrl($item).($enter == 0 ? ' ' : "\n");
         }
-        return substr($return_url, 0, -1);
+        return $return_url;
     }
 
     public static function getItemUrl($item, $is_ss) {
@@ -631,7 +629,7 @@ class URL
                         }
                     }
                 }
-                $return_array["remark"] = explode(" - ", $node->name)[0]."-".$return_array["network"]."-".$return_array["host"];
+                $return_array["remark"] = str_replace(' ', '', explode(" - ", $node->name)[0])."-".$return_array["network"];
                 // for shadowrocket only
                 $return_array["remarks"] = $return_array["remark"];
                 switch ($inbound->network) {
@@ -714,7 +712,7 @@ class URL
                         }
                     }
                 }
-                $return_array["ps"] = explode(" - ", $node->name)[0]."-".$return_array["net"]."-".$return_array["add"];
+                $return_array["ps"] = str_replace(' ', '', explode(" - ", $node->name)[0])."-".$return_array["net"];
                 break;
             default:
                 break;
@@ -729,7 +727,7 @@ class URL
         $return_array['address'] = $node->server;
         $return_array['port'] = $conf->local_port;
         $return_array['fast_open'] = $conf->fast_open;
-        $return_array['remark'] = $node->name;
+        $return_array['remark'] = str_replace(' ', '', explode(" - ", $node->name)[0]);
 
         $return_array['reuse_session'] = $conf->reuse_session;
         $return_array['session_ticket'] = $conf->session_ticket;
@@ -742,7 +740,7 @@ class URL
     }
 
     // use subscribe rule v1 to generate a clien json configuration
-    public static function genV2rayClientJson($item) {
+    public static function generateV2rayClientJson($item) {
         $root_conf = [
             "log" => [
                 "loglevel" => "warning"

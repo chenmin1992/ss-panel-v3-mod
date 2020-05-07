@@ -178,6 +178,26 @@ class LinkController extends BaseController
         return $NLink->token;
     }
 
+    public static function GenerateClashSubCode($userid)
+    {
+        $Elink = Link::where("type", "=", 12)->where("userid", "=", $userid)->first();
+        if ($Elink != null) {
+            return $Elink->token;
+        }
+        $NLink = new Link();
+        $NLink->type = 12;
+        $NLink->address = "";
+        $NLink->port = 0;
+        $NLink->ios = 0;
+        $NLink->geo = 0;
+        $NLink->method = "";
+        $NLink->userid = $userid;
+        $NLink->token = LinkController::GenerateRandomLink();
+        $NLink->save();
+
+        return $NLink->token;
+    }
+
     public static function GetContent($request, $response, $args)
     {
         $token = $args['token'];
@@ -188,6 +208,7 @@ class LinkController extends BaseController
             return null;
         }
 
+        $domainname = preg_replace('|https?:\/\/|', '', Config::get('baseUrl'));
         switch ($Elink->type) {
             case -1:
                 $user=User::where("id", $Elink->userid)->first();
@@ -264,13 +285,37 @@ class LinkController extends BaseController
                     $mu = (int)$request->getQueryParams()["mu"];
                 }
 
-                $v = 2;
-                if (!empty($request->getQueryParams()["v"])) {
-                    $v = (int)$request->getQueryParams()["v"] + 2;
+                $is_ss = 0;
+                if (!empty($request->getQueryParams()["is_ss"])) {
+                    $is_ss = (int)$request->getQueryParams()["is_ss"];
                 }
 
-                $newResponse = $response->withHeader('Content-type', ' application/octet-stream; charset=utf-8')->withHeader('Cache-Control', 'no-store, no-cache, must-revalidate')->withHeader('Content-Disposition', ' attachment; filename='.$token.'.txt');
-                $newResponse->getBody()->write(LinkController::GetSub(User::where("id", "=", $Elink->userid)->first(), $mu, $v));
+                $v = 2;
+                if (!empty($request->getQueryParams()["v"])) {
+                    $v = (int)$request->getQueryParams()["v"];
+                }
+
+                $newResponse = $response->withHeader('Content-type', ' application/octet-stream; charset=utf-8')->withHeader('Cache-Control', 'no-store, no-cache, must-revalidate')->withHeader('Content-Disposition', ' attachment; filename='.$domainname.'.txt');
+                $newResponse->getBody()->write(LinkController::GetSub(User::where("id", "=", $Elink->userid)->first(), $mu, $is_ss, $v));
+                return $newResponse;
+            case 12:
+                $user=User::where("id", $Elink->userid)->first();
+                if ($user == null) {
+                    return null;
+                }
+
+                $mu = 0;
+                if (!empty($request->getQueryParams()["mu"])) {
+                    $mu = (int)$request->getQueryParams()["mu"];
+                }
+
+                $is_ss = 0;
+                if (!empty($request->getQueryParams()["is_ss"])) {
+                    $is_ss = (int)$request->getQueryParams()["is_ss"];
+                }
+
+                $newResponse = $response->withHeader('Content-type', ' application/octet-stream; charset=utf-8')->withHeader('Cache-Control', 'no-store, no-cache, must-revalidate')->withHeader('Content-Disposition', ' attachment; filename='.$domainname.'.yaml');
+                $newResponse->getBody()->write(LinkController::GetClash(User::where("id", "=", $Elink->userid)->first(), $mu, $is_ss));
                 return $newResponse;
             default:
                 break;
@@ -333,7 +378,7 @@ class LinkController extends BaseController
         $json=json_decode($string, true);
         $temparray=array();
 
-        $items = URL::getAllItems($user, $is_mu, $is_ss);
+        $items = URL::getAllSSRItems($user, $is_mu, $is_ss);
         foreach($items as $item) {
             array_push($temparray, array("remarks"=>$item['remark'],
                                         "server"=>$item['address'],
@@ -362,7 +407,7 @@ class LinkController extends BaseController
         $proxy_name="";
         $proxy_group="";
 
-        $items = URL::getAllItems($user, $is_mu, $is_ss);
+        $items = URL::getAllSSRItems($user, $is_mu, $is_ss);
         foreach($items as $item) {
             $proxy_group .= $item['remark'].' = custom,'.$item['address'].','.$item['port'].','.$item['method'].','.$item['passwd'].','.Config::get('baseUrl').'/downloads/SSEncrypt.module'.URL::getSurgeObfs($item)."\n";
             $proxy_name .= ",".$item['remark'];
@@ -1623,7 +1668,7 @@ FINAL,Proxy';
 
         $count = 0;
 
-        $items = URL::getAllItems($user, $is_mu, $is_ss);
+        $items = URL::getAllSSRItems($user, $is_mu, $is_ss);
         foreach($items as $item) {
             if($is_ss == 0) {
                 $bash .= 'nvram set rt_ss_name_x'.$count.'="'.$item['remark']."\"\n";
@@ -1651,7 +1696,168 @@ FINAL,Proxy';
 
     public static function GetSub($user, $mu = 0, $is_ss = 0, $v = 2)
     {
-        // return Tools::base64_url_encode(URL::getAllUrl($user, $mu, 0, $v, 1));
-        return base64_encode(URL::getAllUrl($user, $mu, 0, $v, 1));
+        // return Tools::base64_url_encode(URL::getAllUrl($user, $mu, $is_ss, $v, 1));
+        return base64_encode(URL::getAllUrl($user, $mu, $is_ss, $v, 1));
+    }
+
+    public static function GetClash($user, $mu = 0, $is_ss = 0)
+    {
+        $root_conf = [
+            "port" => 7890,
+            "socks-port" => 7891,
+            "allow-lan" => false,
+            "mode" => "Rule",
+            "log-level" => "info",
+            "external-controller" => "127.0.0.1:9090",
+            "experimental" => [
+                "ignore-resolve-fail" => true
+            ],
+            "dns" => [
+                "enable" => true,
+                "ipv6" => false,
+                "nameserver" => [
+                    "182.254.116.116",
+                    "223.6.6.6",
+                    "176.103.130.131",
+                    "114.114.115.115"
+                ],
+                "fallback" => [
+                    "tls://dns.adguard.com:853",
+                    "tls://1.0.0.1:853",
+                    "tls://dns.google:853",
+                    "https://dns.adguard.com/dns-query",
+                    "https://cloudflare-dns.com/dns-query",
+                    "https://dns.google/dns-query"
+                ],
+                "fallback-filter" => [
+                    "geoip" => true,
+                    "ipcidr" => [
+                        "240.0.0.0/4"
+                    ]
+                ]
+            ],
+            "proxies" => [],
+            "proxy-groups" => [
+                [
+                    "name" => "PROXY",
+                    "type" => "url-test",
+                    "proxies" => [],
+                    "url" => "https://www.cloudflare.com/ips-v4",
+                    "interval" => 300
+                ]
+            ],
+            "rules" => []
+        ];
+        $items = URL::getAllItems($user, $mu, $is_ss, 1);
+        foreach ($items as $index => $item) {
+            if(array_key_exists('protocol_param', $item)) { //SS
+                $ss = [
+                    "name" => $item['remark'],
+                    "type" => "ss",
+                    "server" => $item['address'],
+                    "port" => $item['port'],
+                    "cipher" => $item['method'],
+                    "password" => $item['passwd'],
+                    "udp" => true
+                ];
+                array_push($root_conf['proxies'], $ss);
+                array_push($root_conf['proxy-groups'][0]['proxies'], $ss['name']);
+                continue;
+            }
+            if(array_key_exists('uuid', $item) && $item['network'] == 'ws') { //vmess
+                $vemss = [
+                    "name" => $item['remark'],
+                    "type" => "vmess",
+                    "server" => $item['host'],
+                    "port" => $item['port'],
+                    "uuid" => $item['uuid'],
+                    "alterId" => $item['aid'],
+                    "cipher" => "auto",
+                    "udp" => true,
+                    "tls" => $item['tls'] == 1 ? true : false,
+                    "skip-cert-verify" => false,
+                    "network" => $item['network']
+                ];
+                if(!empty($item['wsPath'])) {
+                    $vemss['ws-path'] = $item['wsPath'];
+                }
+                if(!empty($item['wsHost'])) {
+                    $vemss['ws-headers'] = [
+                        "Host" => $item['wsHost']
+                    ];
+                }
+                array_push($root_conf['proxies'], $vemss);
+                array_push($root_conf['proxy-groups'][0]['proxies'], $vemss['name']);
+                continue;
+            }
+            if(array_key_exists('reuse_session', $item)) { //trojan
+                $trojan = [
+                    "name" => $item['remark'],
+                    "type" => "trojan",
+                    "server" => $item['address'],
+                    "port" => $item['port'],
+                    "password" => $item['passwd'],
+                    "udp" => true,
+                    "sni" => $item['address'],
+                    "alpn" => [
+                        "h2",
+                        "http/1.1"
+                    ],
+                    "skip-cert-verify" => false
+                ];
+                array_push($root_conf['proxies'], $trojan);
+                array_push($root_conf['proxy-groups'][0]['proxies'], $trojan['name']);
+                continue;
+            }
+        }
+        $custom_rules = explode("\n", $user->pac);
+        $country_iso_codes = ['AD', 'AE', 'AF', 'AG', 'AI', 'AL', 'AM', 'AO', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AW', 'AX', 'AZ', 'BA', 'BB', 'BD', 'BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BL', 'BM', 'BN', 'BO', 'BQ', 'BR', 'BS', 'BT', 'BV', 'BW', 'BY', 'BZ', 'CA', 'CC', 'CD', 'CF', 'CG', 'CH', 'CI', 'CK', 'CL', 'CM', 'CN', 'CO', 'CR', 'CU', 'CV', 'CW', 'CX', 'CY', 'CZ', 'DE', 'DJ', 'DK', 'DM', 'DO', 'DZ', 'EC', 'EE', 'EG', 'EH', 'ER', 'ES', 'ET', 'FI', 'FJ', 'FK', 'FM', 'FO', 'FR', 'GA', 'GB', 'GD', 'GE', 'GF', 'GG', 'GH', 'GI', 'GL', 'GM', 'GN', 'GP', 'GQ', 'GR', 'GS', 'GT', 'GU', 'GW', 'GY', 'HK', 'HM', 'HN', 'HR', 'HT', 'HU', 'ID', 'IE', 'IL', 'IM', 'IN', 'IO', 'IQ', 'IR', 'IS', 'IT', 'JE', 'JM', 'JO', 'JP', 'KE', 'KG', 'KH', 'KI', 'KM', 'KN', 'KP', 'KR', 'KW', 'KY', 'KZ', 'LA', 'LB', 'LC', 'LI', 'LK', 'LR', 'LS', 'LT', 'LU', 'LV', 'LY', 'MA', 'MC', 'MD', 'ME', 'MF', 'MG', 'MH', 'MK', 'ML', 'MM', 'MN', 'MO', 'MP', 'MQ', 'MR', 'MS', 'MT', 'MU', 'MV', 'MW', 'MX', 'MY', 'MZ', 'NA', 'NC', 'NE', 'NF', 'NG', 'NI', 'NL', 'NO', 'NP', 'NR', 'NU', 'NZ', 'OM', 'PA', 'PE', 'PF', 'PG', 'PH', 'PK', 'PL', 'PM', 'PN', 'PR', 'PS', 'PT', 'PW', 'PY', 'QA', 'RE', 'RO', 'RS', 'RU', 'RW', 'SA', 'SB', 'SC', 'SD', 'SE', 'SG', 'SH', 'SI', 'SJ', 'SK', 'SL', 'SM', 'SN', 'SO', 'SR', 'SS', 'ST', 'SV', 'SX', 'SY', 'SZ', 'TC', 'TD', 'TF', 'TG', 'TH', 'TJ', 'TK', 'TL', 'TM', 'TN', 'TO', 'TR', 'TT', 'TV', 'TW', 'TZ', 'UA', 'UG', 'UM', 'US', 'UY', 'UZ', 'VA', 'VC', 'VE', 'VG', 'VI', 'VN', 'VU', 'WF', 'WS', 'XK', 'YE', 'YT', 'ZA', 'ZM', 'ZW'];
+        foreach ($custom_rules as $index => $custom_rule) {
+            if(empty(str_replace(' ', '', $custom_rule))) {
+                continue;
+            } else {
+                $domain_suffix = '';
+                $country_code = '';
+                $method = '';
+
+                if(substr($custom_rule, 0, 2) == '@@') {
+                    $method = ',DIRECT';
+                    $custom_rule = substr($custom_rule, 2);
+                }
+                if(substr($custom_rule, 0, 2) == '||') {
+                    $domain_suffix = '-SUFFIX';
+                } elseif(substr($custom_rule, 0, 1) == '|') {
+                    $domain_suffix = '';
+                    $country_code = strtoupper(substr($custom_rule, 1));
+                } else {
+                    continue;
+                }
+                if(empty($method)) {
+                    $method = ',PROXY';
+                }
+                if(preg_match("/(?:[0-9\.]{1,3}){3}[0-9]+\/\d+/", $custom_rule, $matches)) {
+                    array_push($root_conf['rules'], 'IP-CIDR,'.$matches[0].$method);
+                    continue;
+                }
+                if(preg_match("/[a-z0-9.\-]+\.[a-z]+/i", $custom_rule, $matches)) {
+                    array_push($root_conf['rules'], 'DOMAIN'.$domain_suffix.','.strtolower($matches[0]).$method);
+                    continue;
+                }
+                if(!empty($country_code)) {
+                    foreach ($country_iso_codes as $country_iso_code) {
+                        if($country_code == $country_iso_code) {
+                            array_push($root_conf['rules'], 'GEOIP,'.$country_iso_code.$method);
+                            continue 2;
+                        }
+                    }
+                }
+                if(preg_match("/\b[a-z0-9-]+\b/i", $custom_rule, $matches)) {
+                    array_push($root_conf['rules'], 'DOMAIN-KEYWORD,'.strtolower($matches[0]).$method);
+                    continue;
+                }
+            }
+        }
+        $root_conf['rules'] = array_merge($root_conf['rules'], explode("\n", file_get_contents(BASE_PATH.'/storage/clash_rules.yaml')));
+        return yaml_emit($root_conf, YAML_UTF8_ENCODING, YAML_CRLN_BREAK);
     }
 }

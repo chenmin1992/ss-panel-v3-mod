@@ -84,7 +84,7 @@ class XCat
 
     public function defaultAction()
     {
-        print_r(Tools::getGeoLocation('49.88.112.118'));
+        print_r(Job::updateClashRules());
     }
 
     public function cleanRelayRule()

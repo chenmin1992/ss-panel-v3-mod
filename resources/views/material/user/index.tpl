@@ -39,6 +39,7 @@
 									<div class="card-inner margin-bottom-no">
 										<p class="card-heading">连接信息 以及 All-in-One(快速配置指导)</p>
 										<p>您可以在这里查看您的连接信息。<br>同时，这里为您提供了自动化地配置文件生成，包含了所有 Shadowsocks 服务器的信息，方便您在诸多的服务器中快速添加，快速切换。</p>
+										<p> Clash 配置地址：<code>{$baseUrl}/link/{$clash_sub_token}</code></p>
 										<nav class="tab-nav margin-top-no">
 											<ul class="nav nav-list">
 												<li {if $ssr_prefer}class="active"{/if}>
@@ -84,8 +85,8 @@
 													</nav>
 													<div class="tab-pane fade active in" id="all_ssr_info">
 														{$user = URL::getSSRConnectInfo($pre_user)}
-														{$ssr_url_all = URL::getAllUrl($pre_user, 0, 0)}
-														{$ssr_url_all_mu = URL::getAllUrl($pre_user, 1, 0)}
+														{$ssr_url_all = URL::getAllSSRUrl($pre_user, 0, 0)}
+														{$ssr_url_all_mu = URL::getAllSSRUrl($pre_user, 1, 0)}
 														{if URL::SSRCanConnect($user)}
 														<dl class="dl-horizontal">
 															<p><dt>端口</dt>
@@ -174,9 +175,9 @@
 													</nav>
 													<div class="tab-pane fade active in" id="all_ss_info">
 														{$user = URL::getSSConnectInfo($pre_user)}
-														{$ss_url_all = URL::getAllUrl($pre_user, 0, 1)}
-														{$ss_url_all_mu = URL::getAllUrl($pre_user, 1, 1)}
-														{$ss_url_all_win = URL::getAllUrl($pre_user, 0, 2)}
+														{$ss_url_all = URL::getAllSSRUrl($pre_user, 0, 1)}
+														{$ss_url_all_mu = URL::getAllSSRUrl($pre_user, 1, 1)}
+														{$ss_url_all_win = URL::getAllSSRUrl($pre_user, 0, 2)}
 
 														{if URL::SSCanConnect($user)}
 														<dl class="dl-horizontal">
@@ -318,8 +319,8 @@
                                                         <dl class="dl-horizontal">
 															<p><dt>密码</dt>
 															<dd>{$user->passwd}</dd></p>
-	                                                        <br>
 	                                                        <p> 订阅地址：<code>{$baseUrl}/link/{$ssr_sub_token}?v=2</code></p>
+	                                                        <p> 注：Trojan的客户端现在都不是很稳定，建议使用 Clash </p>
                                                         </dl>
                                                     </div>
                                                     <div class="tab-pane fade" id="all_trojan_windows">
