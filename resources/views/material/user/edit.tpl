@@ -339,7 +339,7 @@
 							<div class="card-main">
 								<div class="card-inner">
 									<div class="card-inner">
-										<p class="card-heading">自定义ACL/PAC/Surge</p>
+										<p class="card-heading">自定义ACL/PAC/Surge/Shadowrocket/Clash规则</p>
 										<p>您可以在此处追加 Gfwlist 规则。</p>
 										<p>格式参看<a href="https://adblockplus.org/filter-cheatsheet#options" target="_blank">https://adblockplus.org/filter-cheatsheet#options</a></p>
 										<p>说明：<code>||google.com</code>代理google.com及其子域名</p>
@@ -348,7 +348,7 @@
 										<p><code>@@|google.com</code>只直连google.com</p>
 										<p><code>|222.186.0.0/16</code>代理这个IP段</p>
 										<p><code>@@|222.186.0.0/16</code>直连这个IP段</p>
-										<p>下面的只对Shadowrocket和Clash有效</p>
+										<p>以下规则只对Shadowrocket和Clash有效</p>
 										<p><code>|google</code>代理域名中包含google的URL</p>
 										<p><code>@@|google</code>直连域名中包含google的URL</p>
 										<p><code>|US</code>代理美国IP</p>
