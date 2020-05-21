@@ -208,7 +208,7 @@ class LinkController extends BaseController
             return null;
         }
 
-        $domainname = preg_replace('|https?:\/\/|i', '', Config::get('baseUrl'));
+        $domainname = preg_replace('|https?:\/\/|', '', Config::get('baseUrl'));
         switch ($Elink->type) {
             case -1:
                 $user=User::where("id", $Elink->userid)->first();
@@ -312,6 +312,9 @@ class LinkController extends BaseController
                 $small = 0;
                 if (!empty($request->getQueryParams()["small"])) {
                     $small = (int)$request->getQueryParams()["small"];
+                }
+                if ($small == 1) {
+                    $domainname .= '-small';
                 }
 
                 $newResponse = $response->withHeader('Content-type', ' application/octet-stream; charset=utf-8')->withHeader('Cache-Control', 'no-store, no-cache, must-revalidate')->withHeader('Content-Disposition', ' attachment; filename='.$domainname.'.yaml');
@@ -1712,9 +1715,10 @@ FINAL,Proxy';
             "experimental" => [
                 "ignore-resolve-fail" => true
             ],
+            "hosts" => [
+                "localhost" => "127.0.0.1"
+            ],
             "dns" => [
-                "enable" => true,
-                "ipv6" => false,
                 "nameserver" => [
                     "182.254.116.116",
                     "223.6.6.6",
@@ -1742,7 +1746,7 @@ FINAL,Proxy';
                     "name" => "PROXY",
                     "type" => "url-test",
                     "proxies" => [],
-                    "url" => "https://www.cloudflare.com/ips-v4",
+                    "url" => "http://www.gstatic.com/generate_204",
                     "interval" => 300
                 ]
             ],
@@ -1764,8 +1768,9 @@ FINAL,Proxy';
                 array_push($root_conf['proxy-groups'][0]['proxies'], $ss['name']);
                 continue;
             }
-            if(array_key_exists('uuid', $item) && $item['network'] == 'ws') { //vmess
-                $vemss = [
+            $vmess_networks = ['ws'];
+            if(array_key_exists('uuid', $item) && in_array($item['network'], $vmess_networks)) { //vmess
+                $vmess = [
                     "name" => $item['remark'],
                     "type" => "vmess",
                     "server" => $item['host'],
@@ -1778,16 +1783,34 @@ FINAL,Proxy';
                     "skip-cert-verify" => false,
                     "network" => $item['network']
                 ];
-                if(!empty($item['wsPath'])) {
-                    $vemss['ws-path'] = $item['wsPath'];
+                switch ($vmess['network']) {
+                    case 'ws':
+                        if(!empty($item['wsPath'])) {
+                            $vmess['ws-path'] = $item['wsPath'];
+                        }
+                        if(!empty($item['wsHost'])) {
+                            $vmess['ws-headers'] = [
+                                "Host" => $item['wsHost']
+                            ];
+                        }
+                        break;
+
+                    case 'h2':
+                        $vmess['network'] = 'http';
+                        $vmess['http-opts'] = [ 'method' => 'GET' ];
+                        if(!empty($item['h2Path'])) {
+                            $vmess['http-opts']['path'] = [ $item['h2Path'] ];
+                        }
+                        if(!empty($item['h2Host'])) {
+                            $vmess['http-opts']['headers'] = [ 'Host' => [ $item['h2Host'] ] ];
+                        }
+                        break;
+
+                    default:
+                        break;
                 }
-                if(!empty($item['wsHost'])) {
-                    $vemss['ws-headers'] = [
-                        "Host" => $item['wsHost']
-                    ];
-                }
-                array_push($root_conf['proxies'], $vemss);
-                array_push($root_conf['proxy-groups'][0]['proxies'], $vemss['name']);
+                array_push($root_conf['proxies'], $vmess);
+                array_push($root_conf['proxy-groups'][0]['proxies'], $vmess['name']);
                 continue;
             }
             if(array_key_exists('reuse_session', $item)) { //trojan
@@ -1813,8 +1836,7 @@ FINAL,Proxy';
         $custom_rules = explode("\n", $user->pac);
         $country_iso_codes = ['AD', 'AE', 'AF', 'AG', 'AI', 'AL', 'AM', 'AO', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AW', 'AX', 'AZ', 'BA', 'BB', 'BD', 'BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BL', 'BM', 'BN', 'BO', 'BQ', 'BR', 'BS', 'BT', 'BV', 'BW', 'BY', 'BZ', 'CA', 'CC', 'CD', 'CF', 'CG', 'CH', 'CI', 'CK', 'CL', 'CM', 'CN', 'CO', 'CR', 'CU', 'CV', 'CW', 'CX', 'CY', 'CZ', 'DE', 'DJ', 'DK', 'DM', 'DO', 'DZ', 'EC', 'EE', 'EG', 'EH', 'ER', 'ES', 'ET', 'FI', 'FJ', 'FK', 'FM', 'FO', 'FR', 'GA', 'GB', 'GD', 'GE', 'GF', 'GG', 'GH', 'GI', 'GL', 'GM', 'GN', 'GP', 'GQ', 'GR', 'GS', 'GT', 'GU', 'GW', 'GY', 'HK', 'HM', 'HN', 'HR', 'HT', 'HU', 'ID', 'IE', 'IL', 'IM', 'IN', 'IO', 'IQ', 'IR', 'IS', 'IT', 'JE', 'JM', 'JO', 'JP', 'KE', 'KG', 'KH', 'KI', 'KM', 'KN', 'KP', 'KR', 'KW', 'KY', 'KZ', 'LA', 'LB', 'LC', 'LI', 'LK', 'LR', 'LS', 'LT', 'LU', 'LV', 'LY', 'MA', 'MC', 'MD', 'ME', 'MF', 'MG', 'MH', 'MK', 'ML', 'MM', 'MN', 'MO', 'MP', 'MQ', 'MR', 'MS', 'MT', 'MU', 'MV', 'MW', 'MX', 'MY', 'MZ', 'NA', 'NC', 'NE', 'NF', 'NG', 'NI', 'NL', 'NO', 'NP', 'NR', 'NU', 'NZ', 'OM', 'PA', 'PE', 'PF', 'PG', 'PH', 'PK', 'PL', 'PM', 'PN', 'PR', 'PS', 'PT', 'PW', 'PY', 'QA', 'RE', 'RO', 'RS', 'RU', 'RW', 'SA', 'SB', 'SC', 'SD', 'SE', 'SG', 'SH', 'SI', 'SJ', 'SK', 'SL', 'SM', 'SN', 'SO', 'SR', 'SS', 'ST', 'SV', 'SX', 'SY', 'SZ', 'TC', 'TD', 'TF', 'TG', 'TH', 'TJ', 'TK', 'TL', 'TM', 'TN', 'TO', 'TR', 'TT', 'TV', 'TW', 'TZ', 'UA', 'UG', 'UM', 'US', 'UY', 'UZ', 'VA', 'VC', 'VE', 'VG', 'VI', 'VN', 'VU', 'WF', 'WS', 'XK', 'YE', 'YT', 'ZA', 'ZM', 'ZW'];
         foreach ($custom_rules as $index => $custom_rule) {
-            $custom_rule = str_replace(' ', '', $custom_rule);
-            if(empty($custom_rule)) {
+            if(empty(str_replace(' ', '', $custom_rule))) {
                 continue;
             } else {
                 $domain_suffix = '';

@@ -289,6 +289,10 @@ class Job
                     $data .= str_replace('FINAL', 'MATCH', strtoupper($rule))."\n";
                     break;
                 } else {
+                    $pos = strpos($rule, '#');
+                    if ( $pos > 0 ) {
+                        $rule = substr($rule, 0, $pos);
+                    }
                     $rs = explode(',', $rule);
                     if(count($rs) > 2) {
                         $rs[2] = strtoupper($rs[2]);
@@ -303,7 +307,8 @@ class Job
         }
 
 
-        $rules_url = 'https://github.com/h2y/Shadowrocket-ADBlock-Rules/raw/master/sr_top500_whitelist.conf';
+        // $rules_url = 'https://github.com/h2y/Shadowrocket-ADBlock-Rules/raw/master/sr_top500_whitelist.conf';
+        $rules_url = 'https://github.com/h2y/Shadowrocket-ADBlock-Rules/raw/master/sr_cnip.conf';
         $rules = explode("\n", file_get_contents($rules_url));
         $started = false;
         $data = '';
@@ -319,6 +324,10 @@ class Job
                     $data .= str_replace('FINAL', 'MATCH', strtoupper($rule))."\n";
                     break;
                 } else {
+                    $pos = strpos($rule, '#');
+                    if ( $pos > 0 ) {
+                        $rule = substr($rule, 0, $pos);
+                    }
                     $rs = explode(',', $rule);
                     if(count($rs) > 2) {
                         $rs[2] = strtoupper($rs[2]);

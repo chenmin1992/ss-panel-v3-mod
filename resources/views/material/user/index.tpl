@@ -39,8 +39,8 @@
 									<div class="card-inner margin-bottom-no">
 										<p class="card-heading">连接信息 以及 All-in-One(快速配置指导)</p>
 										<p>您可以在这里查看您的连接信息。<br>同时，这里为您提供了自动化地配置文件生成，包含了所有 Shadowsocks 服务器的信息，方便您在诸多的服务器中快速添加，快速切换。</p>
-										<p>所有订阅链接支持点击后复制到剪贴板</p>
-										<p>Clash 配置地址：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$clash_sub_token}"><code>{$baseUrl}/link/{$clash_sub_token}</code></a></p>
+										<p> Clash 配置地址：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$clash_sub_token}"><code>{$baseUrl}/link/{$clash_sub_token}</code></a></p>
+										<p> Clash 小内存设备配置地址：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$clash_sub_token}?small=1"><code>{$baseUrl}/link/{$clash_sub_token}?small=1</code></a></p>
 										<nav class="tab-nav margin-top-no">
 											<ul class="nav nav-list">
 												<li {if $ssr_prefer}class="active"{/if}>

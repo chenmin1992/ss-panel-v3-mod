@@ -54,12 +54,11 @@ class UserController extends BaseController
             )->where("enable", 1)->where("expire_in", ">", date("Y-m-d H:i:s"))->get();
         }
         if ($node->node_bandwidth_limit!=0) {
-            if ($node->node_bandwidth_limit < $node->node_bandwidth) {
-                $users=null;
+            if ($node->node_bandwidth_limit <= $node->node_bandwidth) {
 
                 $res = [
                     "ret" => 1,
-                    "data" => $users
+                    "data" => array()
                 ];
                 return $this->echoJson($response, $res);
             }
