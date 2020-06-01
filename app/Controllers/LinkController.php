@@ -1744,7 +1744,7 @@ FINAL,Proxy';
             "proxy-groups" => [
                 [
                     "name" => "PROXY",
-                    "type" => "url-test",
+                    "type" => "fallback",
                     "proxies" => [],
                     "url" => "http://www.gstatic.com/generate_204",
                     "interval" => 300
@@ -1752,7 +1752,7 @@ FINAL,Proxy';
             ],
             "rules" => []
         ];
-        $items = URL::getAllItems($user, $mu, 0, 1);
+        $items = Tools::arrayOrderby(URL::getAllItems($user, $mu, 0, 1);, 'node_class', SORT_DESC, 'id', SORT_DESC);
         foreach ($items as $index => $item) {
             if(array_key_exists('protocol_param', $item)) { //SS
                 $ss = [

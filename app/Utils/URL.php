@@ -506,6 +506,8 @@ class URL
             $user = URL::getSSRConnectInfo($user);
         }
 
+        $return_array['id'] = $node->id;
+        $return_array['node_class'] = $node->node_class;
         $return_array['address'] = $node->server;
         $return_array['port'] = $user->port;
         $return_array['passwd'] = $user->passwd;
@@ -579,6 +581,8 @@ class URL
     public static function getV2rayItem($user, $node, $inbound, $conf_version) {
         $uuid = $user->get_v2ray_uuid();
         $return_array = Array();
+        $return_array['id'] = $node->id;
+        $return_array['node_class'] = $node->node_class;
         switch ($conf_version) {
             case 1:
                 // $return_array["v"] = 1;
@@ -723,12 +727,13 @@ class URL
     public static function getTrojanItem($user, $node, $conf) {
         // 'trojan://'.$item['passwd'].'@'.$item['address'].':'.$item['port'].'?allowInsecure=0&tfo='.$item['fast_open'].'#'.rawurlencode($item['remark']);
         $return_array = Array();
+        $return_array['id'] = $node->id;
+        $return_array['node_class'] = $node->node_class;
         $return_array['passwd'] = $user->passwd;
         $return_array['address'] = $node->server;
         $return_array['port'] = $conf->local_port;
         $return_array['fast_open'] = $conf->fast_open;
         $return_array['remark'] = str_replace(' ', '', explode(" - ", $node->name)[0]);
-
         $return_array['reuse_session'] = $conf->reuse_session;
         $return_array['session_ticket'] = $conf->session_ticket;
         $return_array['no_delay'] = $conf->no_delay;
