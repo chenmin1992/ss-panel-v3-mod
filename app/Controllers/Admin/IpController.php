@@ -103,11 +103,17 @@ class IpController extends AdminController
         });
 
         $iplocation = new QQWry();
+        $reader = new Reader(BASE_PATH."/storage/GeoLite2-City.mmdb");
 
-        $datatables->edit('location', function ($data) use ($iplocation) {
+        $datatables->edit('location', function ($data) use ($iplocation, $reader) {
             $location=$iplocation->getlocation($data['location']);
+            if ( $location['country'] == 'IANA') {
+                $record = $reader->city(Tools::getRealIp($data['location']));
+                return $record->country->names['zh-CN'].$record->city->names['zh-CN'];
+            }
             return iconv('gbk', 'utf-8//IGNORE', $location['country'].$location['area']);
         });
+        // $reader->close();
 
         $body = $response->getBody();
         $body->write($datatables->generate());
@@ -123,11 +129,17 @@ class IpController extends AdminController
         });
 
         $iplocation = new QQWry();
+        $reader = new Reader(BASE_PATH."/storage/GeoLite2-City.mmdb");
 
-        $datatables->edit('location', function ($data) use ($iplocation) {
+        $datatables->edit('location', function ($data) use ($iplocation, $reader) {
             $location=$iplocation->getlocation($data['location']);
+            if ( $location['country'] == 'IANA') {
+                $record = $reader->city(Tools::getRealIp($data['location']));
+                return $record->country->names['zh-CN'].$record->city->names['zh-CN'];
+            }
             return iconv('gbk', 'utf-8//IGNORE', $location['country'].$location['area']);
         });
+        // $reader->close();
 
         $body = $response->getBody();
         $body->write($datatables->generate());
@@ -144,10 +156,17 @@ class IpController extends AdminController
 
 
         $iplocation = new QQWry();
-        $datatables->edit('location', function ($data) use ($iplocation) {
+        $reader = new Reader(BASE_PATH."/storage/GeoLite2-City.mmdb");
+
+        $datatables->edit('location', function ($data) use ($iplocation, $reader) {
             $location=$iplocation->getlocation($data['location']);
+            if ( $location['country'] == 'IANA') {
+                $record = $reader->city(Tools::getRealIp($data['location']));
+                return $record->country->names['zh-CN'].$record->city->names['zh-CN'];
+            }
             return iconv('gbk', 'utf-8//IGNORE', $location['country'].$location['area']);
         });
+        // $reader->close();
 
         $datatables->edit('type', function ($data) {
             return $data['type'] == 0 ? '成功' : '失败';
@@ -183,7 +202,7 @@ class IpController extends AdminController
             }
         });
 
-        $datatables->edit('location', function ($data) use ($iplocation) {
+        $datatables->edit('location', function ($data) use ($iplocation, $reader) {
             $location=$iplocation->getlocation(Tools::getRealIp($data['location']));
             if ( $location['country'] == 'IANA') {
                 $record = $reader->city(Tools::getRealIp($data['location']));
@@ -191,7 +210,7 @@ class IpController extends AdminController
             }
             return iconv('gbk', 'utf-8//IGNORE', $location['country'].$location['area']);
         });
-        $reader->close();
+        // $reader->close();
 
         $body = $response->getBody();
         $body->write($datatables->generate());

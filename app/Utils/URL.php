@@ -410,8 +410,7 @@ class URL
     }
 
     public static function getTrojanItemUrl($item) {
-        return 'trojan://'.$item['passwd'].'@'.$item['address'].':'.$item['port'].'?allowInsecure=0&tfo='.$item['fast_open'].'#'.rawurlencode($item['remark']);
-        // return 'trojan://'.$item['passwd'].'@'.$item['address'].':'.$item['port'].'?allowInsecure=0&tfo='.$item['fast_open'].'#'.$item['remark'];
+        return 'trojan://'.$item['passwd'].'@'.$item['address'].':'.$item['port'].'?allowInsecure=0&peer=&tfo='.$item['fast_open'].'&mux=0#'.rawurlencode($item['remark']);
     }
 
     public static function getJsonObfs($item) {
