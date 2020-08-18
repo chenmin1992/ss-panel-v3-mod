@@ -40,7 +40,7 @@
 										<p class="card-heading">连接信息 以及 All-in-One(快速配置指导)</p>
 										<p>您可以在这里查看您的连接信息。<br>同时，这里为您提供了自动化地配置文件生成，包含了所有 Shadowsocks 服务器的信息，方便您在诸多的服务器中快速添加，快速切换。</p>
 										<p> Clash 配置地址：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$clash_sub_token}"><code>{$baseUrl}/link/{$clash_sub_token}</code></a></p>
-										<p> Clash 小内存设备配置地址：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$clash_sub_token}?small=1"><code>{$baseUrl}/link/{$clash_sub_token}?small=1</code></a></p>
+										<p> Clash 配置地址(小内存设备)：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$clash_sub_token}?small=1"><code>{$baseUrl}/link/{$clash_sub_token}?small=1</code></a></p>
 										<nav class="tab-nav margin-top-no">
 											<ul class="nav nav-list">
 												<li {if $ssr_prefer}class="active"{/if}>
@@ -325,7 +325,7 @@
                                                         </dl>
                                                     </div>
                                                     <div class="tab-pane fade" id="all_trojan_windows">
-                                                        <p><a href="/ssr-download/trojan-win.zip">下载</a>，解压，运行程序，然后您有三种方式导入所有节点<br>
+                                                        <p><a href="/ssr-download/trojan-win.7z">下载</a>，解压，运行程序，然后您有三种方式导入所有节点<br>
                                                             (1)下载<a href="/user/getpcconf?is_mu=0&is_ss=2">这个</a>，然后点击trojan图标 服务器 -- 添加自定义配置服务器，选择这个文件，<br>
                                                             (2)点击<a class="copy-text" data-clipboard-text="{$trojan_url_all}">这个</a>，然后点击trojanN图标 服务器 -- 从剪贴板导入批量URL<br>
                                                             (3)(推荐)点击trojanN图标 订阅 -- 订阅设置，添加，将订阅地址设置为下面的地址，改一个喜欢的备注，确定之后再更新订阅。<br>

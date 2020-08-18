@@ -1752,7 +1752,7 @@ FINAL,Proxy';
             ],
             "rules" => []
         ];
-        $items = Tools::arrayOrderby(URL::getAllItems($user, $mu, 0, 1);, 'node_class', SORT_DESC, 'id', SORT_DESC);
+        $items = Tools::arrayOrderby(URL::getAllItems($user, $mu, 0, 1), 'node_class', SORT_DESC, 'id', SORT_DESC);
         foreach ($items as $index => $item) {
             if(array_key_exists('protocol_param', $item)) { //SS
                 $ss = [
@@ -1859,7 +1859,7 @@ FINAL,Proxy';
                     $method = ',PROXY';
                 }
                 if(preg_match("/(?:[0-9\.]{1,3}){3}[0-9]+\/\d+/", $custom_rule, $matches)) {
-                    array_push($root_conf['rules'], 'IP-CIDR,'.$matches[0].$method);
+                    array_push($root_conf['rules'], 'IP-CIDR,'.$matches[0].$method.',no-resolve');
                     continue;
                 }
                 if(preg_match("/[a-z0-9.\-]+\.[a-z]+/i", $custom_rule, $matches)) {
