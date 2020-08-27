@@ -337,6 +337,7 @@
                                                     </div>
                                                     <div class="tab-pane fade" id="all_trojan_ios">
                                                         <p>推荐下载<a href="https://itunes.apple.com/us/app/shadowrocket/id932747118">Shadowrocket</a>，需要非大陆Apple ID，然后在 Safari 中点击<a href="{$trojan_url_all}">这个</a>，然后点击确定，就可以批量添加节点。</p>
+	                                                    <p>Trojan 订阅地址：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$ssr_sub_token}?v=1"><code>{$baseUrl}/link/{$ssr_sub_token}?v=1</code></a></p>
                                                     </div>
                                                     <div class="tab-pane fade" id="all_trojan_android">
                                                         <p><a href="/ssr-download/trojan-android.apk">下载</a>，安装，然后点击<a class="copy-text" data-clipboard-text="{$trojan_url_all}">这个</a>，右上角点击加号,选择从剪贴板导入，然后设置里的路由模式选择“绕过局域网及大陆地址”，返回，选择一个合适的服务器，右下角开启就可以上网了。

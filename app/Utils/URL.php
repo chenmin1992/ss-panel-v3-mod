@@ -260,12 +260,6 @@ class URL
             )->where("type", "1")->where("node_class", "<=", $user->class)->orderBy("name")->get();
         }
 
-        // $relay_rules = Relay::where('user_id', $user->id)->orwhere('user_id', 0)->orderBy('id', 'asc')->get();
-
-        // if (!Tools::is_protocol_relay($user)) {
-        //     $relay_rules = array();
-        // }
-
         foreach ($nodes as $node) {
             $inbounds = json_decode($node->v2conf);
             foreach ($inbounds as $inbound) {
@@ -300,12 +294,6 @@ class URL
                 }
             )->where("type", "1")->where("node_class", "<=", $user->class)->orderBy("name")->get();
         }
-
-        // $relay_rules = Relay::where('user_id', $user->id)->orwhere('user_id', 0)->orderBy('id', 'asc')->get();
-
-        // if (!Tools::is_protocol_relay($user)) {
-        //     $relay_rules = array();
-        // }
 
         foreach ($nodes as $node) {
             $conf = json_decode($node->trojan_conf);
@@ -551,6 +539,7 @@ class URL
     1)ws path
     2)h2 path
     3)QUIC key
+    3)mKCP key
     tls：底层传输安全（tls)
 
 
@@ -603,6 +592,7 @@ class URL
                         $return_array["kcpHeader"] = $inbound->obfs;
                         $return_array["uplinkCapacity"] = $inbound->uplinkcapacity;
                         $return_array["downlinkCapacity"] = $inbound->downlinkcapacity;
+                        $return_array["kcpSeed"] = $inbound->seed;
                         break;
                     case "ws":
                         $return_array["wsPath"] = $inbound->path;
@@ -640,7 +630,7 @@ class URL
                         break;
                     case "kcp":
                         // $return_array["obfsParam"] = json_encode([ "uplinkCapacity" => $inbound->uplinkcapacity, "downlinkCapacity" => $inbound->downlinkcapacity, "tti" => $inbound->tti, "header" => $inbound->obfs, "mtu" => $inbound->mtu ]);
-                        $return_array["obfsParam"] = json_encode([ "header" => $inbound->obfs ]);
+                        $return_array["obfsParam"] = json_encode([ "seed" => $inbound->seed, "header" => $inbound->obfs ]);
                         break;
                     case "ws":
                         if(!empty($inbound->headers->Host)) {
@@ -685,6 +675,7 @@ class URL
                         break;
                     case "kcp":
                         $return_array["type"] = $inbound->obfs;
+                        $return_array["path"] = $inbound->seed;
                         break;
                     case "ws":
                         $return_array["path"] = $inbound->path;
@@ -867,7 +858,7 @@ class URL
                 $out['streamSettings']['wsSettings'] = $wss;
                 break;
             case "kcp":
-                $out['streamSettings']['kcpSettings'] = [
+                $kcps = [
                         "mtu" => 1350,
                         "tti" => 20,
                         "uplinkCapacity" => $item['uplinkCapacity'],
@@ -879,6 +870,10 @@ class URL
                             "type" => $item['kcpHeader']
                         ]
                 ];
+                if(!empty($item['seed'])) {
+                    $kcps['seed'] = $item['path'];
+                }
+                $out['streamSettings']['kcpSettings'] = $kcps;
                 break;
             case "h2":
                 $h2s = [

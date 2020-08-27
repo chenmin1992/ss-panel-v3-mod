@@ -340,6 +340,10 @@
                                                                 <option value="wireguard" {if $inbound->obfs=='wireguard'}selected{/if}>wireguard</option>
                                                             </select>
                                                         </div>
+		                                                <div class="form-group form-group-label">
+		                                                    <label class="floating-label" for="seed">Seed (留空随机生成)</label>
+		                                                    <input class="form-control" id="seed" type="text" name="seed" value="{$inbound->seed}">
+		                                                </div>
                                                     </div>
 
                                                     <div class="tab-pane fade {if $inbound->network=='ws'}active in{/if}" id="ws">
@@ -703,6 +707,7 @@
 					"readbuffersize": 1,
 					"writebuffersize": 1,
 					"obfs": "wechat-video",
+					"seed": "",
 					// ws
 					"path": "",
 					"headers": {},
@@ -735,6 +740,11 @@
 					inb["readbuffersize"] = parseInt($(this).find("#kcp #readbuffersize").val());
 					inb["writebuffersize"] = parseInt($(this).find("#kcp #writebuffersize").val());
 					inb["obfs"] = $(this).find("#kcp #obfs").val();
+					if($(this).find("#kcp #seed").val() === "") {
+						inb["seed"] = Math.random().toString(36).substring(2, 15);
+					} else {
+						inb["seed"] = $(this).find("#kcp #seed").val();	
+					}
 				}
 				if(inb["network"] == "ws") {
 					inb["path"] = $(this).find("#ws #path").val();
