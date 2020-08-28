@@ -378,8 +378,9 @@ class URL
         switch ($conf_version) {
             case 1:
                 $parameters = '';
+                $ignore_items = ['security', 'uuid', 'host', 'port', 'id', 'node_class'];
                 foreach ($item as $key => $value) {
-                    if($key == 'security' or $key == 'uuid' or $key == 'host' or $key == 'port') {
+                    if(in_array($key, $ignore_items)) {
                         continue;
                     }
                     $parameters .= $key.'='.rawurlencode($value).'&';
@@ -645,10 +646,17 @@ class URL
                     default:
                         break;
                 }
-                $return_array["path"] = $inbound->path;
-                $return_array["obfs"] = $inbound->network;
-                if($inbound->network == "kcp") {
-                    $return_array["obfs"] = "mkcp";
+                $return_array["path"] = $inbound->path;                
+                switch ($inbound->network) {
+                    case "kcp":
+                        $return_array["obfs"] = "mkcp";
+                        break;
+                    case "ws":
+                        $return_array["obfs"] = "websocket";
+                        break;                    
+                    default:
+                        $return_array["obfs"] = $inbound->network;
+                        break;
                 }
                 // $return_array["peer"] = $return_array["tlsServer"];
                 if($inbound->tcpfastopen == "true") {
@@ -870,8 +878,8 @@ class URL
                             "type" => $item['kcpHeader']
                         ]
                 ];
-                if(!empty($item['seed'])) {
-                    $kcps['seed'] = $item['path'];
+                if(!empty($item['kcpSeed'])) {
+                    $kcps['seed'] = $item['kcpSeed'];
                 }
                 $out['streamSettings']['kcpSettings'] = $kcps;
                 break;

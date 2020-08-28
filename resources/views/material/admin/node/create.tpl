@@ -623,7 +623,28 @@
         inb.prop('id', 'in-' + newid);
         inb.removeClass('active in');
         inb.find('select').each(function() { // bug fix https://bugs.jquery.com/ticket/1294
-            $(this).val(oinb.find('select#'+$(this).prop('id')).val());
+        	var pathes = [];
+        	var e = $(this);
+        	while(!e.is(inb)) {
+        		var path = e.prop('tagName').toLowerCase();
+        		var id = e.prop('id');
+        		if(id != undefined && id != '') {
+        			path += '#' + id;
+        		}
+        		var classes = e.prop('class');
+        		if(classes != undefined && classes != '') {
+        			classes = classes.split(' ');
+        			for (var i = 0; i < classes.length; i++) {
+        				if(classes[i] !== '') {
+        					path += '.' + classes[i];
+        				}
+        			}
+        		}
+        		pathes.push(path);
+        		e = e.parent();
+        	}
+        	var full_path = pathes.reverse().join(' ');
+			$(this).val(oinb.find(full_path).val());
         });
         inb.find('#network').change(function() {
             $(this).parent().siblings('#networks').children('div.active.in').removeClass('active in');
@@ -751,45 +772,45 @@
 				};
 				if(inb["network"] == "tcp") {
 					inb["obfs"] = $(this).find("#tcp #obfs").val();
-					try { inb["httprequest"] = JSON.parse($(this).find("#tcp #http_request").val()); } catch(err) {}
-					try { inb["httpresponse"] = JSON.parse($(this).find("#tcp #http_response").val()); } catch(err) {}
+					try { inb["httprequest"] = JSON.parse($(this).find("#networks #tcp #http_request").val()); } catch(err) {}
+					try { inb["httpresponse"] = JSON.parse($(this).find("#networks #tcp #http_response").val()); } catch(err) {}
 				}
 				if(inb["network"] == "kcp") {
-					inb["mtu"] = parseInt($(this).find("#kcp #mtu").val());
-					inb["tti"] = parseInt($(this).find("#kcp #tti").val());
-					inb["uplinkcapacity"] = parseInt($(this).find("#kcp #uplinkcapacity").val());
-					inb["downlinkcapacity"] = parseInt($(this).find("#kcp #downlinkcapacity").val());
-					inb["congestion"] = $(this).find("#kcp #congestion").is(":checked");
-					inb["readbuffersize"] = parseInt($(this).find("#kcp #readbuffersize").val());
-					inb["writebuffersize"] = parseInt($(this).find("#kcp #writebuffersize").val());
-					inb["obfs"] = $(this).find("#kcp #obfs").val();
-					if($(this).find("#kcp #seed").val() === "") {
+					inb["mtu"] = parseInt($(this).find("#networks #kcp #mtu").val());
+					inb["tti"] = parseInt($(this).find("#networks #kcp #tti").val());
+					inb["uplinkcapacity"] = parseInt($(this).find("#networks #kcp #uplinkcapacity").val());
+					inb["downlinkcapacity"] = parseInt($(this).find("#networks #kcp #downlinkcapacity").val());
+					inb["congestion"] = $(this).find("#networks #kcp #congestion").is(":checked");
+					inb["readbuffersize"] = parseInt($(this).find("#networks #kcp #readbuffersize").val());
+					inb["writebuffersize"] = parseInt($(this).find("#networks #kcp #writebuffersize").val());
+					inb["obfs"] = $(this).find("#networks #kcp #obfs").val();
+					if($(this).find("#networks #kcp #seed").val() === "") {
 						inb["seed"] = Math.random().toString(36).substring(2, 15);
 					} else {
-						inb["seed"] = $(this).find("#kcp #seed").val();	
+						inb["seed"] = $(this).find("#networks #kcp #seed").val();	
 					}
 				}
 				if(inb["network"] == "ws") {
-					inb["path"] = $(this).find("#ws #path").val();
-					try { inb["headers"] = JSON.parse($(this).find("#ws #headers").val()); } catch(err) {}
-					inb["proxyaddr"] = $(this).find("#ws #proxy_addr").val();
-					inb["proxyport"] = parseInt($(this).find("#ws #proxy_port").val());
-					inb["proxysecurity"] = $(this).find("#ws #proxy_security").val();
+					inb["path"] = $(this).find("#networks #ws #path").val();
+					try { inb["headers"] = JSON.parse($(this).find("#networks #ws #headers").val()); } catch(err) {}
+					inb["proxyaddr"] = $(this).find("#networks #ws #proxy_addr").val();
+					inb["proxyport"] = parseInt($(this).find("#networks #ws #proxy_port").val());
+					inb["proxysecurity"] = $(this).find("#networks #ws #proxy_security").val();
 				}
 				if(inb["network"] == "h2") {
-					inb["host"] = $(this).find("#h2 #host").val();
-					inb["path"] = $(this).find("#h2 #path").val();
-					inb["proxyaddr"] = $(this).find("#h2 #proxy_addr").val();
-					inb["proxyport"] = parseInt($(this).find("#h2 #proxy_port").val());
-					inb["proxysecurity"] = $(this).find("#h2 #proxy_security").val();
+					inb["host"] = $(this).find("#networks #h2 #host").val();
+					inb["path"] = $(this).find("#networks #h2 #path").val();
+					inb["proxyaddr"] = $(this).find("#networks #h2 #proxy_addr").val();
+					inb["proxyport"] = parseInt($(this).find("#networks #h2 #proxy_port").val());
+					inb["proxysecurity"] = $(this).find("#networks #h2 #proxy_security").val();
 				}
 				if(inb["network"] == "domainsocket") {
-					inb["path"] = $(this).find("#domainsocket #path").val();
+					inb["path"] = $(this).find("#networks #domainsocket #path").val();
 				}
 				if(inb["network"] == "quic") {
-					inb["encryption"] = $(this).find("#quic #encryption").val();
-					inb["quickey"] = $(this).find("#quic #quic_key").val();
-					inb["obfs"] = $(this).find("#quic #obfs").val();
+					inb["encryption"] = $(this).find("#networks #quic #encryption").val();
+					inb["quickey"] = $(this).find("#networks #quic #quic_key").val();
+					inb["obfs"] = $(this).find("#networks #quic #obfs").val();
 				}
 				if(inb["security"] == "tls") {
 					inb["cert"] = parseInt($(this).find("#cert").val());

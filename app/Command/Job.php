@@ -923,14 +923,14 @@ class Job
     }
 
     public static function hideV2ray() {
-        $white_networks = array('h2', 'ws', 'domainsocket');
+        $blacklist_networks = array('kcp', 'quic');
         $nodes = Node::all();
         foreach ($nodes as $node) {
             if ($node->sort == 11) {
                 $ins = json_decode($node->v2conf);
                 $need = false;
                 foreach ($ins as $in) {
-                    if (!in_array($in->network, $white_networks)) {
+                    if (in_array($in->network, $blacklist_networks)) {
                         if ($in->listen == '::') {
                             $in->listen = '::1';
                         } else {
