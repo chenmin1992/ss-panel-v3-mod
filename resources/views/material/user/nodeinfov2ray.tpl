@@ -157,7 +157,7 @@
                                                 {/foreach}
                                             </ul>
                                         </nav>
-                                        <div class="tab-content" id="v2ray_qrcode">
+                                        <div class="tab-content">
                                             {foreach from=$node->v2conf|json_decode key=index item=inbound}
                                             <div class="tab-pane fade {if $index==0}active in{/if}" id="qr-{$index}">
                                                 <nav class="tab-nav margin-top-no">
@@ -208,10 +208,9 @@
 
 <script src="/assets/public/js/jquery.qrcode.min.js"></script>
 <script>
-    $('#v2ray_qrcode').children('div.tab-pane.fade').each(function() {
-        $(this).find('div#v2ray-qr').qrcode({
-            "text": $(this).find('div#v2ray-qr').attr('data')
+    $('div#v2ray-qr').each(function() {
+        $(this).qrcode({
+            "text": $(this).attr('data')
         });
     });
-
 </script>
