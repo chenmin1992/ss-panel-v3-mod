@@ -196,7 +196,6 @@
                                                                 <option value="dokodemo-door" disabled>Dokodemo-door</option>
                                                                 <option value="dns" disabled>DNS</option>
                                                                 <option value="blackhole" disabled>Blackhole</option>
-                                                                <option value="vless" disabled>VLESS</option>
                                                             </select>
                                                         </div>
                                                 </div>
@@ -575,6 +574,7 @@
 
 {literal}
 <script>
+
     $('#sort').change(function() {
         if(this.value == '11') {
             $('#v2in').removeClass('access-hide');

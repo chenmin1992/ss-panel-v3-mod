@@ -1792,6 +1792,10 @@ FINAL,Proxy';
                             $vmess['ws-headers'] = [
                                 "Host" => $item['wsHost']
                             ];
+                        } else {
+                            $vmess['ws-headers'] = [
+                                "Host" => $item['host']
+                            ];
                         }
                         break;
 
@@ -1803,6 +1807,8 @@ FINAL,Proxy';
                         }
                         if(!empty($item['h2Host'])) {
                             $vmess['http-opts']['headers'] = [ 'Host' => [ $item['h2Host'] ] ];
+                        } else {
+                            $vmess['http-opts']['headers'] = [ 'Host' => [ $item['host'] ] ];
                         }
                         break;
 
