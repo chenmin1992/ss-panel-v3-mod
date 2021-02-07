@@ -586,6 +586,16 @@ class URL
                 $return_array["tlsServer"] = $node->server;
                 $return_array["mux"] = 1;
                 $return_array["muxConcurrency"] = 8;
+                if($inbound->network == "ws" or $inbound->network == "h2") {
+                    if(!empty($inbound->proxyaddr) and !empty($inbound->proxyport)) {
+                        $return_array["host"] = $inbound->proxyaddr;
+                        $return_array["port"] = $inbound->proxyport;
+                        if($inbound->security == "none" and $inbound->proxysecurity == "tls") {
+                            $return_array["tls"] = 1;
+                            $return_array["tlsServer"] = $return_array["host"];
+                        }
+                    }
+                }
                 switch ($inbound->network) {
                     case "tcp":
                         break;
@@ -599,10 +609,19 @@ class URL
                         $return_array["wsPath"] = $inbound->path;
                         if(!empty($inbound->headers->Host)) {
                             $return_array["wsHost"] = $inbound->headers->Host;
+                            if($return_array["tls"] == 1) {
+                                $return_array["tlsServer"] = $inbound->headers->Host;
+                            }
+                        } else {
+                            $return_array["wsHost"] = $return_array["host"];
                         }
                         break;
                     case "h2":
-                        $return_array["h2Host"] = $inbound->host;
+                        if(!empty($inbound->host)) {
+                            $return_array["h2Host"] = $inbound->host;
+                        } else {
+                            $return_array["h2Host"] = $return_array["host"];
+                        }
                         $return_array["h2Path"] = $inbound->path;
                         break;
                     case "quic":
@@ -612,16 +631,6 @@ class URL
                         break;
                     default:
                         break;
-                }
-                if($inbound->network == "ws" or $inbound->network == "h2") {
-                    if(!empty($inbound->proxyaddr) and !empty($inbound->proxyport)) {
-                        $return_array["host"] = $inbound->proxyaddr;
-                        $return_array["port"] = $inbound->proxyport;
-                        if($inbound->security == "none" and $inbound->proxysecurity == "tls") {
-                            $return_array["tls"] = 1;
-                            $return_array["tlsServer"] = $return_array["host"];
-                        }
-                    }
                 }
                 $return_array["remark"] = str_replace(' ', '', explode(" - ", $node->name)[0])."-".$return_array["network"];
                 // for shadowrocket only
@@ -634,12 +643,12 @@ class URL
                         $return_array["obfsParam"] = json_encode([ "seed" => $inbound->seed, "header" => $inbound->obfs ]);
                         break;
                     case "ws":
-                        if(!empty($inbound->headers->Host)) {
-                            $return_array["obfsParam"] = $inbound->headers->Host;
-                        }
+                        $return_array["obfsParam"] = $return_array["wsHost"];
+                        $return_array["peer"] = $return_array["tlsServer"];
                         break;
                     case "h2":
-                        $return_array["obfsParam"] = $inbound->host;
+                        $return_array["obfsParam"] = $return_array["h2Host"];
+                        $return_array["peer"] = $return_array["tlsServer"];
                         break;
                     case "quic":
                         break;
@@ -658,7 +667,6 @@ class URL
                         $return_array["obfs"] = $inbound->network;
                         break;
                 }
-                // $return_array["peer"] = $return_array["tlsServer"];
                 if($inbound->tcpfastopen == "true") {
                     $return_array["tfo"] = 1;
                 } else {
@@ -677,6 +685,15 @@ class URL
                 $return_array["host"] = "";
                 $return_array["path"] = "";
                 $return_array["tls"] = $inbound->security;
+                if($inbound->network == "ws" or $inbound->network == "h2") {
+                    if(!empty($inbound->proxyaddr) and !empty($inbound->proxyport)) {
+                        $return_array["add"] = $inbound->proxyaddr;
+                        $return_array["port"] = $inbound->proxyport;
+                        if($inbound->security == "none" and $inbound->proxysecurity == "tls") {
+                            $return_array["tls"] = "tls";
+                        }
+                    }
+                }
                 switch ($inbound->network) {
                     case "tcp":
                         $return_array["type"] = $inbound->obfs;
@@ -689,11 +706,17 @@ class URL
                         $return_array["path"] = $inbound->path;
                         if(!empty($inbound->headers->Host)) {
                             $return_array["host"] = $inbound->headers->Host;
+                        } else {
+                            $return_array["host"] = $return_array["add"];
                         }
                         break;
                     case "h2":
-                        $return_array["host"] = $inbound->host;
                         $return_array["path"] = $inbound->path;
+                        if(!empty($inbound->host)) {
+                            $return_array["host"] = $inbound->host;
+                        } else {
+                            $return_array["host"] = $return_array["add"];
+                        }
                         break;
                     case "quic":
                         $return_array["type"] = $inbound->obfs;
@@ -704,15 +727,6 @@ class URL
                         break;
                     default:
                         break;
-                }
-                if($inbound->network == "ws" or $inbound->network == "h2") {
-                    if(!empty($inbound->proxyaddr) and !empty($inbound->proxyport)) {
-                        $return_array["add"] = $inbound->proxyaddr;
-                        $return_array["port"] = $inbound->proxyport;
-                        if($inbound->security == "none" and $inbound->proxysecurity == "tls") {
-                            $return_array["tls"] = "tls";
-                        }
-                    }
                 }
                 $return_array["ps"] = str_replace(' ', '', explode(" - ", $node->name)[0])."-".$return_array["net"];
                 break;

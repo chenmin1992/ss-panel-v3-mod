@@ -437,13 +437,10 @@ class Tools
         $records=dns_get_record($server, DNS_ALL);
         $ips='';
         foreach($records as $record) {
-            if($record->type=='A') {
-                $ips.=$record->ip.',';
-            }
-        }
-        foreach($records as $record) {
-            if($record->type=='AAAA') {
-                $ips.=$record->ipv6.',';
+            if($record['type']=='A') {
+                $ips.=$record['ip'].',';
+            } elseif($record['type']=='AAAA') {
+                $ips.=$record['ipv6'].',';
             }
         }
         if (strlen($ips)>0) {
