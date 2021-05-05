@@ -1744,7 +1744,7 @@ FINAL,Proxy';
             "proxy-groups" => [
                 [
                     "name" => "PROXY",
-                    "type" => "fallback",
+                    "type" => "url-test",
                     "proxies" => [],
                     "url" => "http://www.gstatic.com/generate_204",
                     "interval" => 300
