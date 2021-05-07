@@ -349,6 +349,8 @@ class Job
                 if(substr($rule, 0, 1) == '#' or empty($rule)) {
                     continue;
                 } elseif (strtoupper(substr($rule, 0, 5)) == 'FINAL') {
+                    $data .= "GEOIP,HK,DIRECT\n";
+                    $data .= "GEOIP,TW,DIRECT\n";
                     $data .= str_replace('FINAL', 'MATCH', strtoupper($rule))."\n";
                     break;
                 } else {
