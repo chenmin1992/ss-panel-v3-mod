@@ -223,7 +223,7 @@ class Job
 
         Job::updateQQWry();
 
-        Job::updateClashRules();
+        // Job::updateClashRules();
     }
 
     public static function updateQQWry()
