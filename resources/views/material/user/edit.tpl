@@ -342,7 +342,8 @@
 										<p class="card-heading">自定义ACL/PAC/Surge/Shadowrocket/Clash规则</p>
 										<p>您可以在此处追加 Gfwlist 规则。</p>
 										<p>格式参看<a href="https://adblockplus.org/filter-cheatsheet#options" target="_blank">https://adblockplus.org/filter-cheatsheet#options</a></p>
-										<p>说明：<code>||google.com</code>代理google.com及其子域名</p>
+										<p>说明：</p>
+										<p><code>||google.com</code>代理google.com及其子域名</p>
 										<p><code>|google.com</code>只代理google.com</p>
 										<p><code>@@||google.com</code>直连google.com及其子域名</p>
 										<p><code>@@|google.com</code>只直连google.com</p>
@@ -353,6 +354,8 @@
 										<p><code>@@|google</code>直连域名中包含google的URL</p>
 										<p><code>|US</code>代理美国IP</p>
 										<p><code>@@|US</code>直连美国IP</p>
+										<p><code>!||google.com</code>屏蔽google.com及其子域名</p>
+										<p><code>!|google.com</code>只屏蔽google.com</p>
 										<p><a href="https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes" target="_blank">国家代码点我查看</a></p>
 										<div class="form-group form-group-label">
 											<label class="floating-label" for="pac">规则书写区</label>

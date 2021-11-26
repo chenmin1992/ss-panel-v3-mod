@@ -1746,7 +1746,7 @@ FINAL,Proxy';
                     "name" => "PROXY",
                     "type" => "url-test",
                     "proxies" => [],
-                    "url" => "http://www.gstatic.com/generate_204",
+                    "url" => "http://clients3.google.com/generate_204",
                     "interval" => 10
                 ]
             ],
@@ -1852,7 +1852,13 @@ FINAL,Proxy';
                 if(substr($custom_rule, 0, 2) == '@@') {
                     $method = ',DIRECT';
                     $custom_rule = substr($custom_rule, 2);
+                } elseif (substr($custom_rule, 0, 1) == '!') {
+                    $method = ',REJECT';
+                    $custom_rule = substr($custom_rule, 1);
+                } else {
+                    $method = ',PROXY';
                 }
+
                 if(substr($custom_rule, 0, 2) == '||') {
                     $domain_suffix = '-SUFFIX';
                 } elseif(substr($custom_rule, 0, 1) == '|') {
@@ -1861,9 +1867,7 @@ FINAL,Proxy';
                 } else {
                     continue;
                 }
-                if(empty($method)) {
-                    $method = ',PROXY';
-                }
+
                 if(preg_match("/(?:[0-9\.]{1,3}){3}[0-9]+\/\d+/", $custom_rule, $matches)) {
                     array_push($root_conf['rules'], 'IP-CIDR,'.$matches[0].$method.',no-resolve');
                     continue;
