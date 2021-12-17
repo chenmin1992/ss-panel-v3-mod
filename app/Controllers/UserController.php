@@ -71,6 +71,10 @@ class UserController extends BaseController
 
         $clash_sub_token = LinkController::GenerateClashSubCode($this->user->id, 0);
 
+        // $v2ray_sub_token = LinkController::GenerateV2RaySubCode($this->user->id, 0);
+
+        // $trojan_sub_token = LinkController::GenerateTrojanSubCode($this->user->id, 0);
+
         $uid = time().rand(1, 10000) ;
         if (Config::get('enable_geetest_checkin') == 'true') {
             $GtSdk = Geetest::get($uid);
@@ -84,6 +88,7 @@ class UserController extends BaseController
         return $this->view()->assign("clash_sub_token", $clash_sub_token)
                 ->assign("ssr_sub_token", $ssr_sub_token)->assign("router_token", $router_token)
                 ->assign("router_token_without_mu", $router_token_without_mu)->assign("acl_token", $acl_token)
+                // ->assign("v2ray_sub_token", $v2ray_sub_token)->assign("trojan_sub_token", $trojan_sub_token)
                 ->assign('ann', $Ann)->assign('geetest_html', $GtSdk)->assign("ios_token", $ios_token)
                 ->assign('enable_duoshuo', Config::get('enable_duoshuo'))->assign('duoshuo_shortname', Config::get('duoshuo_shortname'))
                 ->assign("user", $this->user)->registerClass("URL", "App\Utils\URL")->assign('baseUrl', Config::get('baseUrl'))->display('user/index.tpl');

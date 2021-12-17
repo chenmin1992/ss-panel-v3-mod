@@ -198,6 +198,46 @@ class LinkController extends BaseController
         return $NLink->token;
     }
 
+    public static function GenerateV2RaySubCode($userid)
+    {
+        $Elink = Link::where("type", "=", 13)->where("userid", "=", $userid)->first();
+        if ($Elink != null) {
+            return $Elink->token;
+        }
+        $NLink = new Link();
+        $NLink->type = 13;
+        $NLink->address = "";
+        $NLink->port = 0;
+        $NLink->ios = 0;
+        $NLink->geo = 0;
+        $NLink->method = "";
+        $NLink->userid = $userid;
+        $NLink->token = LinkController::GenerateRandomLink();
+        $NLink->save();
+
+        return $NLink->token;
+    }
+
+    public static function GenerateTrojanSubCode($userid)
+    {
+        $Elink = Link::where("type", "=", 14)->where("userid", "=", $userid)->first();
+        if ($Elink != null) {
+            return $Elink->token;
+        }
+        $NLink = new Link();
+        $NLink->type = 14;
+        $NLink->address = "";
+        $NLink->port = 0;
+        $NLink->ios = 0;
+        $NLink->geo = 0;
+        $NLink->method = "";
+        $NLink->userid = $userid;
+        $NLink->token = LinkController::GenerateRandomLink();
+        $NLink->save();
+
+        return $NLink->token;
+    }
+
     public static function GetContent($request, $response, $args)
     {
         $token = $args['token'];
@@ -319,6 +359,22 @@ class LinkController extends BaseController
 
                 $newResponse = $response->withHeader('Content-type', ' application/octet-stream; charset=utf-8')->withHeader('Cache-Control', 'no-store, no-cache, must-revalidate')->withHeader('Content-Disposition', ' attachment; filename='.$domainname.'.yaml');
                 $newResponse->getBody()->write(LinkController::GetClash(User::where("id", "=", $Elink->userid)->first(), $mu, $small));
+                return $newResponse;
+            case 13:
+                $user=User::where("id", $Elink->userid)->first();
+                if ($user == null) {
+                    return null;
+                }
+
+                $newResponse->getBody()->write('');
+                return $newResponse;
+            case 14:
+                $user=User::where("id", $Elink->userid)->first();
+                if ($user == null) {
+                    return null;
+                }
+
+                $newResponse->getBody()->write('');
                 return $newResponse;
             default:
                 break;
