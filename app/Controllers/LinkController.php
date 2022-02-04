@@ -1729,7 +1729,7 @@ FINAL,Proxy';
 
         $items = URL::getAllSSRItems($user, $is_mu, $is_ss);
         foreach($items as $item) {
-            if($is_ss == 0) {
+            if ($is_ss == 0) {
                 $bash .= 'nvram set rt_ss_name_x'.$count.'="'.$item['remark']."\"\n";
                 $bash .= 'nvram set rt_ss_port_x'.$count.'='.$item['port']."\n";
                 $bash .= 'nvram set rt_ss_password_x'.$count.'="'.$item['passwd']."\"\n";
@@ -1775,19 +1775,25 @@ FINAL,Proxy';
                 "localhost" => "127.0.0.1"
             ],
             "dns" => [
+                "default-nameserver" => [
+                    "182.254.116.116",
+                    "223.6.6.6",
+                    "114.114.115.115"
+                ],
+                "enhanced-mode" => "fake-ip",
+                "use-hosts" => true,
                 "nameserver" => [
                     "182.254.116.116",
                     "223.6.6.6",
-                    "176.103.130.131",
                     "114.114.115.115"
                 ],
                 "fallback" => [
-                    "tls://dns.adguard.com:853",
-                    "tls://1.0.0.1:853",
                     "tls://dns.google:853",
-                    "https://dns.adguard.com/dns-query",
+                    "tls://1.0.0.1:853",
+                    "tls://dns.adguard.com:853",
+                    "https://dns.google/dns-query",
                     "https://cloudflare-dns.com/dns-query",
-                    "https://dns.google/dns-query"
+                    "https://dns.adguard.com/dns-query"
                 ],
                 "fallback-filter" => [
                     "geoip" => true,
@@ -1810,7 +1816,7 @@ FINAL,Proxy';
         ];
         $items = Tools::arrayOrderby(URL::getAllItems($user, $mu, 0, 1), 'node_class', SORT_DESC, 'id', SORT_DESC);
         foreach ($items as $index => $item) {
-            if(array_key_exists('protocol_param', $item)) { //SS
+            if (array_key_exists('protocol_param', $item)) { //SS
                 $ss = [
                     "name" => $item['remark'],
                     "type" => "ss",
@@ -1825,7 +1831,7 @@ FINAL,Proxy';
                 continue;
             }
             $vmess_networks = ['ws'];
-            if(array_key_exists('uuid', $item) && in_array($item['network'], $vmess_networks)) { //vmess
+            if (array_key_exists('uuid', $item) && in_array($item['network'], $vmess_networks)) { //vmess
                 $vmess = [
                     "name" => $item['remark'],
                     "type" => "vmess",
@@ -1841,10 +1847,10 @@ FINAL,Proxy';
                 ];
                 switch ($vmess['network']) {
                     case 'ws':
-                        if(!empty($item['wsPath'])) {
+                        if (!empty($item['wsPath'])) {
                             $vmess['ws-path'] = $item['wsPath'];
                         }
-                        if(!empty($item['wsHost'])) {
+                        if (!empty($item['wsHost'])) {
                             $vmess['ws-headers'] = [
                                 "Host" => $item['wsHost']
                             ];
@@ -1858,10 +1864,10 @@ FINAL,Proxy';
                     case 'h2':
                         $vmess['network'] = 'http';
                         $vmess['http-opts'] = [ 'method' => 'GET' ];
-                        if(!empty($item['h2Path'])) {
+                        if (!empty($item['h2Path'])) {
                             $vmess['http-opts']['path'] = [ $item['h2Path'] ];
                         }
-                        if(!empty($item['h2Host'])) {
+                        if (!empty($item['h2Host'])) {
                             $vmess['http-opts']['headers'] = [ 'Host' => [ $item['h2Host'] ] ];
                         } else {
                             $vmess['http-opts']['headers'] = [ 'Host' => [ $item['host'] ] ];
@@ -1875,7 +1881,7 @@ FINAL,Proxy';
                 array_push($root_conf['proxy-groups'][0]['proxies'], $vmess['name']);
                 continue;
             }
-            if(array_key_exists('reuse_session', $item)) { //trojan
+            if (array_key_exists('reuse_session', $item)) { //trojan
                 $trojan = [
                     "name" => $item['remark'],
                     "type" => "trojan",
@@ -1898,14 +1904,14 @@ FINAL,Proxy';
         $custom_rules = explode("\n", $user->pac);
         $country_iso_codes = ['AD', 'AE', 'AF', 'AG', 'AI', 'AL', 'AM', 'AO', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AW', 'AX', 'AZ', 'BA', 'BB', 'BD', 'BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BL', 'BM', 'BN', 'BO', 'BQ', 'BR', 'BS', 'BT', 'BV', 'BW', 'BY', 'BZ', 'CA', 'CC', 'CD', 'CF', 'CG', 'CH', 'CI', 'CK', 'CL', 'CM', 'CN', 'CO', 'CR', 'CU', 'CV', 'CW', 'CX', 'CY', 'CZ', 'DE', 'DJ', 'DK', 'DM', 'DO', 'DZ', 'EC', 'EE', 'EG', 'EH', 'ER', 'ES', 'ET', 'FI', 'FJ', 'FK', 'FM', 'FO', 'FR', 'GA', 'GB', 'GD', 'GE', 'GF', 'GG', 'GH', 'GI', 'GL', 'GM', 'GN', 'GP', 'GQ', 'GR', 'GS', 'GT', 'GU', 'GW', 'GY', 'HK', 'HM', 'HN', 'HR', 'HT', 'HU', 'ID', 'IE', 'IL', 'IM', 'IN', 'IO', 'IQ', 'IR', 'IS', 'IT', 'JE', 'JM', 'JO', 'JP', 'KE', 'KG', 'KH', 'KI', 'KM', 'KN', 'KP', 'KR', 'KW', 'KY', 'KZ', 'LA', 'LB', 'LC', 'LI', 'LK', 'LR', 'LS', 'LT', 'LU', 'LV', 'LY', 'MA', 'MC', 'MD', 'ME', 'MF', 'MG', 'MH', 'MK', 'ML', 'MM', 'MN', 'MO', 'MP', 'MQ', 'MR', 'MS', 'MT', 'MU', 'MV', 'MW', 'MX', 'MY', 'MZ', 'NA', 'NC', 'NE', 'NF', 'NG', 'NI', 'NL', 'NO', 'NP', 'NR', 'NU', 'NZ', 'OM', 'PA', 'PE', 'PF', 'PG', 'PH', 'PK', 'PL', 'PM', 'PN', 'PR', 'PS', 'PT', 'PW', 'PY', 'QA', 'RE', 'RO', 'RS', 'RU', 'RW', 'SA', 'SB', 'SC', 'SD', 'SE', 'SG', 'SH', 'SI', 'SJ', 'SK', 'SL', 'SM', 'SN', 'SO', 'SR', 'SS', 'ST', 'SV', 'SX', 'SY', 'SZ', 'TC', 'TD', 'TF', 'TG', 'TH', 'TJ', 'TK', 'TL', 'TM', 'TN', 'TO', 'TR', 'TT', 'TV', 'TW', 'TZ', 'UA', 'UG', 'UM', 'US', 'UY', 'UZ', 'VA', 'VC', 'VE', 'VG', 'VI', 'VN', 'VU', 'WF', 'WS', 'XK', 'YE', 'YT', 'ZA', 'ZM', 'ZW'];
         foreach ($custom_rules as $index => $custom_rule) {
-            if(empty(str_replace(' ', '', $custom_rule))) {
+            if (empty(str_replace(' ', '', $custom_rule))) {
                 continue;
             } else {
                 $domain_suffix = '';
                 $country_code = '';
                 $method = '';
 
-                if(substr($custom_rule, 0, 2) == '@@') {
+                if (substr($custom_rule, 0, 2) == '@@') {
                     $method = ',DIRECT';
                     $custom_rule = substr($custom_rule, 2);
                 } elseif (substr($custom_rule, 0, 1) == '!') {
@@ -1915,38 +1921,34 @@ FINAL,Proxy';
                     $method = ',PROXY';
                 }
 
-                if(substr($custom_rule, 0, 2) == '||') {
+                if (substr($custom_rule, 0, 2) == '||') {
                     $domain_suffix = '-SUFFIX';
-                } elseif(substr($custom_rule, 0, 1) == '|') {
+                } elseif (substr($custom_rule, 0, 1) == '|') {
                     $domain_suffix = '';
                     $country_code = strtoupper(substr($custom_rule, 1));
                 } else {
                     continue;
                 }
 
-                if(preg_match("/(?:[0-9\.]{1,3}){3}[0-9]+\/\d+/", $custom_rule, $matches)) {
+                if (preg_match("/(?:[\d\.]+){3}\d+\/\d+/", $custom_rule, $matches)) {
                     array_push($root_conf['rules'], 'IP-CIDR,'.$matches[0].$method.',no-resolve');
                     continue;
                 }
-                if(preg_match("/[a-z0-9.\-]+\.[a-z]+/i", $custom_rule, $matches)) {
+                if (preg_match("/[a-z0-9.\-]+\.[a-z]+/i", $custom_rule, $matches)) {
                     array_push($root_conf['rules'], 'DOMAIN'.$domain_suffix.','.strtolower($matches[0]).$method);
                     continue;
                 }
-                if(!empty($country_code)) {
-                    foreach ($country_iso_codes as $country_iso_code) {
-                        if($country_code == $country_iso_code) {
-                            array_push($root_conf['rules'], 'GEOIP,'.$country_iso_code.$method);
-                            continue 2;
-                        }
-                    }
+                if (!empty($country_code) && in_array($country_iso_code, $country_iso_codes)) {
+					array_push($root_conf['rules'], 'GEOIP,'.$country_iso_code.$method);
+					continue;
                 }
-                if(preg_match("/\b[a-z0-9-]+\b/i", $custom_rule, $matches)) {
+                if (preg_match("/\b[a-z0-9-]+\b/i", $custom_rule, $matches)) {
                     array_push($root_conf['rules'], 'DOMAIN-KEYWORD,'.strtolower($matches[0]).$method);
                     continue;
                 }
             }
         }
-        if($small == 1) {
+        if ($small == 1) {
             $root_conf['rules'] = array_merge($root_conf['rules'], explode("\n", file_get_contents(BASE_PATH.'/storage/clash_rules_small.yaml')));
         } else {
             $root_conf['rules'] = array_merge($root_conf['rules'], explode("\n", file_get_contents(BASE_PATH.'/storage/clash_rules.yaml')));

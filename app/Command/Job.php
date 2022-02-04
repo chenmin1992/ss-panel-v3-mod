@@ -382,6 +382,99 @@ class Job
         }
     }
 
+    public static function expandRuleSetURL($url, $policy)
+    {
+        $yaml = file_get_contents($url);
+        $payload = yaml_parse($yaml)['payload'];
+        $arr = array();
+        $rule_starts = ['DOMAIN','DOMAIN-SUFFIX','DOMAIN-KEYWORD','GEOIP','IP-CIDR','IP-CIDR6','SRC-IP-CIDR','SRC-PORT','DST-PORT','PROCESS-NAME','MATCH'];
+        foreach ($payload as $value) {
+            $rule = explode(",", $value);
+            // classical
+            if (count($rule) > 1 && in_array(strtoupper($rule[0]), $rule_starts)) {
+                array_push($arr, implode(',', [strtoupper($rule[0]), $rule[1], $policy]));
+                continue;
+            }
+            // IPv4
+            if (preg_match("/(?:[\d\.]+){3}\d+\/\d+/", $value, $match)) {
+                array_push($arr, implode(',', ['IP-CIDR', $match[0], $policy, 'no-resolve']));
+                continue;
+            }
+            // IPv6
+            if (preg_match("/(?:[a-f0-9]*:)+(?:[a-f0-9]*)?\/\d+/", $value, $match)) {
+                array_push($arr, implode(',', ['IP-CIDR6', $match[0], $policy, 'no-resolve']));
+                continue;
+            }
+            // domain
+            if (preg_match("/(\+\.)?(\w[\w\.\-]*)/i", $value, $match)) {
+                $domain_suffix = '';
+                if ($match[1] == '+.' && count($match) > 2) {
+                    array_push($arr, implode(',', ['DOMAIN-SUFFIX', strtolower($match[2]), $policy]));
+                    continue;
+                }
+                array_push($arr, implode(',', ['DOMAIN', strtolower($match[0]), $policy]));
+                continue;
+            }
+        }
+        return $arr;
+    }
+
+    public static function updateClashRulesFromLoyalsoldier()
+    {
+        $readme = file_get_contents('https://raw.githubusercontent.com/Loyalsoldier/clash-rules/master/README.md');
+        if (preg_match_all("/```yaml\n(rules:\n(?:  - .+\n)+)```/m", $readme, $yamls)) {
+            // var_dump($yamls);
+            // return;
+            $data_whitelist = '';
+            $data_blacklist = '';
+            $rule_set_blacklist = ['applications', 'reject', 'greatfire'];
+            foreach ($yamls[1] as $yaml) {
+                $rules = yaml_parse($yaml)['rules'];
+                $data = '';
+                foreach ($rules as $rule) {
+                    $rule_arr = explode(',', $rule);
+                    if (count($rule_arr) > 1) {
+                        if ($rule_arr[0] == 'RULE-SET' && count($rule_arr) > 2) {
+                            if (in_array($rule_arr[1], $rule_set_blacklist)) {
+                                continue;
+                            }
+                            $rules_in_ruleset = Job::expandRuleSetURL('https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/'.$rule_arr[1].'.txt', $rule_arr[2]);
+                            $data .= implode("\n", $rules_in_ruleset)."\n";
+                        } else {
+                            $data .= $rule."\n";
+                            if (strtoupper($rule) == 'MATCH,PROXY') {
+                                $data_whitelist = $data;
+                                break;
+                            }
+                            if (strtoupper($rule) == 'MATCH,DIRECT') {
+                                $data_blacklist = $data;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            if(strlen($data_whitelist) > 0) {
+                file_put_contents(BASE_PATH.'/storage/clash_rules_whitelist.yaml', substr($data_whitelist, 0, -1));
+            }
+            if(strlen($data_blacklist) > 0) {
+                file_put_contents(BASE_PATH.'/storage/clash_rules_blacklist.yaml', substr($data_blacklist, 0, -1));
+            }
+        }
+        // $data = '';
+        // $rules_in_ruleset = Job::expandRuleSetURL('https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/private.txt', 'DIRECT');
+        // $data .= implode("\n", $rules_in_ruleset)."\n";
+        // $rules_in_ruleset = Job::expandRuleSetURL('https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/reject.txt', 'REJECT');
+        // $data .= implode("\n", $rules_in_ruleset)."\n";
+        // $rules_in_ruleset = Job::expandRuleSetURL('https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/tld-not-cn.txt', 'PROXY');
+        // $data .= implode("\n", $rules_in_ruleset)."\n";
+        // $rules_in_ruleset = Job::expandRuleSetURL('https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/gfw.txt', 'PROXY');
+        // $data .= implode("\n", $rules_in_ruleset)."\n";
+        // $rules_in_ruleset = Job::expandRuleSetURL('https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/telegramcidr.txt', 'PROXY');
+        // $data .= implode("\n", $rules_in_ruleset)."\n";
+        // $data .= "MATCH,DIRECT\n";
+    }
+
     public static function CheckJob()
     {
         //在线人数检测

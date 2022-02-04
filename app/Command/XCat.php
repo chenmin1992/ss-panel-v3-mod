@@ -86,7 +86,7 @@ class XCat
 
     public function defaultAction()
     {
-        print_r(Job::updateClashRules());
+        print_r(Job::updateClashRulesFromLoyalsoldier());
     }
 
     public function cleanRelayRule()
