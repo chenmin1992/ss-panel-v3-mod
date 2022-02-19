@@ -279,13 +279,15 @@ class URL
         if ($user->is_admin) {
             $nodes=Node::where(
                 function ($query) {
-                    $query->where('sort', 12);
+                    $query->where('sort', 12)
+                        ->orwhere('sort', 13);
                 }
             )->where("type", "1")->orderBy("name")->get();
         } else {
             $nodes=Node::where(
                 function ($query) {
-                    $query->where('sort', 12);
+                    $query->where('sort', 12)
+                        ->orwhere('sort', 13);
                 }
             )->where(
                 function ($query) use ($user){
@@ -299,6 +301,17 @@ class URL
             $conf = json_decode($node->trojan_conf);
             $item = URL::getTrojanItem($user, $node, $conf);
             if($item != null) {
+                if ($node->sort == 13) {
+                    $relay_rule = Relay::where('source_node_id', $node->id)->where(
+                        function ($query) use ($user) {
+                            $query->Where("user_id", "=", $user->id)
+                                ->orWhere("user_id", "=", 0);
+                        }
+                    )->orderBy("priority", "DESC")->first();
+                    $item['sni'] = $relay_rule->dist_node()->server;
+                    $item['port'] = $relay_rule->port;
+                    $item['remark'] = explode(" - ", $node->name)[0] .  " - " . $relay_rule->dist_node()->name;
+                }
                 array_push($return_array, $item);
             }
         }
@@ -399,7 +412,7 @@ class URL
     }
 
     public static function getTrojanItemUrl($item) {
-        return 'trojan://'.$item['passwd'].'@'.$item['address'].':'.$item['port'].'?allowInsecure=0&peer=&tfo='.$item['fast_open'].'&mux=0#'.rawurlencode($item['remark']);
+        return 'trojan://'.$item['passwd'].'@'.$item['address'].':'.$item['port'].'?allowInsecure=0&peer='.$item['sni'].'&tfo='.$item['fast_open'].'&mux=0#'.rawurlencode($item['remark']);
     }
 
     public static function getJsonObfs($item) {
@@ -744,6 +757,7 @@ class URL
         $return_array['passwd'] = $user->passwd;
         $return_array['address'] = $node->server;
         $return_array['port'] = $conf->local_port;
+        $return_array['sni'] = $node->server;
         $return_array['fast_open'] = $conf->fast_open;
         $return_array['remark'] = str_replace(' ', '', explode(" - ", $node->name)[0]);
         $return_array['reuse_session'] = $conf->reuse_session;

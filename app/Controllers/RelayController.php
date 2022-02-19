@@ -114,31 +114,35 @@ class RelayController extends UserController
     public function create($request, $response, $args)
     {
         $user = Auth::getUser();
-        $source_nodes = Node::where(
-            function ($query) use ($user) {
-                $query->Where("node_group", "=", $user->node_group)
-                    ->orWhere("node_group", "=", 0);
-            }
-        )->where('type', 1)->where('sort', 10)->where("node_class", "<=", $user->class)->orderBy('name')->get();
+        if ($user->is_admin) {
+            $source_nodes = Node::where('type', 1)->whereIn('sort', [10, 13])->orderBy('name')->get();
 
-        $dist_nodes = Node::where(
-            function ($query) use ($user) {
-                $query->Where("node_group", "=", $user->node_group)
-                    ->orWhere("node_group", "=", 0);
-            }
-        )->where('type', 1)->where(
-            function ($query) {
-                $query->Where('sort', 0)
-                    ->orWhere('sort', 10);
-            }
-        )->where("node_class", "<=", $user->class)->orderBy('name')->get();
+            $dist_nodes = Node::where('type', 1)->whereIn('sort', [0, 10, 12, 13])->orderBy('name')->get();
 
-        $ports_raw = Node::where(
-            function ($query) use ($user) {
-                $query->Where("node_group", "=", $user->node_group)
-                    ->orWhere("node_group", "=", 0);
-            }
-        )->where('type', 1)->where('sort', 9)->where("node_class", "<=", $user->class)->orderBy('name')->get();
+            $ports_raw = Node::where('type', 1)->where('sort', 9)->orderBy('name')->get();
+        } else {
+            $source_nodes = Node::where(
+                function ($query) use ($user) {
+                    $query->Where("node_group", "=", $user->node_group)
+                        ->orWhere("node_group", "=", 0);
+                }
+            )->where('type', 1)->whereIn('sort', [10, 13])->where("node_class", "<=", $user->class)->orderBy('name')->get();
+
+            $dist_nodes = Node::where(
+                function ($query) use ($user) {
+                    $query->Where("node_group", "=", $user->node_group)
+                        ->orWhere("node_group", "=", 0);
+                }
+            )->where('type', 1)->whereIn('sort', [0, 10, 12, 13])->where("node_class", "<=", $user->class)->orderBy('name')->get();
+
+            $ports_raw = Node::where(
+                function ($query) use ($user) {
+                    $query->Where("node_group", "=", $user->node_group)
+                        ->orWhere("node_group", "=", 0);
+                }
+            )->where('type', 1)->where('sort', 9)->where("node_class", "<=", $user->class)->orderBy('name')->get();
+        }
+
 
         $ports = array();
         foreach ($ports_raw as $port_raw) {
@@ -262,31 +266,34 @@ class RelayController extends UserController
         }
 
         $user = Auth::getUser();
-        $source_nodes = Node::where(
-            function ($query) use ($user) {
-                $query->Where("node_group", "=", $user->node_group)
-                    ->orWhere("node_group", "=", 0);
-            }
-        )->where('type', 1)->where('sort', 10)->where("node_class", "<=", $user->class)->orderBy('name')->get();
+        if ($user->is_admin) {
+            $source_nodes = Node::where('type', 1)->whereIn('sort', [10, 13])->orderBy('name')->get();
 
-        $dist_nodes = Node::where(
-            function ($query) use ($user) {
-                $query->Where("node_group", "=", $user->node_group)
-                    ->orWhere("node_group", "=", 0);
-            }
-        )->where('type', 1)->where(
-            function ($query) {
-                $query->Where('sort', 0)
-                    ->orWhere('sort', 10);
-            }
-        )->where("node_class", "<=", $user->class)->orderBy('name')->get();
+            $dist_nodes = Node::where('type', 1)->whereIn('sort', [0, 10, 12, 13])->orderBy('name')->get();
 
-        $ports_raw = Node::where(
-            function ($query) use ($user) {
-                $query->Where("node_group", "=", $user->node_group)
-                    ->orWhere("node_group", "=", 0);
-            }
-        )->where('type', 1)->where('sort', 9)->where("node_class", "<=", $user->class)->orderBy('name')->get();
+            $ports_raw = Node::where('type', 1)->where('sort', 9)->orderBy('name')->get();
+        } else {
+            $source_nodes = Node::where(
+                function ($query) use ($user) {
+                    $query->Where("node_group", "=", $user->node_group)
+                        ->orWhere("node_group", "=", 0);
+                }
+            )->where('type', 1)->whereIn('sort', [10, 13])->where("node_class", "<=", $user->class)->orderBy('name')->get();
+
+            $dist_nodes = Node::where(
+                function ($query) use ($user) {
+                    $query->Where("node_group", "=", $user->node_group)
+                        ->orWhere("node_group", "=", 0);
+                }
+            )->where('type', 1)->whereIn('sort', [0, 10, 12, 13])->where("node_class", "<=", $user->class)->orderBy('name')->get();
+
+            $ports_raw = Node::where(
+                function ($query) use ($user) {
+                    $query->Where("node_group", "=", $user->node_group)
+                        ->orWhere("node_group", "=", 0);
+                }
+            )->where('type', 1)->where('sort', 9)->where("node_class", "<=", $user->class)->orderBy('name')->get();
+        }
 
         $ports = array();
         foreach ($ports_raw as $port_raw) {

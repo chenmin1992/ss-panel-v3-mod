@@ -271,6 +271,9 @@ class NodeController extends AdminController
                 case 12:
                   $sort = 'Trojan';
                   break;
+                case 13:
+                  $sort = 'Trojan 中转';
+                  break;
                 default:
                   $sort = '系统保留';
             }

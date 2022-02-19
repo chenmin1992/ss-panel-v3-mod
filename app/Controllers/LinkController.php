@@ -1889,7 +1889,7 @@ FINAL,Proxy';
                     "port" => $item['port'],
                     "password" => $item['passwd'],
                     "udp" => true,
-                    "sni" => $item['address'],
+                    "sni" => $item['sni'],
                     "alpn" => [
                         "h2",
                         "http/1.1"
@@ -1931,14 +1931,14 @@ FINAL,Proxy';
                 }
 
                 if (preg_match("/(?:[\d\.]+){3}\d+\/\d+/", $custom_rule, $matches)) {
-                    array_push($root_conf['rules'], 'IP-CIDR,'.$matches[0].$method.',no-resolve');
+                    array_push($root_conf['rules'], 'IP-CIDR,'.$matches[0].$method);
                     continue;
                 }
                 if (preg_match("/[a-z0-9.\-]+\.[a-z]+/i", $custom_rule, $matches)) {
                     array_push($root_conf['rules'], 'DOMAIN'.$domain_suffix.','.strtolower($matches[0]).$method);
                     continue;
                 }
-                if (!empty($country_code) && in_array($country_iso_code, $country_iso_codes)) {
+                if (!empty($country_code) && in_array($country_code, $country_iso_codes)) {
 					array_push($root_conf['rules'], 'GEOIP,'.$country_iso_code.$method);
 					continue;
                 }

@@ -30,14 +30,9 @@ class RelayController extends AdminController
     public function create($request, $response, $args)
     {
         $user = Auth::getUser();
-        $source_nodes = Node::where('sort', 10)->orderBy('name')->get();
+        $source_nodes = Node::whereIn('sort', [10, 13])->orderBy('name')->get();
 
-        $dist_nodes = Node::where(
-            function ($query) {
-                $query->Where('sort', 0)
-                    ->orWhere('sort', 10);
-            }
-        )->orderBy('name')->get();
+        $dist_nodes = Node::whereIn('sort', [0, 10, 12, 13])->orderBy('name')->get();
 
 
         return $this->view()->assign('source_nodes', $source_nodes)->assign('dist_nodes', $dist_nodes)->display('admin/relay/add.tpl');
@@ -113,14 +108,9 @@ class RelayController extends AdminController
             exit(0);
         }
 
-        $source_nodes = Node::where('sort', 10)->orderBy('name')->get();
+        $source_nodes = Node::whereIn('sort', [10, 13])->orderBy('name')->get();
 
-        $dist_nodes = Node::where(
-            function ($query) {
-                $query->Where('sort', 0)
-                    ->orWhere('sort', 10);
-            }
-        )->orderBy('name')->get();
+        $dist_nodes = Node::whereIn('sort', [0, 10, 12, 13])->orderBy('name')->get();
 
         return $this->view()->assign('rule', $rule)->assign('source_nodes', $source_nodes)->assign('dist_nodes', $dist_nodes)->display('admin/relay/edit.tpl');
     }

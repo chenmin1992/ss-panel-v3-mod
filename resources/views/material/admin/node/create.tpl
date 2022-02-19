@@ -112,6 +112,7 @@
 													<option value="10">Shadowsocks 中转</option>
 													<option value="11">V2Ray</option>
 													<option value="12">Trojan</option>
+													<option value="13">Trojan 中转</option>
 												</select>
 											</div>
 									</div>
@@ -599,16 +600,16 @@
 {literal}
 <script>
     $('#sort').change(function() {
-        if(this.value == '11') {
-            $('#v2in').removeClass('access-hide');
-        } else {
-            $('#v2in').addClass('access-hide');
-        }
-
-        if(this.value == '12') {
-            $('#trojan').removeClass('access-hide');
-        } else {
-            $('#trojan').addClass('access-hide');
+        $('#v2in').addClass('access-hide');
+        $('#trojan').addClass('access-hide');
+        switch(this.value) {
+            case '11':
+                $('#v2in').removeClass('access-hide');
+                break;
+            case '12':
+                $('#trojan').removeClass('access-hide');
+                break;
+            default:
         }
     });
 
