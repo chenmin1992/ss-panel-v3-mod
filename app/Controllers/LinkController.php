@@ -1808,7 +1808,7 @@ FINAL,Proxy';
                     "name" => "PROXY",
                     "type" => "url-test",
                     "proxies" => [],
-                    "url" => "http://clients3.google.com/generate_204",
+                    "url" => "http://www.google.com/gen_204",
                     "interval" => 10
                 ]
             ],
@@ -1859,10 +1859,25 @@ FINAL,Proxy';
                                 "Host" => $item['host']
                             ];
                         }
+                        $vmess['ws-opts'] = [
+                            "path" => $vmess['ws-path'],
+                            "headers" => $vmess['ws-headers']
+                        ];
                         break;
 
                     case 'h2':
-                        $vmess['network'] = 'http';
+                        $vmess['h2-opts'] = [];
+                        if (!empty($item['h2Path'])) {
+                            $vmess['h2-opts']['path'] = $item['h2Path'];
+                        }
+                        if (!empty($item['h2Host'])) {
+                            $vmess['h2-opts']['headers'] = [ 'Host' => [ $item['h2Host'] ] ];
+                        } else {
+                            $vmess['h2-opts']['headers'] = [ 'Host' => [ $item['host'] ] ];
+                        }
+                        break;
+
+                    case 'http':
                         $vmess['http-opts'] = [ 'method' => 'GET' ];
                         if (!empty($item['h2Path'])) {
                             $vmess['http-opts']['path'] = [ $item['h2Path'] ];
