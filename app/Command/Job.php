@@ -302,7 +302,7 @@ class Job
                             case 'IP-CIDR':
                             case 'IP-CIDR6':
                             case 'SRC-IP-CIDR':
-                                $data .= $rule.",no-resolve\n";
+                                $data .= $rule."\n";
                                 break;                            
                             default:
                                 $data .= $rule."\n";
@@ -324,33 +324,33 @@ class Job
             $rule = str_replace(' ', '', $line);
             if(!$started && strtoupper($rule) == '[RULE]') {
                 $started = true;
-                $data .= "IP-CIDR,192.168.0.0/16,DIRECT,no-resolve\n";
-                $data .= "IP-CIDR,10.0.0.0/8,DIRECT,no-resolve\n";
-                $data .= "IP-CIDR,172.16.0.0/16,DIRECT,no-resolve\n";
-                $data .= "IP-CIDR,172.17.0.0/16,DIRECT,no-resolve\n";
-                $data .= "IP-CIDR,172.18.0.0/16,DIRECT,no-resolve\n";
-                $data .= "IP-CIDR,172.19.0.0/16,DIRECT,no-resolve\n";
-                $data .= "IP-CIDR,172.20.0.0/16,DIRECT,no-resolve\n";
-                $data .= "IP-CIDR,172.21.0.0/16,DIRECT,no-resolve\n";
-                $data .= "IP-CIDR,172.22.0.0/16,DIRECT,no-resolve\n";
-                $data .= "IP-CIDR,172.23.0.0/16,DIRECT,no-resolve\n";
-                $data .= "IP-CIDR,172.24.0.0/16,DIRECT,no-resolve\n";
-                $data .= "IP-CIDR,172.25.0.0/16,DIRECT,no-resolve\n";
-                $data .= "IP-CIDR,172.26.0.0/16,DIRECT,no-resolve\n";
-                $data .= "IP-CIDR,172.27.0.0/16,DIRECT,no-resolve\n";
-                $data .= "IP-CIDR,172.28.0.0/16,DIRECT,no-resolve\n";
-                $data .= "IP-CIDR,172.29.0.0/16,DIRECT,no-resolve\n";
-                $data .= "IP-CIDR,172.30.0.0/16,DIRECT,no-resolve\n";
-                $data .= "IP-CIDR,172.31.0.0/16,DIRECT,no-resolve\n";
-                $data .= "IP-CIDR,172.31.0.0/16,DIRECT,no-resolve\n";
-                $data .= "IP-CIDR,127.0.0.0/8,DIRECT,no-resolve\n";
+                $data .= "IP-CIDR,192.168.0.0/16,DIRECT\n";
+                $data .= "IP-CIDR,10.0.0.0/8,DIRECT\n";
+                $data .= "IP-CIDR,172.16.0.0/16,DIRECT\n";
+                $data .= "IP-CIDR,172.17.0.0/16,DIRECT\n";
+                $data .= "IP-CIDR,172.18.0.0/16,DIRECT\n";
+                $data .= "IP-CIDR,172.19.0.0/16,DIRECT\n";
+                $data .= "IP-CIDR,172.20.0.0/16,DIRECT\n";
+                $data .= "IP-CIDR,172.21.0.0/16,DIRECT\n";
+                $data .= "IP-CIDR,172.22.0.0/16,DIRECT\n";
+                $data .= "IP-CIDR,172.23.0.0/16,DIRECT\n";
+                $data .= "IP-CIDR,172.24.0.0/16,DIRECT\n";
+                $data .= "IP-CIDR,172.25.0.0/16,DIRECT\n";
+                $data .= "IP-CIDR,172.26.0.0/16,DIRECT\n";
+                $data .= "IP-CIDR,172.27.0.0/16,DIRECT\n";
+                $data .= "IP-CIDR,172.28.0.0/16,DIRECT\n";
+                $data .= "IP-CIDR,172.29.0.0/16,DIRECT\n";
+                $data .= "IP-CIDR,172.30.0.0/16,DIRECT\n";
+                $data .= "IP-CIDR,172.31.0.0/16,DIRECT\n";
+                $data .= "IP-CIDR,172.31.0.0/16,DIRECT\n";
+                $data .= "IP-CIDR,127.0.0.0/8,DIRECT\n";
                 continue;
             } elseif($started) {
                 if(substr($rule, 0, 1) == '#' or empty($rule)) {
                     continue;
                 } elseif (strtoupper(substr($rule, 0, 5)) == 'FINAL') {
-                    $data .= "GEOIP,HK,DIRECT\n";
-                    $data .= "GEOIP,TW,DIRECT\n";
+                    // $data .= "GEOIP,HK,DIRECT\n";
+                    // $data .= "GEOIP,TW,DIRECT\n";
                     $data .= str_replace('FINAL', 'MATCH', strtoupper($rule))."\n";
                     break;
                 } else {
@@ -367,7 +367,7 @@ class Job
                             case 'IP-CIDR':
                             case 'IP-CIDR6':
                             case 'SRC-IP-CIDR':
-                                $data .= $rule.",no-resolve\n";
+                                $data .= $rule."\n";
                                 break;                            
                             default:
                                 $data .= $rule."\n";
