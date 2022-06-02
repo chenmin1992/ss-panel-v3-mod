@@ -39,14 +39,15 @@
 									<div class="card-inner margin-bottom-no">
 										<p class="card-heading">连接信息 以及 All-in-One(快速配置指导)</p>
 										<p>您可以在这里查看您的连接信息。<br>同时，这里为您提供了自动化地配置文件生成，包含了所有 Shadowsocks 服务器的信息，方便您在诸多的服务器中快速添加，快速切换。</p>
-										<p> Clash 配置地址：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$clash_sub_token}"><code>{$baseUrl}/link/{$clash_sub_token}</code></a></p>
-										<p> Clash 配置地址(小内存设备)：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$clash_sub_token}?small=1"><code>{$baseUrl}/link/{$clash_sub_token}?small=1</code></a></p>
 										<nav class="tab-nav margin-top-no">
 											<ul class="nav nav-list">
-												<li {if $ssr_prefer}class="active"{/if}>
+												<li class="active">
+													<a class="waves-attach" data-toggle="tab" href="#all_clash"><i class="icon icon-lg">hotel_class</i>&nbsp;Clash</a>
+												</li>
+												<li>
 													<a class="waves-attach" data-toggle="tab" href="#all_ssr"><i class="icon icon-lg">airplanemode_active</i>&nbsp;ShadowsocksR</a>
 												</li>
-												<li {if !$ssr_prefer}class="active"{/if}>
+												<li>
 													<a class="waves-attach" data-toggle="tab" href="#all_ss"><i class="icon icon-lg">flight_takeoff</i>&nbsp;Shadowsocks</a>
 												</li>
 												<li>
@@ -59,7 +60,60 @@
 										</nav>
 										<div class="card-inner">
 											<div class="tab-content">
-												<div class="tab-pane fade {if $ssr_prefer}active in{/if}" id="all_ssr">
+												<div class="tab-pane fade active in" id="all_clash">
+                                                    {$shadowrocket_sub = base64_encode($baseUrl|cat:'/link/'|cat:$ssr_sub_token|cat:'?v=1')}
+													<nav class="tab-nav margin-top-no">
+														<ul class="nav nav-list">
+															<li class="active">
+																<a class="waves-attach" data-toggle="tab" href="#all_clash_info"><i class="icon icon-lg">info_outline</i>&nbsp;连接信息</a>
+															</li>
+															<li>
+																<a class="waves-attach" data-toggle="tab" href="#all_clash_windows"><i class="icon icon-lg">desktop_windows</i>&nbsp;Windows</a>
+															</li>
+															<li>
+																<a class="waves-attach" data-toggle="tab" href="#all_clash_mac"><i class="icon icon-lg">laptop_mac</i>&nbsp;MacOS</a>
+															</li>
+															<li>
+																<a class="waves-attach" data-toggle="tab" href="#all_clash_ios"><i class="icon icon-lg">laptop_mac</i>&nbsp;iOS</a>
+															</li>
+															<li>
+																<a class="waves-attach" data-toggle="tab" href="#all_clash_android"><i class="icon icon-lg">android</i>&nbsp;Android</a>
+															</li>
+															<li>
+																<a class="waves-attach" data-toggle="tab" href="#all_clash_router"><i class="icon icon-lg">router</i>&nbsp;路由器</a>
+															</li>
+														</ul>
+													</nav>
+													<div class="tab-pane fade active in" id="all_ss_info">
+                                                        <p> Clash 配置地址：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$clash_sub_token}"><code>{$baseUrl}/link/{$clash_sub_token}</code></a></p>
+                                                        <p> Clash 配置地址(小内存设备)：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$clash_sub_token}?small=1"><code>{$baseUrl}/link/{$clash_sub_token}?small=1</code></a></p>
+													</div>
+													<div class="tab-pane fade" id="all_clash_windows">
+														<p><a href="/ssr-download/clash-win.exe">下载</a>，安装运行，复制 <a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$clash_sub_token}">订阅链接(点我复制)</a>，
+                                                            点击任务栏里小猫图标打开，左侧导航选 Profiles，把刚才复制的订阅链接粘贴进去，然后点击 Download，
+                                                            下载完后，选中刚下载的配置文件，然后右键任务栏小猫图标，勾选 System Proxy，Proxy Mode 选中 Rule，就可以上网啦。<br>
+                                                        </p>
+													</div>
+													<div class="tab-pane fade" id="all_clash_mac">
+														<p><a href="/ssr-download/clash-mac.dmg">下载</a>，安装运行，复制 <a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$clash_sub_token}">订阅链接(点我复制)</a>，
+                                                            然后点击最上面的小猫图标，在不关闭菜单的情况下同时按 Command + M，点击添加，把刚才复制的订阅链接添加进去，
+                                                            下载完后，点击小猫图标，在配置中选择刚下载的配置文件，最后再点击小猫图标，同时按 Command + S，就可以上网啦。
+                                                        </p>
+													</div>
+													<div class="tab-pane fade" id="all_clash_ios">
+														<p>推荐下载<a href="https://itunes.apple.com/cn/app/shadowrocket/id932747118?mt=8">Shadowrocket</a>，然后在 Safari 中点击<a href="sub://{$shadowrocket_sub}">这个</a>然后点击打开，就可以添加订阅链接了。</p>
+														<p>或者复制 <a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$ssr_sub_token}?v=1">订阅链接(点我复制)</a>，然后在小火箭里面添加订阅，选择一个节点，打开上方的开关，就可以上网了。</p>
+													</div>
+													<div class="tab-pane fade" id="all_clash_android">
+														<p><a href="/ssr-download/clash-android.apk">下载</a>，再复制 <a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$ssr_sub_token}?v=1">订阅链接（点我)</a>，然后在小猫里面添加订阅就可以上网了。</p>
+													</div>
+													<div class="tab-pane fade" id="all_clash_router">
+														<p>路由器 刷入<a href="http://opt.cn2qq.com/padavan/">这个固件</a>，然后用浏览器登录路由器，切换到<code>搭建Web环境 -> clash，依次打开：clash 开关、开启 HTTP 代理，</code>，
+                                                        然后复制<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$clash_sub_token}?small=1">订阅链接(点我复制)</a>，填到<code>clash 订阅链接:</code>，最后点击<code>应用本页面设置</code>，就可以上网了。</p>
+													</div>
+												</div>
+                                                
+												<div class="tab-pane fade" id="all_ssr">
 													{$pre_user = URL::cloneUser($user)}
 
 													<nav class="tab-nav margin-top-no">
@@ -151,7 +205,8 @@
 													</div>
 
 												</div>
-												<div class="tab-pane fade {if !$ssr_prefer}active in{/if}" id="all_ss">
+                                                
+												<div class="tab-pane fade" id="all_ss">
 													<nav class="tab-nav margin-top-no">
 														<ul class="nav nav-list">
 															<li class="active">
@@ -289,7 +344,6 @@
                                                         </p><br>
                                                         <p>V2Ray 订阅地址：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$ssr_sub_token}?v=2"><code>{$baseUrl}/link/{$ssr_sub_token}?v=2</code></a></p>
                                                     </div>
-
                                                 </div>
 
                                                 <div class="tab-pane fade" id="all_trojan">
@@ -337,14 +391,13 @@
                                                     </div>
                                                     <div class="tab-pane fade" id="all_trojan_ios">
                                                         <p>推荐下载<a href="https://itunes.apple.com/us/app/shadowrocket/id932747118">Shadowrocket</a>，需要非大陆Apple ID，然后在 Safari 中点击<a href="{$trojan_url_all}">这个</a>，然后点击确定，就可以批量添加节点。</p>
-	                                                    <p>Trojan 订阅地址：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$ssr_sub_token}?v=1"><code>{$baseUrl}/link/{$ssr_sub_token}?v=1</code></a></p>
                                                     </div>
                                                     <div class="tab-pane fade" id="all_trojan_android">
                                                         <p><a href="/ssr-download/trojan-android.apk">下载</a>，安装，然后点击<a class="copy-text" data-clipboard-text="{$trojan_url_all}">这个</a>，右上角点击加号,选择从剪贴板导入，然后设置里的路由模式选择“绕过局域网及大陆地址”，返回，选择一个合适的服务器，右下角开启就可以上网了。
                                                         </p>
                                                     </div>
-
                                                 </div>
+                                                
 											</div>
 										</div>
 										<div class="card-action">

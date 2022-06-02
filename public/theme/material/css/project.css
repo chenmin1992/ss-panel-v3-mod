@@ -258,3 +258,8 @@ body {
 .ui-tab {
   margin-top: 10px;
 }
+
+code {
+  display: inline-block;
+  overflow-wrap: anywhere;
+}
