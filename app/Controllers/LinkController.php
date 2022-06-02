@@ -1954,8 +1954,8 @@ FINAL,Proxy';
                     continue;
                 }
                 if (!empty($country_code) && in_array($country_code, $country_iso_codes)) {
-					array_push($root_conf['rules'], 'GEOIP,'.$country_iso_code.$method);
-					continue;
+                    array_push($root_conf['rules'], 'GEOIP,'.$country_iso_code.$method);
+                    continue;
                 }
                 if (preg_match("/\b[a-z0-9-]+\b/i", $custom_rule, $matches)) {
                     array_push($root_conf['rules'], 'DOMAIN-KEYWORD,'.strtolower($matches[0]).$method);
