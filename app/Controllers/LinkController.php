@@ -1957,7 +1957,7 @@ FINAL,Proxy';
                     array_push($root_conf['rules'], 'GEOIP,'.$country_iso_code.$method);
                     continue;
                 }
-                if (preg_match("/\b[a-z0-9-]+\b/i", $custom_rule, $matches)) {
+                if (preg_match("/[a-z0-9-]+/i", $custom_rule, $matches)) {
                     array_push($root_conf['rules'], 'DOMAIN-KEYWORD,'.strtolower($matches[0]).$method);
                     continue;
                 }
