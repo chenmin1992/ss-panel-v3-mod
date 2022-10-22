@@ -219,9 +219,9 @@ class Job
             Job::backup();
         }
 
-        Job::updatedownload();
+        // Job::updatedownload();
 
-        Job::updateQQWry();
+        // Job::updateQQWry();
 
         // Job::updateClashRules();
     }
