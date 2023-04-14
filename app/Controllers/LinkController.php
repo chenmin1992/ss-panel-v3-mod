@@ -1765,12 +1765,9 @@ FINAL,Proxy';
             "port" => 7890,
             "socks-port" => 7891,
             "allow-lan" => false,
-            "mode" => "Rule",
+            "mode" => "rule",
             "log-level" => "info",
             "external-controller" => "127.0.0.1:9090",
-            "experimental" => [
-                "ignore-resolve-fail" => true
-            ],
             "hosts" => [
                 "localhost" => "127.0.0.1"
             ],
@@ -1808,12 +1805,15 @@ FINAL,Proxy';
                     "name" => "PROXY",
                     "type" => "url-test",
                     "proxies" => [],
-                    "url" => "http://www.google.com/gen_204",
+                    "url" => "https://www.google.com/gen_204",
                     "interval" => 10
                 ]
             ],
             "rules" => []
         ];
+        if ($user->is_admin or $user->class >= Node::max('node_class')) {
+            $root_conf['proxy-groups'][0]['type'] = 'fallback';
+        }
         $items = Tools::arrayOrderby(URL::getAllItems($user, $mu, 0, 1), 'node_class', SORT_DESC, 'id', SORT_DESC);
         foreach ($items as $index => $item) {
             if (array_key_exists('protocol_param', $item)) { //SS
