@@ -86,7 +86,9 @@
 													</nav>
 													<div class="tab-pane fade active in" id="all_ss_info">
                                                         <p> Clash 配置地址：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$clash_sub_token}"><code>{$baseUrl}/link/{$clash_sub_token}</code></a></p>
-                                                        <p> Clash 配置地址(小内存设备)：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$clash_sub_token}?small=1"><code>{$baseUrl}/link/{$clash_sub_token}?small=1</code></a></p>
+                                                        <p> Clash 配置地址(国内外分流)：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$clash_sub_token}?cnip=1"><code>{$baseUrl}/link/{$clash_sub_token}?cnip=1</code></a></p>
+                                                        <p> Clash 配置地址(流媒体直连)：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$clash_sub_token}?sm=0"><code>{$baseUrl}/link/{$clash_sub_token}?sm=0</code></a></p>
+                                                        <p> Clash 配置地址(国内外分流+流媒体直连)：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$clash_sub_token}?cnip=1&sm=0"><code>{$baseUrl}/link/{$clash_sub_token}?cnip=1&sm=0</code></a></p>
 													</div>
 													<div class="tab-pane fade" id="all_clash_windows">
 														<p><a href="/ssr-download/clash-win.exe">下载</a>，安装运行，复制 <a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$clash_sub_token}">订阅链接(点我复制)</a>，

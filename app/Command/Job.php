@@ -365,6 +365,8 @@ class Job
         if(strlen($data) > 0) {
             file_put_contents(BASE_PATH.'/storage/clash_rules_small.yaml', substr($data, 0, -1));
         }
+        
+        file_put_contents(BASE_PATH.'/storage/clash-rules-stream-media-direct.yaml', file_get_contents('https://github.com/chenmin1992/qqwry-download/raw/cm/clash-rules-stream-media-direct.yaml'));
     }
 
     public static function expandRuleSetURL($url, $policy)

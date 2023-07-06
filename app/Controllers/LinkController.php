@@ -349,16 +349,33 @@ class LinkController extends BaseController
                     $mu = (int)$request->getQueryParams()["mu"];
                 }
 
-                $small = 0;
-                if (!empty($request->getQueryParams()["small"])) {
-                    $small = (int)$request->getQueryParams()["small"];
+                $query = $request->getQueryParams();
+                $cnip = 0;
+                if (!empty($query["cnip"])) {
+                    $cnip = (int)$query["cnip"];
                 }
-                if ($small == 1) {
-                    $domainname .= '-small';
+                if ($cnip == 1) {
+                    $domainname .= '-cnip';
+                }
+
+                // stream media
+                $sm = -1;
+                if (isset($query["sm"])) {
+                    $sm = (int)$query["sm"];
+                }
+                switch ($sm) {
+                    case 0:
+                        $domainname .= '-sm-direct';
+                        break;
+                    case 1:
+                        $domainname .= '-sm-proxy';
+                        break;
+                    default:
+                        break;
                 }
 
                 $newResponse = $response->withHeader('Content-type', ' application/octet-stream; charset=utf-8')->withHeader('Cache-Control', 'no-store, no-cache, must-revalidate')->withHeader('Content-Disposition', ' attachment; filename='.$domainname.'.yaml');
-                $newResponse->getBody()->write(LinkController::GetClash(User::where("id", "=", $Elink->userid)->first(), $mu, $small));
+                $newResponse->getBody()->write(LinkController::GetClash(User::where("id", "=", $Elink->userid)->first(), $mu, $cnip, $sm));
                 return $newResponse;
             case 13:
                 $user=User::where("id", $Elink->userid)->first();
@@ -1759,7 +1776,7 @@ FINAL,Proxy';
         return base64_encode(URL::getAllUrl($user, $mu, $is_ss, $v, 1));
     }
 
-    public static function GetClash($user, $mu = 0, $small = 0)
+    public static function GetClash($user, $mu = 0, $cnip = 0, $sm = -1)
     {
         $root_conf = [
             "port" => 7890,
@@ -1963,8 +1980,11 @@ FINAL,Proxy';
                 }
             }
         }
-        if ($small == 1) {
-            $root_conf['rules'] = array_merge($root_conf['rules'], explode("\n", file_get_contents(BASE_PATH.'/storage/clash_rules_small.yaml')));
+        if ($sm == 0) { // 0 for direct 1 for proxy -1 for leave it
+            $root_conf['rules'] = array_merge($root_conf['rules'], explode("\n", file_get_contents(BASE_PATH.'/storage/clash-rules-stream-media-direct.yaml')));
+        }
+        if ($cnip == 1) {
+            $root_conf['rules'] = array_merge($root_conf['rules'], explode("\n", file_get_contents(BASE_PATH.'/storage/clash_rules_cnip.yaml')));
         } else {
             $root_conf['rules'] = array_merge($root_conf['rules'], explode("\n", file_get_contents(BASE_PATH.'/storage/clash_rules.yaml')));
         }
