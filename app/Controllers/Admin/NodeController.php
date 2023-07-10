@@ -74,6 +74,116 @@ class NodeController extends AdminController
         $node->node_bandwidth_limit=$request->getParam('node_bandwidth_limit')*1024*1024*1024;
         $node->bandwidthlimit_resetday=$request->getParam('bandwidthlimit_resetday');
 
+        // v2ray
+        $v2confs = json_decode($node->v2conf, true);
+        $inbs = [];
+        foreach ($v2confs as $v2conf) {
+            $inb = [
+                "listen" => $v2conf['listen'],
+                "port" => (int)$v2conf['port'],
+                "protocol" => $v2conf['protocol'],
+                // vmess
+                "alterid" => 32,
+                "disableinsecureencryption" => true,
+                // trojan
+                "fallbackendpoint" => 80,
+                "blockbt" => (bool)$v2conf['blockbt'],
+                "network" => $v2conf['network'],
+                "tcpfastopen" => (string)$v2conf['tcpfastopen'],
+                // tcp
+                "obfs" => "none",
+                "httprequest" => [],
+                "httpresponse" => [],
+                // kcp
+                "mtu" => 1350,
+                "tti" => 20,
+                "uplinkcapacity" => 5,
+                "downlinkcapacity" => 20,
+                "congestion" => false,
+                "readbuffersize" => 1,
+                "writebuffersize" => 1,
+                "obfs" => "wechat-video",
+                "seed" => "",
+                // ws
+                "path" => "",
+                "headers" => [],
+                // h2
+                "host" => "",
+                "path" => "",
+                // quic
+                "encryption" => "none",
+                "quickey" => "",
+                "obfs" => "wechat-video",
+                // domainsocket
+                "path" => "",
+                // grpc
+                "servicename" => "GunService",
+                // reverse proxy
+                "proxyaddr" => $v2conf['proxyaddr'],
+                "proxyport" => (int)$v2conf['proxyport'],
+                "proxysecurity" => $v2conf['proxysecurity'],
+                // tls
+                "security" => $v2conf['security'],
+                "cert" => (int)$v2conf['cert']
+            ];
+            switch ($v2conf['protocol']) {
+                case 'vmess':
+                    $inb['alterid'] = (int)$v2conf['alterid'];
+                    $inb['disableinsecureencryption'] = (bool)$v2conf['disableinsecureencryption'];
+                    break;
+                case 'trojan':
+                    if (is_int($v2conf['fallbackendpoint'])) {
+                        $inb['fallbackendpoint'] = intval($v2conf['fallbackendpoint']);
+                    } else {
+                        $inb['fallbackendpoint'] = $v2conf['fallbackendpoint'];
+                    }
+                    break;
+                default:
+                    break;
+            }
+            switch ($v2conf['network']) {
+                case 'tcp':
+                    $inb['obfs'] = $v2conf['obfs'];
+                    $inb['httprequest'] = $v2conf['httprequest'];
+                    $inb['httpresponse'] = $v2conf['httpresponse'];
+                    break;
+                case 'kcp':
+                    $inb['mtu'] = (int)$v2conf['mtu'];
+                    $inb['tti'] = (int)$v2conf['tti'];
+                    $inb['uplinkcapacity'] = (int)$v2conf['uplinkcapacity'];
+                    $inb['downlinkcapacity'] = (int)$v2conf['downlinkcapacity'];
+                    $inb['congestion'] = (bool)$v2conf['congestion'];
+                    $inb['readbuffersize'] = (int)$v2conf['readbuffersize'];
+                    $inb['writebuffersize'] = (int)$v2conf['writebuffersize'];
+                    $inb['obfs'] = $v2conf['obfs'];
+                    $inb['seed'] = $v2conf['seed'];
+                    break;
+                case 'ws':
+                    $inb['path'] = $v2conf['path'];
+                    $inb['headers'] = $v2conf['headers'];
+                    break;
+                case 'h2':
+                    $inb['host'] = $v2conf['host'];
+                    $inb['path'] = $v2conf['path'];
+                    break;
+                case 'quic':
+                    $inb['encryption'] = $v2conf['encryption'];
+                    $inb['quickey'] = $v2conf['quickey'];
+                    $inb['obfs'] = $v2conf['obfs'];
+                    break;
+                case 'domainsocket':
+                    $inb['path'] = $v2conf['path'];
+                    break;
+                case 'grpc':
+                    $inb['servicename'] = $v2conf['servicename'];
+                    break;
+                default:
+                    break;
+            }
+            array_push($inbs, $inb);
+        }
+        $node->v2conf = json_encode($inbs, JSON_FORCE_OBJECT);
+
         if (!$node->save()) {
             $rs['ret'] = 0;
             $rs['msg'] = "添加失败";
@@ -152,6 +262,116 @@ class NodeController extends AdminController
         $node->node_class=$request->getParam('class');
         $node->node_bandwidth_limit=$request->getParam('node_bandwidth_limit')*1024*1024*1024;
         $node->bandwidthlimit_resetday=$request->getParam('bandwidthlimit_resetday');
+
+        // v2ray
+        $v2confs = json_decode($node->v2conf, true);
+        $inbs = [];
+        foreach ($v2confs as $v2conf) {
+            $inb = [
+                "listen" => $v2conf['listen'],
+                "port" => (int)$v2conf['port'],
+                "protocol" => $v2conf['protocol'],
+                // vmess
+                "alterid" => 32,
+                "disableinsecureencryption" => true,
+                // trojan
+                "fallbackendpoint" => 80,
+                "blockbt" => (bool)$v2conf['blockbt'],
+                "network" => $v2conf['network'],
+                "tcpfastopen" => (string)$v2conf['tcpfastopen'],
+                // tcp
+                "obfs" => "none",
+                "httprequest" => [],
+                "httpresponse" => [],
+                // kcp
+                "mtu" => 1350,
+                "tti" => 20,
+                "uplinkcapacity" => 5,
+                "downlinkcapacity" => 20,
+                "congestion" => false,
+                "readbuffersize" => 1,
+                "writebuffersize" => 1,
+                "obfs" => "wechat-video",
+                "seed" => "",
+                // ws
+                "path" => "",
+                "headers" => [],
+                // h2
+                "host" => "",
+                "path" => "",
+                // quic
+                "encryption" => "none",
+                "quickey" => "",
+                "obfs" => "wechat-video",
+                // domainsocket
+                "path" => "",
+                // grpc
+                "servicename" => "GunService",
+                // reverse proxy
+                "proxyaddr" => $v2conf['proxyaddr'],
+                "proxyport" => (int)$v2conf['proxyport'],
+                "proxysecurity" => $v2conf['proxysecurity'],
+                // tls
+                "security" => $v2conf['security'],
+                "cert" => (int)$v2conf['cert']
+            ];
+            switch ($v2conf['protocol']) {
+                case 'vmess':
+                    $inb['alterid'] = (int)$v2conf['alterid'];
+                    $inb['disableinsecureencryption'] = (bool)$v2conf['disableinsecureencryption'];
+                    break;
+                case 'trojan':
+                    if (is_int($v2conf['fallbackendpoint'])) {
+                        $inb['fallbackendpoint'] = intval($v2conf['fallbackendpoint']);
+                    } else {
+                        $inb['fallbackendpoint'] = $v2conf['fallbackendpoint'];
+                    }
+                    break;
+                default:
+                    break;
+            }
+            switch ($v2conf['network']) {
+                case 'tcp':
+                    $inb['obfs'] = $v2conf['obfs'];
+                    $inb['httprequest'] = $v2conf['httprequest'];
+                    $inb['httpresponse'] = $v2conf['httpresponse'];
+                    break;
+                case 'kcp':
+                    $inb['mtu'] = (int)$v2conf['mtu'];
+                    $inb['tti'] = (int)$v2conf['tti'];
+                    $inb['uplinkcapacity'] = (int)$v2conf['uplinkcapacity'];
+                    $inb['downlinkcapacity'] = (int)$v2conf['downlinkcapacity'];
+                    $inb['congestion'] = (bool)$v2conf['congestion'];
+                    $inb['readbuffersize'] = (int)$v2conf['readbuffersize'];
+                    $inb['writebuffersize'] = (int)$v2conf['writebuffersize'];
+                    $inb['obfs'] = $v2conf['obfs'];
+                    $inb['seed'] = $v2conf['seed'];
+                    break;
+                case 'ws':
+                    $inb['path'] = $v2conf['path'];
+                    $inb['headers'] = $v2conf['headers'];
+                    break;
+                case 'h2':
+                    $inb['host'] = $v2conf['host'];
+                    $inb['path'] = $v2conf['path'];
+                    break;
+                case 'quic':
+                    $inb['encryption'] = $v2conf['encryption'];
+                    $inb['quickey'] = $v2conf['quickey'];
+                    $inb['obfs'] = $v2conf['obfs'];
+                    break;
+                case 'domainsocket':
+                    $inb['path'] = $v2conf['path'];
+                    break;
+                case 'grpc':
+                    $inb['servicename'] = $v2conf['servicename'];
+                    break;
+                default:
+                    break;
+            }
+            array_push($inbs, $inb);
+        }
+        $node->v2conf = json_encode($inbs, JSON_FORCE_OBJECT);
 
         if (!$node->save()) {
             $rs['ret'] = 0;

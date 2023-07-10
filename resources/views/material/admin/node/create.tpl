@@ -182,32 +182,43 @@
                                                 </div>
 
                                                 <div class="form-group form-group-label">
-                                                    <div class="form-group form-group-label">
-                                                            <label class="floating-label" for="protocol">协议</label>
-                                                            <select id="protocol" class="form-control" name="protocol">
-                                                                <option value="vmess" selected>VMess</option>
-                                                                <option value="socks" disabled>Socks</option>
-                                                                <option value="shadowsocks" disabled>Shadowsocks</option>
-                                                                <option value="mtproto" disabled>MTProto</option>
-                                                                <option value="http" disabled>HTTP</option>
-                                                                <option value="dokodemo-door" disabled>Dokodemo-door</option>
-                                                                <option value="dns" disabled>DNS</option>
-                                                                <option value="blackhole" disabled>Blackhole</option>
-                                                                <option value="vless" disabled>VLESS</option>
-                                                            </select>
+                                                    <label class="floating-label" for="protocol">协议</label>
+                                                    <select id="protocol" class="form-control" name="protocol">
+                                                        <option value="blackhole" disabled>Blackhole</option>
+                                                        <option value="dns" disabled>DNS</option>
+                                                        <option value="dokodemo-door" disabled>Dokodemo-door</option>
+                                                        <option value="freedom" disabled>Freedom</option>
+                                                        <option value="http" disabled>HTTP</option>
+                                                        <option value="socks" disabled>Socks</option>
+                                                        <option value="vmess" selected>VMess</option>
+                                                        <option value="shadowsocks" disabled>Shadowsocks</option>
+                                                        <option value="trojan" >Trojan</option>
+                                                        <option value="vless" disabled>VLESS</option>
+                                                        <option value="mtproto" disabled>MTProto</option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="tab-content" id="protocols">
+                                                    <div class="tab-pane fade active in" id="vmess">
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="alterid">AlterId</label>
+                                                            <input class="form-control" id="alterid" type="number" name="alterid" value="32">
                                                         </div>
-                                                </div>
 
-                                                <div class="form-group form-group-label">
-                                                    <label class="floating-label" for="alterid">AlterId</label>
-                                                    <input class="form-control" id="alterid" type="number" name="alterid" value="32">
-                                                </div>
-
-                                                <div class="form-group form-group-label">
-                                                    <div class="checkbox switch">
-                                                        <label for="disable_insecure_encryption">
-                                                            <input checked class="access-hide" id="disable_insecure_encryption" type="checkbox" name="disable_insecure_encryption"><span class="switch-toggle"></span>禁用不安全的加密方式
-                                                        </label>
+                                                        <div class="form-group form-group-label">
+                                                            <div class="checkbox switch">
+                                                                <label for="disable_insecure_encryption">
+                                                                    <input checked class="access-hide" id="disable_insecure_encryption" type="checkbox" name="disable_insecure_encryption"><span class="switch-toggle"></span>禁用不安全的加密方式
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="tab-pane fade" id="trojan">
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="fallbackendpoint">Fallback 端点</label>
+                                                            <input class="form-control" id="fallbackendpoint" type="text" name="fallbackendpoint" value="80">
+                                                        </div>
                                                     </div>
                                                 </div>
 
@@ -231,7 +242,7 @@
                                                     <label class="floating-label" for="cert">证书/cert</label>
                                                     <select id="cert" class="form-control" name="cert">
                                                         <option value="0" selected>none</option>
-														{foreach $certs as $cert}
+                                                        {foreach $certs as $cert}
                                                         <option value="{$cert->id}">{$cert->name}</option>
                                                         {/foreach}
                                                     </select>
@@ -244,8 +255,9 @@
                                                         <option value="kcp">mKCP</option>
                                                         <option value="ws" selected>WebSocket</option>
                                                         <option value="h2">HTTP/2</option>
-                                                        <option value="domainsocket">DomainSocket</option>
                                                         <option value="quic">QUIC</option>
+                                                        <option value="domainsocket">DomainSocket</option>
+                                                        <option value="grpc">gRPC</option>
                                                     </select>
                                                 </div>
 
@@ -379,15 +391,15 @@
                                                         </div>
 
                                                         <div class="form-group form-group-label">
-                                                            <label class="floating-label" for="proxy_addr">代理地址，不使用Nginx/Caddy/CDN请留空</label>
+                                                            <label class="floating-label" for="proxy_addr">代理地址，不使用 Nginx/Caddy/CDN 请留空</label>
                                                             <input class="form-control" id="proxy_addr" type="text" name="proxy_addr">
                                                         </div>
                                                         <div class="form-group form-group-label">
-                                                            <label class="floating-label" for="proxy_port">代理端口，不使用Nginx/Caddy/CDN请留空</label>
+                                                            <label class="floating-label" for="proxy_port">代理端口，不使用 Nginx/Caddy/CDN 请留空 </label>
                                                             <input class="form-control" id="proxy_port" type="number" name="proxy_port">
                                                         </div>
                                                         <div class="form-group form-group-label">
-                                                            <label class="floating-label" for="proxy_security">代理TLS，不使用Nginx/Caddy/CDN请选择none</label>
+                                                            <label class="floating-label" for="proxy_security">代理TLS，不使用 Nginx/Caddy/CDN 请选择 none</label>
                                                             <select id="proxy_security" class="form-control" name="proxy_security">
                                                                 <option value="none" selected>none</option>
                                                                 <option value="tls">tls</option>
@@ -406,26 +418,19 @@
                                                         </div>
 
                                                         <div class="form-group form-group-label">
-                                                            <label class="floating-label" for="proxy_addr">代理地址，不使用Nginx/Caddy/CDN请留空</label>
+                                                            <label class="floating-label" for="proxy_addr">代理地址，不使用 Caddy/CDN 请留空 </label>
                                                             <input class="form-control" id="proxy_addr" type="text" name="proxy_addr">
                                                         </div>
                                                         <div class="form-group form-group-label">
-                                                            <label class="floating-label" for="proxy_port">代理端口，不使用Nginx/Caddy/CDN请留空</label>
+                                                            <label class="floating-label" for="proxy_port">代理端口，不使用 Caddy/CDN 请留空 </label>
                                                             <input class="form-control" id="proxy_port" type="number" name="proxy_port">
                                                         </div>
                                                         <div class="form-group form-group-label">
-                                                            <label class="floating-label" for="proxy_security">代理TLS，不使用Nginx/Caddy/CDN请选择none</label>
+                                                            <label class="floating-label" for="proxy_security">代理TLS，不使用 Caddy/CDN请选择 none</label>
                                                             <select id="proxy_security" class="form-control" name="proxy_security">
                                                                 <option value="none" selected>none</option>
                                                                 <option value="tls">tls</option>
                                                             </select>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="tab-pane fade" id="domainsocket">
-                                                        <div class="form-group form-group-label">
-                                                            <label class="floating-label" for="path">Path</label>
-                                                            <input class="form-control" id="path" type="text" name="path" value="/tmp/v2ray.sock">
                                                         </div>
                                                     </div>
 
@@ -452,6 +457,20 @@
                                                                 <option value="dtls">dtls</option>
                                                                 <option value="wireguard">wireguard</option>
                                                             </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="tab-pane fade" id="domainsocket">
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="path">Path</label>
+                                                            <input class="form-control" id="path" type="text" name="path" value="/tmp/v2ray.sock">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="tab-pane fade" id="grpc">
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="servicename">Path</label>
+                                                            <input class="form-control" id="servicename" type="text" name="servicename" value="GunService">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -570,12 +589,8 @@
 								</div>
 							</div>
 						</div>
-
 					</form>
 					{include file='dialog.tpl'}
-
-
-
 
 			</div>
 
@@ -600,14 +615,14 @@
 {literal}
 <script>
     $('#sort').change(function() {
-        $('#v2in').addClass('access-hide');
-        $('#trojan').addClass('access-hide');
+        $('.card#v2in').addClass('access-hide');
+        $('.card#trojan').addClass('access-hide');
         switch(this.value) {
             case '11':
-                $('#v2in').removeClass('access-hide');
+                $('.card#v2in').removeClass('access-hide');
                 break;
             case '12':
-                $('#trojan').removeClass('access-hide');
+                $('.card#trojan').removeClass('access-hide');
                 break;
             default:
         }
@@ -647,6 +662,10 @@
         	var full_path = pathes.reverse().join(' ');
 			$(this).val(oinb.find(full_path).val());
         });
+        inb.find('#protocol').change(function() {
+            $(this).parent().siblings('#protocols').children('div.active.in').removeClass('active in');
+            $(this).parent().siblings('#protocols').children('div#' + this.value ).addClass('active in');
+        });
         inb.find('#network').change(function() {
             $(this).parent().siblings('#networks').children('div.active.in').removeClass('active in');
             $(this).parent().siblings('#networks').children('div#' + this.value ).addClass('active in');
@@ -672,6 +691,10 @@
     });
 
     $('#inbounds').children().each(function() {
+        $(this).find('#protocol').change(function() {
+            $(this).parent().siblings('#protocols').children('div.active.in').removeClass('active in');
+            $(this).parent().siblings('#protocols').children('div#' + this.value ).addClass('active in');
+        });
         $(this).find('#network').change(function() {
             $(this).parent().siblings('#networks').children('div.active.in').removeClass('active in');
             $(this).parent().siblings('#networks').children('div#' + this.value ).addClass('active in');
@@ -728,112 +751,75 @@
 				var custom_rss=0;
 			}
 
-			var inbs = [];
-			$("#inbounds").children().each(function() {
-				var inb = {
-					"listen": $(this).find("#listen").val(),
-					"port": parseInt($(this).find("#port").val()),
-					"protocol": $(this).find("#protocol").val(),
-					"alterid": parseInt($(this).find("#alterid").val()),
-					"disableinsecureencryption": $(this).find("#disable_insecure_encryption").is(":checked"),
-					"blockbt": $(this).find("#block_bt").is(":checked"),
-					"network": $(this).find("#network").val(),
-					"tcpfastopen": $(this).find("#tcpfastopen").val(),
-					// tcp
-					"obfs": "none",
-					"httprequest": {},
-					"httpresponse": {},
-					// kcp
-					"mtu": 1350,
-					"tti": 20,
-					"uplinkcapacity": 5,
-					"downlinkcapacity": 20,
-					"congestion": false,
-					"readbuffersize": 1,
-					"writebuffersize": 1,
-					"obfs": "wechat-video",
-					"seed": "",
-					// ws
-					"path": "",
-					"headers": {},
-					// h2
-					"host": "",
-					"path": "",
-					// quic
-					"encryption": "none",
-					"quickey": "",
-					"obfs": "wechat-video",
-					// reverse proxy
-					"proxyaddr": "",
-					"proxyport": 0,
-					"proxysecurity": "none",
-					// tls
-					"security": $(this).find("#security").val(),
-					"cert": 0
-				};
-				if(inb["network"] == "tcp") {
-					inb["obfs"] = $(this).find("#tcp #obfs").val();
-					try { inb["httprequest"] = JSON.parse($(this).find("#tcp #http_request").val()); } catch(err) {}
-					try { inb["httpresponse"] = JSON.parse($(this).find("#tcp #http_response").val()); } catch(err) {}
-				}
-				if(inb["network"] == "kcp") {
-					inb["mtu"] = parseInt($(this).find("#kcp #mtu").val());
-					inb["tti"] = parseInt($(this).find("#kcp #tti").val());
-					inb["uplinkcapacity"] = parseInt($(this).find("#kcp #uplinkcapacity").val());
-					inb["downlinkcapacity"] = parseInt($(this).find("#kcp #downlinkcapacity").val());
-					inb["congestion"] = $(this).find("#kcp #congestion").is(":checked");
-					inb["readbuffersize"] = parseInt($(this).find("#kcp #readbuffersize").val());
-					inb["writebuffersize"] = parseInt($(this).find("#kcp #writebuffersize").val());
-					inb["obfs"] = $(this).find("#kcp #obfs").val();
-					if($(this).find("#kcp #seed").val() === "") {
-						inb["seed"] = Math.random().toString(36).substring(2, 15);
-					} else {
-						inb["seed"] = $(this).find("#kcp #seed").val();	
-					}
-				}
-				if(inb["network"] == "ws") {
-					inb["path"] = $(this).find("#ws #path").val();
-					try { inb["headers"] = JSON.parse($(this).find("#ws #headers").val()); } catch(err) {}
-					inb["proxyaddr"] = $(this).find("#ws #proxy_addr").val();
-					inb["proxyport"] = parseInt($(this).find("#ws #proxy_port").val());
-					inb["proxysecurity"] = $(this).find("#ws #proxy_security").val();
-				}
-				if(inb["network"] == "h2") {
-					inb["host"] = $(this).find("#h2 #host").val();
-					inb["path"] = $(this).find("#h2 #path").val();
-					inb["proxyaddr"] = $(this).find("#h2 #proxy_addr").val();
-					inb["proxyport"] = parseInt($(this).find("#h2 #proxy_port").val());
-					inb["proxysecurity"] = $(this).find("#h2 #proxy_security").val();
-				}
-				if(inb["network"] == "domainsocket") {
-					inb["path"] = $(this).find("#domainsocket #path").val();
-				}
-				if(inb["network"] == "quic") {
-					inb["encryption"] = $(this).find("#quic #encryption").val();
-					inb["quickey"] = $(this).find("#quic #quic_key").val();
-					inb["obfs"] = $(this).find("#quic #obfs").val();
-				}
-				if(inb["security"] == "tls") {
-					inb["cert"] = parseInt($(this).find("#cert").val());
-				}
-				inbs.push(inb);
-			});
+            var inbs = [];
+            $("#inbounds").children().each(function() {
+                var inb = {
+                    "listen": $("#listen").val(),
+                    "port": parseInt($("#port").val()),
+                    "protocol": $("#protocol").val(),
+                    // vmess
+                    "alterid": parseInt($("#alterid").val()),
+                    "disableinsecureencryption": $("#disable_insecure_encryption").is(":checked"),
+                    // trojan
+                    "fallbackendpoint": $("#fallbackendpoint").val(),
+                    "blockbt": $("#block_bt").is(":checked"),
+                    "network": $("#network").val(),
+                    "tcpfastopen": $("#tcpfastopen").val(),
+                    // tcp
+                    "obfs": $("#tcp #obfs").val(),
+                    "httprequest": JSON.parse($("#tcp #http_request").val()),
+                    "httpresponse": JSON.parse($("#tcp #http_response").val()),
+                    // kcp
+                    "mtu": parseInt($("#kcp #mtu").val()),
+                    "tti": parseInt($("#kcp #tti").val()),
+                    "uplinkcapacity": parseInt($("#kcp #uplinkcapacity").val()),
+                    "downlinkcapacity": parseInt($("#kcp #downlinkcapacity").val()),
+                    "congestion": $("#kcp #congestion").is(":checked"),
+                    "readbuffersize": parseInt($("#kcp #readbuffersize").val()),
+                    "writebuffersize": parseInt($("#kcp #writebuffersize").val()),
+                    "obfs": $("#kcp #obfs").val(),
+                    "seed": $("#kcp #seed").val(),
+                    // ws
+                    "path": $("#ws #path").val(),
+                    "headers": JSON.parse($("#ws #headers").val()),
+                    // h2
+                    "host": $("#h2 #host").val(),
+                    "path": $("#h2 #path").val(),
+                    // quic
+                    "encryption": $("#quic #encryption").val(),
+                    "quickey": $("#quic #quic_key").val(),
+                    "obfs": $("#quic #obfs").val(),
+                    // domainsocket
+                    "path": $("#domainsocket #path").val(),
+                    // grpc
+                    "servicename": $("#grpc #servicename").val(),
+                    // reverse proxy
+                    "proxyaddr": $("#ws #proxy_addr").val(),
+                    "proxyport": parseInt($("#ws #proxy_port").val()),
+                    "proxysecurity": $("#ws #proxy_security").val(),
+                    // tls
+                    "security": $("#security").val(),
+                    "cert": parseInt($("#v2in #cert").val())
+                };
+                inb["path"] = $(this).find("#"+$(this).find("#network").val()+" #path").val();
+                inbs.push(inb);
+            });
 
-			var trojan_conf = {
-					"local_addr": $("#trojan #local_addr").val(),
-					"local_port": parseInt($("#trojan #local_port").val()),
-					"cert": parseInt($("#trojan #cert").val()),
-					"prefer_server_cipher": $("#trojan #prefer_server_cipher").is(":checked"),
-					"reuse_session": $("#trojan #reuse_session").is(":checked"),
-					"session_ticket": $("#trojan #session_ticket").is(":checked"),
-					"session_timeout": parseInt($("#trojan #session_timeout").val()),
-					"prefer_ipv4": $("#trojan #prefer_ipv4").is(":checked"),
-					"no_delay": $("#trojan #no_delay").is(":checked"),
-					"keep_alive": $("#trojan #keep_alive").is(":checked"),
-					"reuse_port": $("#trojan #reuse_port").is(":checked"),
-					"fast_open": $("#trojan #fast_open").is(":checked"),
-					"fast_open_qlen": parseInt($("#trojan #fast_open_qlen").val())
-				};
+            var trojan_conf = {
+                    "local_addr": $("#trojan #local_addr").val(),
+                    "local_port": parseInt($("#trojan #local_port").val()),
+                    "cert": parseInt($("#trojan #cert").val()),
+                    "prefer_server_cipher": $("#trojan #prefer_server_cipher").is(":checked"),
+                    "reuse_session": $("#trojan #reuse_session").is(":checked"),
+                    "session_ticket": $("#trojan #session_ticket").is(":checked"),
+                    "session_timeout": parseInt($("#trojan #session_timeout").val()),
+                    "prefer_ipv4": $("#trojan #prefer_ipv4").is(":checked"),
+                    "no_delay": $("#trojan #no_delay").is(":checked"),
+                    "keep_alive": $("#trojan #keep_alive").is(":checked"),
+                    "reuse_port": $("#trojan #reuse_port").is(":checked"),
+                    "fast_open": $("#trojan #fast_open").is(":checked"),
+                    "fast_open_qlen": parseInt($("#trojan #fast_open_qlen").val())
+                };
 {/literal}
             $.ajax({
                 type: "POST",
@@ -842,23 +828,23 @@
                 data: {
                     name: $("#name").val(),
                     server: $("#server").val(),
-					node_ip: $("#node_ip").val(),
+                    node_ip: $("#node_ip").val(),
                     method: $("#method").val(),
                     custom_method: custom_method,
                     rate: $("#rate").val(),
                     info: $("#info").val(),
                     type: type,
-					group: $("#group").val(),
+                    group: $("#group").val(),
                     status: $("#status").val(),
-					node_speedlimit: $("#node_speedlimit").val(),
                     sort: $("#sort").val(),
-					class: $("#class").val(),
-					node_bandwidth_limit: $("#node_bandwidth_limit").val(),
-					bandwidthlimit_resetday: $("#bandwidthlimit_resetday").val(),
-					custom_rss: custom_rss,
-					mu_only: $("#mu_only").val(),
-					v2conf: JSON.stringify(inbs),
-					trojan_conf: JSON.stringify(trojan_conf)
+                    node_speedlimit: $("#node_speedlimit").val(),
+                    class: $("#class").val(),
+                    node_bandwidth_limit: $("#node_bandwidth_limit").val(),
+                    bandwidthlimit_resetday: $("#bandwidthlimit_resetday").val(),
+                    custom_rss: custom_rss,
+                    mu_only: $("#mu_only").val(),
+                    v2conf: JSON.stringify(inbs),
+                    trojan_conf: JSON.stringify(trojan_conf)
                 },
                 success: function (data) {
                     if (data.ret) {
@@ -876,7 +862,8 @@
                     $("#msg").html(data.msg+"  发生错误了。");
                 }
             });
-		}
-	});
+        }
+    });
+
 {/literal}
 </script>
