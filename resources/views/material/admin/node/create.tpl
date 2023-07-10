@@ -193,7 +193,7 @@
                                                         <option value="vmess" selected>VMess</option>
                                                         <option value="shadowsocks" disabled>Shadowsocks</option>
                                                         <option value="trojan" >Trojan</option>
-                                                        <option value="vless" disabled>VLESS</option>
+                                                        <option value="vless" >VLESS</option>
                                                         <option value="mtproto" disabled>MTProto</option>
                                                     </select>
                                                 </div>
@@ -214,12 +214,12 @@
                                                         </div>
                                                     </div>
                                                     
-                                                    <div class="tab-pane fade" id="trojan">
-                                                        <div class="form-group form-group-label">
-                                                            <label class="floating-label" for="fallbackendpoint">Fallback 端点</label>
-                                                            <input class="form-control" id="fallbackendpoint" type="text" name="fallbackendpoint" value="80">
-                                                        </div>
-                                                    </div>
+                                                    <!-- <div class="tab-pane fade" id="trojan"> -->
+                                                        <!-- <div class="form-group form-group-label"> -->
+                                                            <!-- <label class="floating-label" for="fallback">Fallback 端点</label> -->
+                                                            <!-- <input class="form-control" id="fallback" type="text" name="fallback" value="80"> -->
+                                                        <!-- </div> -->
+                                                    <!-- </div> -->
                                                 </div>
 
 			                                    <div class="form-group form-group-label">
@@ -234,7 +234,8 @@
                                                     <label class="floating-label" for="security">TLS</label>
                                                     <select id="security" class="form-control" name="security">
                                                         <option value="none" selected>none</option>
-                                                        <option value="tls">tls</option>
+                                                        <option value="tls">TLS</option>
+                                                        <option value="xtls">xTLS</option>
                                                     </select>
                                                 </div>
 
@@ -761,7 +762,7 @@
                     "alterid": parseInt($("#alterid").val()),
                     "disableinsecureencryption": $("#disable_insecure_encryption").is(":checked"),
                     // trojan
-                    "fallbackendpoint": $("#fallbackendpoint").val(),
+                    // "fallback": $("#fallback").val(),
                     "blockbt": $("#block_bt").is(":checked"),
                     "network": $("#network").val(),
                     "tcpfastopen": $("#tcpfastopen").val(),

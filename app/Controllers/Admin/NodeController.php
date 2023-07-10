@@ -86,7 +86,7 @@ class NodeController extends AdminController
                 "alterid" => 32,
                 "disableinsecureencryption" => true,
                 // trojan
-                "fallbackendpoint" => 80,
+                // "fallbackendpoint" => 80,
                 "blockbt" => (bool)$v2conf['blockbt'],
                 "network" => $v2conf['network'],
                 "tcpfastopen" => (string)$v2conf['tcpfastopen'],
@@ -131,13 +131,13 @@ class NodeController extends AdminController
                     $inb['alterid'] = (int)$v2conf['alterid'];
                     $inb['disableinsecureencryption'] = (bool)$v2conf['disableinsecureencryption'];
                     break;
-                case 'trojan':
-                    if (is_int($v2conf['fallbackendpoint'])) {
-                        $inb['fallbackendpoint'] = intval($v2conf['fallbackendpoint']);
-                    } else {
-                        $inb['fallbackendpoint'] = $v2conf['fallbackendpoint'];
-                    }
-                    break;
+                // case 'trojan':
+                //     if (is_int($v2conf['fallbackendpoint'])) {
+                //         $inb['fallbackendpoint'] = intval($v2conf['fallbackendpoint']);
+                //     } else {
+                //         $inb['fallbackendpoint'] = $v2conf['fallbackendpoint'];
+                //     }
+                //     break;
                 default:
                     break;
             }
@@ -179,6 +179,11 @@ class NodeController extends AdminController
                     break;
                 default:
                     break;
+            }
+            if ($inb['security'] != 'none' && $inb['cert'] == 0) {
+                $rs['ret'] = 0;
+                $rs['msg'] = "添加失败。开启 TLS 必须选择一个证书";
+                return $response->getBody()->write(json_encode($rs));
             }
             array_push($inbs, $inb);
         }
@@ -275,7 +280,7 @@ class NodeController extends AdminController
                 "alterid" => 32,
                 "disableinsecureencryption" => true,
                 // trojan
-                "fallbackendpoint" => 80,
+                // "fallbackendpoint" => 80,
                 "blockbt" => (bool)$v2conf['blockbt'],
                 "network" => $v2conf['network'],
                 "tcpfastopen" => (string)$v2conf['tcpfastopen'],
@@ -368,6 +373,11 @@ class NodeController extends AdminController
                     break;
                 default:
                     break;
+            }
+            if ($inb['security'] != 'none' && $inb['cert'] == 0) {
+                $rs['ret'] = 0;
+                $rs['msg'] = "添加失败。开启 TLS 必须选择一个证书";
+                return $response->getBody()->write(json_encode($rs));
             }
             array_push($inbs, $inb);
         }

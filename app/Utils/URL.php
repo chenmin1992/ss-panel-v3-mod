@@ -592,8 +592,19 @@ class URL
                 $return_array["uuid"] = $uuid;
                 $return_array["host"] = $node->server;
                 $return_array["port"] = $inbound->port;
+                $return_array["protocol"] = $inbound->protocol;
                 $return_array["network"] = $inbound->network;
-                $return_array["aid"] = $inbound->alterid;
+                switch ($inbound->protocol) {
+                    case 'vmess':
+                        $return_array["aid"] = $inbound->alterid;
+                        break;
+                    case 'vless':
+                        break;
+                    case 'trojan':
+                        break;
+                    default:
+                        break;
+                }
                 $return_array["tls"] = $inbound->security == "tls" ? 1 : 0;
                 $return_array["allowInsecure"] = 0;
                 $return_array["tlsServer"] = $node->server;
