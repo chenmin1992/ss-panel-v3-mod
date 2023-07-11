@@ -230,7 +230,16 @@
                                                     <select id="security" class="form-control" name="security">
                                                         <option value="none" {if $inbound->security!='tls'}selected{/if}>none</option>
                                                         <option value="tls" {if $inbound->security=='tls'}selected{/if}>TLS</option>
-                                                        <option value="xtls" {if $inbound->security=='xtls'}selected{/if}>xTLS</option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group form-group-label">
+                                                    <label class="floating-label" for="xtls">XTLS</label>
+                                                    <select id="xtls" class="form-control" name="xtls">
+                                                        <option value="none" {if $inbound->xtls=='none'}selected{/if}>none</option>
+                                                        <option value="xtls-rprx-direct" {if $inbound->xtls=='xtls-rprx-direct'}selected{/if}>xtls-rprx-direct</option>
+                                                        <option value="xtls-rprx-origin" {if $inbound->xtls=='xtls-rprx-origin'}selected{/if}>xtls-rprx-origin</option>
+                                                        <option value="xtls-rprx-vision" {if $inbound->xtls=='xtls-rprx-vision'}selected{/if}>xtls-rprx-vision</option>
                                                     </select>
                                                 </div>
 
@@ -772,9 +781,17 @@
                     "proxysecurity": $("#ws #proxy_security").val(),
                     // tls
                     "security": $("#security").val(),
-                    "cert": parseInt($("#v2in #cert").val())
+                    "cert": parseInt($("#v2in #cert").val()),
+                    "xtls": $("#xtls").val()
                 };
-                inb["path"] = $(this).find("#"+$(this).find("#network").val()+" #path").val();
+                inb["path"] = '';
+                inb["obfs"] = '';
+                if ($("#" + $("#network").val() + " #path").val() != undefined) {
+                	inb["path"] = $("#" + $("#network").val() + " #path").val();
+                }
+                if ($("#" + $("#network").val() + " #obfs").val() != undefined) {
+                	inb["obfs"] = $("#" + $("#network").val() + " #obfs").val();
+                }
                 inbs.push(inb);
             });
 

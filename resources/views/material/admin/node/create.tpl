@@ -235,7 +235,16 @@
                                                     <select id="security" class="form-control" name="security">
                                                         <option value="none" selected>none</option>
                                                         <option value="tls">TLS</option>
-                                                        <option value="xtls">xTLS</option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group form-group-label">
+                                                    <label class="floating-label" for="xtls">XTLS</label>
+                                                    <select id="xtls" class="form-control" name="xtls">
+                                                        <option value="none" selected>none</option>
+                                                        <option value="xtls-rprx-direct">xtls-rprx-direct</option>
+                                                        <option value="xtls-rprx-origin">xtls-rprx-origin</option>
+                                                        <option value="xtls-rprx-vision">xtls-rprx-vision</option>
                                                     </select>
                                                 </div>
 
@@ -276,8 +285,8 @@
                                                         <div class="form-group form-group-label">
                                                             <label class="floating-label" for="obfs">Header</label>
                                                             <select id="obfs" class="form-control" name="obfs">
-                                                                <option value="none">none</option>
-                                                                <option value="http" selected>http</option>
+                                                                <option value="none" selected>none</option>
+                                                                <option value="http">http</option>
                                                             </select>
                                                         </div>
 
@@ -299,7 +308,6 @@
   }
 }</textarea>
                                                         </div>
-
                                                         <div class="form-group form-group-label">
                                                             <label class="floating-label" for="http_response">HTTP Response</label>
                                                             <textarea class="form-control" id="http_response" rows="15">{
@@ -800,9 +808,17 @@
                     "proxysecurity": $("#ws #proxy_security").val(),
                     // tls
                     "security": $("#security").val(),
-                    "cert": parseInt($("#v2in #cert").val())
+                    "cert": parseInt($("#v2in #cert").val()),
+                    "xtls": $("#xtls").val()
                 };
-                inb["path"] = $(this).find("#"+$(this).find("#network").val()+" #path").val();
+                inb["path"] = '';
+                inb["obfs"] = '';
+                if ($("#" + $("#network").val() + " #path").val() != undefined) {
+                	inb["path"] = $("#" + $("#network").val() + " #path").val();
+                }
+                if ($("#" + $("#network").val() + " #obfs").val() != undefined) {
+                	inb["obfs"] = $("#" + $("#network").val() + " #obfs").val();
+                }
                 inbs.push(inb);
             });
 

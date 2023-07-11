@@ -124,20 +124,27 @@ class NodeController extends AdminController
                 "proxysecurity" => $v2conf['proxysecurity'],
                 // tls
                 "security" => $v2conf['security'],
-                "cert" => (int)$v2conf['cert']
+                "cert" => (int)$v2conf['cert'],
+                "xtls" => 'none'
             ];
             switch ($v2conf['protocol']) {
                 case 'vmess':
                     $inb['alterid'] = (int)$v2conf['alterid'];
                     $inb['disableinsecureencryption'] = (bool)$v2conf['disableinsecureencryption'];
                     break;
-                // case 'trojan':
-                //     if (is_int($v2conf['fallbackendpoint'])) {
-                //         $inb['fallbackendpoint'] = intval($v2conf['fallbackendpoint']);
-                //     } else {
-                //         $inb['fallbackendpoint'] = $v2conf['fallbackendpoint'];
-                //     }
-                //     break;
+                case 'vless':
+                    $inb['xtls'] = $v2conf['xtls'];
+                    break;
+                case 'trojan':
+                    if (str_starts_with($v2conf['xtls'], 'xtls')) {
+                        $inb['xtls'] = str_replace($v2conf['xtls'], 'vision', 'direct');
+                    }
+                    // if (is_int($v2conf['fallbackendpoint'])) {
+                    //     $inb['fallbackendpoint'] = intval($v2conf['fallbackendpoint']);
+                    // } else {
+                    //     $inb['fallbackendpoint'] = $v2conf['fallbackendpoint'];
+                    // }
+                    break;
                 default:
                     break;
             }
@@ -318,19 +325,26 @@ class NodeController extends AdminController
                 "proxysecurity" => $v2conf['proxysecurity'],
                 // tls
                 "security" => $v2conf['security'],
-                "cert" => (int)$v2conf['cert']
+                "cert" => (int)$v2conf['cert'],
+                "xtls" => 'none'
             ];
             switch ($v2conf['protocol']) {
                 case 'vmess':
                     $inb['alterid'] = (int)$v2conf['alterid'];
                     $inb['disableinsecureencryption'] = (bool)$v2conf['disableinsecureencryption'];
                     break;
+                case 'vless':
+                    $inb['xtls'] = $v2conf['xtls'];
+                    break;
                 case 'trojan':
-                    if (is_int($v2conf['fallbackendpoint'])) {
-                        $inb['fallbackendpoint'] = intval($v2conf['fallbackendpoint']);
-                    } else {
-                        $inb['fallbackendpoint'] = $v2conf['fallbackendpoint'];
+                    if (str_starts_with($v2conf['xtls'], 'xtls')) {
+                        $inb['xtls'] = str_replace($v2conf['xtls'], 'vision', 'direct');
                     }
+                    // if (is_int($v2conf['fallbackendpoint'])) {
+                    //     $inb['fallbackendpoint'] = intval($v2conf['fallbackendpoint']);
+                    // } else {
+                    //     $inb['fallbackendpoint'] = $v2conf['fallbackendpoint'];
+                    // }
                     break;
                 default:
                     break;

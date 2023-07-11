@@ -656,6 +656,7 @@ class URL
                     default:
                         break;
                 }
+                $return_array["flow"] = $inbound->flow;
                 $return_array["remark"] = str_replace(' ', '', explode(" - ", $node->name)[0])."-".$return_array["network"];
                 // for shadowrocket only
                 $return_array["remarks"] = $return_array["remark"];
@@ -703,7 +704,17 @@ class URL
                 $return_array["add"] = $node->server;
                 $return_array["port"] = $inbound->port;
                 $return_array["id"] = $uuid;
-                $return_array["aid"] = $inbound->alterid;
+                switch ($inbound->protocol) {
+                    case 'vmess':
+                        $return_array["aid"] = $inbound->alterid;
+                        break;
+                    case 'vless':
+                        break;
+                    case 'trojan':
+                        break;
+                    default:
+                        break;
+                }
                 $return_array["net"] = $inbound->network;
                 $return_array["type"] = "";
                 $return_array["host"] = "";
@@ -752,6 +763,7 @@ class URL
                     default:
                         break;
                 }
+                $return_array["flow"] = $inbound->flow;
                 $return_array["ps"] = str_replace(' ', '', explode(" - ", $node->name)[0])."-".$return_array["net"];
                 break;
             default:

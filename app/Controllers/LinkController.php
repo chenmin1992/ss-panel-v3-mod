@@ -1848,7 +1848,7 @@ FINAL,Proxy';
                 continue;
             }
             $vmess_networks = ['ws'];
-            if (array_key_exists('uuid', $item) && in_array($item['network'], $vmess_networks)) { //vmess
+            if (array_key_exists('uuid', $item) && array_key_exists('aid', $item)) { //vmess
                 $vmess = [
                     "name" => $item['remark'],
                     "type" => "vmess",
@@ -1913,7 +1913,7 @@ FINAL,Proxy';
                 array_push($root_conf['proxy-groups'][0]['proxies'], $vmess['name']);
                 continue;
             }
-            if (array_key_exists('reuse_session', $item)) { //trojan
+            if (!array_key_exists('uuid', $item) && !array_key_exists('id', $item) && array_key_exists('reuse_session', $item)) { //trojan origin
                 $trojan = [
                     "name" => $item['remark'],
                     "type" => "trojan",
