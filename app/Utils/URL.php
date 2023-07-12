@@ -391,18 +391,35 @@ class URL
         switch ($conf_version) {
             case 1:
                 $parameters = '';
-                $ignore_items = ['security', 'uuid', 'host', 'port', 'id', 'node_class'];
+                $ignore_items = ['security', 'uuid', 'host', 'port', 'id', 'node_class', 'passwd'];
                 foreach ($item as $key => $value) {
                     if(in_array($key, $ignore_items)) {
                         continue;
                     }
+                    if ($key == 'xtls') {
+                        switch ($value) {
+                            case 'none':
+                                $value = 0;
+                                break;
+                            case 'xtls-rprx-direct':
+                            case 'xtls-rprx-origin':
+                                $value = 1;
+                                break;
+                            case 'xtls-rprx-vision':
+                                $value = 2;
+                                break;
+                            default:
+                                break;
+                        }
+                    }
                     $parameters .= $key.'='.rawurlencode($value).'&';
                 }
-                $url = 'vmess://'.Tools::base64_url_encode($item['security'].':'.$item['uuid'].'@'.$item['host'].':'.$item['port']).'?'.substr($parameters, 0, -1);
+                $url = $item['protocol'].'://'.Tools::base64_url_encode($item['security'].':'.$item['uuid'].'@'.$item['host'].':'.$item['port']).'?'.substr($parameters, 0, -1);
                 break;
-
+                // vless://YXV0bzo3ZDBkYzc5Mi0wYzVlLTdmYmEtYjk2MS1lMzk2NjNmNzIyZTZAZ2djeGRkLmtsdXR6dGVjaC5jb206NDQz?remarks=%E6%B4%9B%E6%9D%89%E7%9F%B6&obfs=none&tls=1&peer=ggcxdd.klutztech.com&tfo=1&mux=1&xtls=2
+                //         auto:7d0dc792-0c5e-7fba-b961-e39663f722e6@ggcxdd.klutztech.com:443
             case 2:
-                $url = 'vmess://'.Tools::base64_url_encode(json_encode($item));
+                $url = $item['protocol'].'://'.Tools::base64_url_encode(json_encode($item));
                 break;
             
             default:
@@ -585,6 +602,9 @@ class URL
         $return_array = Array();
         $return_array['id'] = $node->id;
         $return_array['node_class'] = $node->node_class;
+        $return_array['passwd'] = $user->passwd;
+        $return_array['fingerprint'] = $inbound->fingerprint;
+        $return_array["protocol"] = $inbound->protocol;
         switch ($conf_version) {
             case 1:
                 // $return_array["v"] = 1;
@@ -592,15 +612,16 @@ class URL
                 $return_array["uuid"] = $uuid;
                 $return_array["host"] = $node->server;
                 $return_array["port"] = $inbound->port;
-                $return_array["protocol"] = $inbound->protocol;
                 $return_array["network"] = $inbound->network;
                 switch ($inbound->protocol) {
                     case 'vmess':
                         $return_array["aid"] = $inbound->alterid;
                         break;
                     case 'vless':
+                        $return_array["xtls"] = $inbound->xtls;
                         break;
                     case 'trojan':
+                        $return_array["xtls"] = $inbound->xtls;
                         break;
                     default:
                         break;
@@ -608,8 +629,8 @@ class URL
                 $return_array["tls"] = $inbound->security == "tls" ? 1 : 0;
                 $return_array["allowInsecure"] = 0;
                 $return_array["tlsServer"] = $node->server;
-                $return_array["mux"] = 1;
-                $return_array["muxConcurrency"] = 8;
+                // $return_array["mux"] = 1;
+                // $return_array["muxConcurrency"] = 8;
                 if($inbound->network == "ws" or $inbound->network == "h2") {
                     if(!empty($inbound->proxyaddr) and !empty($inbound->proxyport)) {
                         $return_array["host"] = $inbound->proxyaddr;
@@ -653,15 +674,18 @@ class URL
                         $return_array["quitKey"] = $inbound->quickey;
                         $return_array["quicHeader"] = $inbound->obfs;
                         break;
+                    case "grpc":
+                        $return_array["servicename"] = $inbound->servicename;
+                        break;
                     default:
                         break;
                 }
-                $return_array["flow"] = $inbound->flow;
-                $return_array["remark"] = str_replace(' ', '', explode(" - ", $node->name)[0])."-".$return_array["network"];
+                $return_array["remark"] = str_replace(' ', '', explode(" - ", $node->name)[0]);
                 // for shadowrocket only
                 $return_array["remarks"] = $return_array["remark"];
                 switch ($inbound->network) {
                     case "tcp":
+                        $return_array["peer"] = $return_array["tlsServer"];
                         break;
                     case "kcp":
                         // $return_array["obfsParam"] = json_encode([ "uplinkCapacity" => $inbound->uplinkcapacity, "downlinkCapacity" => $inbound->downlinkcapacity, "tti" => $inbound->tti, "header" => $inbound->obfs, "mtu" => $inbound->mtu ]);
@@ -682,6 +706,9 @@ class URL
                 }
                 $return_array["path"] = $inbound->path;                
                 switch ($inbound->network) {
+                    case "tcp":
+                        $return_array["obfs"] = "none";
+                        break;
                     case "kcp":
                         $return_array["obfs"] = "mkcp";
                         break;
@@ -703,14 +730,16 @@ class URL
                 $return_array["ps"] = "";
                 $return_array["add"] = $node->server;
                 $return_array["port"] = $inbound->port;
-                $return_array["id"] = $uuid;
+                $return_array["uuid"] = $uuid;
                 switch ($inbound->protocol) {
                     case 'vmess':
                         $return_array["aid"] = $inbound->alterid;
                         break;
                     case 'vless':
+                        $return_array["xtls"] = $inbound->xtls;
                         break;
                     case 'trojan':
+                        $return_array["xtls"] = $inbound->xtls;
                         break;
                     default:
                         break;
@@ -760,11 +789,13 @@ class URL
                             $return_array["path"] = $inbound->quickey;
                         }
                         break;
+                    case "grpc":
+                        $return_array["servicename"] = $inbound->servicename;
+                        break;
                     default:
                         break;
                 }
-                $return_array["flow"] = $inbound->flow;
-                $return_array["ps"] = str_replace(' ', '', explode(" - ", $node->name)[0])."-".$return_array["net"];
+                $return_array["ps"] = str_replace(' ', '', explode(" - ", $node->name)[0]);
                 break;
             default:
                 break;

@@ -217,6 +217,16 @@
                                                     </div>
                                                 </div>
 
+                                                <div class="form-group form-group-label">
+                                                    <label class="floating-label" for="xtls">XTLS</label>
+                                                    <select id="xtls" class="form-control" name="xtls">
+                                                        <option value="none" {if $inbound->xtls=='none'}selected{/if}>none</option>
+                                                        <option value="xtls-rprx-direct" {if $inbound->xtls=='xtls-rprx-direct'}selected{/if}>xtls-rprx-direct</option>
+                                                        <option value="xtls-rprx-origin" {if $inbound->xtls=='xtls-rprx-origin'}selected{/if}>xtls-rprx-origin</option>
+                                                        <option value="xtls-rprx-vision" {if $inbound->xtls=='xtls-rprx-vision'}selected{/if}>xtls-rprx-vision</option>
+                                                    </select>
+                                                </div>
+
 			                                    <div class="form-group form-group-label">
 			                                        <div class="checkbox switch">
 			                                            <label for="block_bt">
@@ -234,22 +244,23 @@
                                                 </div>
 
                                                 <div class="form-group form-group-label">
-                                                    <label class="floating-label" for="xtls">XTLS</label>
-                                                    <select id="xtls" class="form-control" name="xtls">
-                                                        <option value="none" {if $inbound->xtls=='none'}selected{/if}>none</option>
-                                                        <option value="xtls-rprx-direct" {if $inbound->xtls=='xtls-rprx-direct'}selected{/if}>xtls-rprx-direct</option>
-                                                        <option value="xtls-rprx-origin" {if $inbound->xtls=='xtls-rprx-origin'}selected{/if}>xtls-rprx-origin</option>
-                                                        <option value="xtls-rprx-vision" {if $inbound->xtls=='xtls-rprx-vision'}selected{/if}>xtls-rprx-vision</option>
-                                                    </select>
-                                                </div>
-
-                                                <div class="form-group form-group-label">
                                                     <label class="floating-label" for="cert">证书/cert</label>
                                                     <select id="cert" class="form-control" name="cert">
                                                         <option value="0">none</option>
                                                         {foreach $certs as $cert}
                                                         <option value="{$cert->id}" {if $inbound->cert==$cert->id}selected{/if}>{$cert->name}</option>
                                                         {/foreach}
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group form-group-label">
+                                                    <label class="floating-label" for="fingerprint">FingerPrint</label>
+                                                    <select id="fingerprint" class="form-control" name="fingerprint">
+                                                        <option value="chrome" {if $inbound->fingerprint=='chrome'}selected{/if}>chrome</option>
+                                                        <option value="firefox" {if $inbound->fingerprint=='firefox'}selected{/if}>firefox</option>
+                                                        <option value="safari" {if $inbound->fingerprint=='safari'}selected{/if}>safari</option>
+                                                        <option value="random" {if $inbound->fingerprint=='random'}selected{/if}>random</option>
+                                                        <option value="none" {if $inbound->fingerprint=='none'}selected{/if}>none</option>
                                                     </select>
                                                 </div>
 
@@ -782,6 +793,7 @@
                     // tls
                     "security": $("#security").val(),
                     "cert": parseInt($("#v2in #cert").val()),
+                    "fingerprint": $("#fingerprint").val(),
                     "xtls": $("#xtls").val()
                 };
                 inb["path"] = '';

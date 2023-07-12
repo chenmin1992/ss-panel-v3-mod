@@ -125,6 +125,7 @@ class NodeController extends AdminController
                 // tls
                 "security" => $v2conf['security'],
                 "cert" => (int)$v2conf['cert'],
+                "fingerprint" => $v2conf['fingerprint'],
                 "xtls" => 'none'
             ];
             switch ($v2conf['protocol']) {
@@ -136,14 +137,9 @@ class NodeController extends AdminController
                     $inb['xtls'] = $v2conf['xtls'];
                     break;
                 case 'trojan':
-                    if (str_starts_with($v2conf['xtls'], 'xtls')) {
-                        $inb['xtls'] = str_replace($v2conf['xtls'], 'vision', 'direct');
+                    if (strpos($v2conf['xtls'], 'xtls') == 0) {
+                        $inb['xtls'] = str_replace('vision', 'direct', $v2conf['xtls']);
                     }
-                    // if (is_int($v2conf['fallbackendpoint'])) {
-                    //     $inb['fallbackendpoint'] = intval($v2conf['fallbackendpoint']);
-                    // } else {
-                    //     $inb['fallbackendpoint'] = $v2conf['fallbackendpoint'];
-                    // }
                     break;
                 default:
                     break;
@@ -191,6 +187,11 @@ class NodeController extends AdminController
                 $rs['ret'] = 0;
                 $rs['msg'] = "添加失败。开启 TLS 必须选择一个证书";
                 return $response->getBody()->write(json_encode($rs));
+            }
+            if (in_array($v2conf['protocol'], ['vmess', 'vless', 'trojan']) and in_array($v2conf['network'], ['tcp', 'grpc', 'ws', 'http'])) {
+                $inb['fingerprint'] = $v2conf['fingerprint'];
+            } else {
+                $inb['fingerprint'] = 'none';
             }
             array_push($inbs, $inb);
         }
@@ -326,6 +327,7 @@ class NodeController extends AdminController
                 // tls
                 "security" => $v2conf['security'],
                 "cert" => (int)$v2conf['cert'],
+                "fingerprint" => $v2conf['fingerprint'],
                 "xtls" => 'none'
             ];
             switch ($v2conf['protocol']) {
@@ -337,14 +339,9 @@ class NodeController extends AdminController
                     $inb['xtls'] = $v2conf['xtls'];
                     break;
                 case 'trojan':
-                    if (str_starts_with($v2conf['xtls'], 'xtls')) {
-                        $inb['xtls'] = str_replace($v2conf['xtls'], 'vision', 'direct');
+                    if (strpos($v2conf['xtls'], 'xtls') == 0) {
+                        $inb['xtls'] = str_replace('vision', 'direct', $v2conf['xtls']);
                     }
-                    // if (is_int($v2conf['fallbackendpoint'])) {
-                    //     $inb['fallbackendpoint'] = intval($v2conf['fallbackendpoint']);
-                    // } else {
-                    //     $inb['fallbackendpoint'] = $v2conf['fallbackendpoint'];
-                    // }
                     break;
                 default:
                     break;
@@ -392,6 +389,11 @@ class NodeController extends AdminController
                 $rs['ret'] = 0;
                 $rs['msg'] = "添加失败。开启 TLS 必须选择一个证书";
                 return $response->getBody()->write(json_encode($rs));
+            }
+            if (in_array($v2conf['protocol'], ['vmess', 'vless', 'trojan']) and in_array($v2conf['network'], ['tcp', 'grpc', 'ws', 'http'])) {
+                $inb['fingerprint'] = $v2conf['fingerprint'];
+            } else {
+                $inb['fingerprint'] = 'none';
             }
             array_push($inbs, $inb);
         }

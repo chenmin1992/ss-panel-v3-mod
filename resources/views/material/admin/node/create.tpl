@@ -213,13 +213,16 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    
-                                                    <!-- <div class="tab-pane fade" id="trojan"> -->
-                                                        <!-- <div class="form-group form-group-label"> -->
-                                                            <!-- <label class="floating-label" for="fallback">Fallback 端点</label> -->
-                                                            <!-- <input class="form-control" id="fallback" type="text" name="fallback" value="80"> -->
-                                                        <!-- </div> -->
-                                                    <!-- </div> -->
+                                                </div>
+
+                                                <div class="form-group form-group-label">
+                                                    <label class="floating-label" for="xtls">XTLS</label>
+                                                    <select id="xtls" class="form-control" name="xtls">
+                                                        <option value="none" selected>none</option>
+                                                        <option value="xtls-rprx-direct">xtls-rprx-direct</option>
+                                                        <option value="xtls-rprx-origin">xtls-rprx-origin</option>
+                                                        <option value="xtls-rprx-vision">xtls-rprx-vision</option>
+                                                    </select>
                                                 </div>
 
 			                                    <div class="form-group form-group-label">
@@ -239,22 +242,23 @@
                                                 </div>
 
                                                 <div class="form-group form-group-label">
-                                                    <label class="floating-label" for="xtls">XTLS</label>
-                                                    <select id="xtls" class="form-control" name="xtls">
-                                                        <option value="none" selected>none</option>
-                                                        <option value="xtls-rprx-direct">xtls-rprx-direct</option>
-                                                        <option value="xtls-rprx-origin">xtls-rprx-origin</option>
-                                                        <option value="xtls-rprx-vision">xtls-rprx-vision</option>
-                                                    </select>
-                                                </div>
-
-                                                <div class="form-group form-group-label">
                                                     <label class="floating-label" for="cert">证书/cert</label>
                                                     <select id="cert" class="form-control" name="cert">
                                                         <option value="0" selected>none</option>
                                                         {foreach $certs as $cert}
                                                         <option value="{$cert->id}">{$cert->name}</option>
                                                         {/foreach}
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group form-group-label">
+                                                    <label class="floating-label" for="fingerprint">FingerPrint</label>
+                                                    <select id="fingerprint" class="form-control" name="fingerprint">
+                                                        <option value="chrome">chrome</option>
+                                                        <option value="firefox">firefox</option>
+                                                        <option value="safari">safari</option>
+                                                        <option value="random">random</option>
+                                                        <option value="none" selected>none</option>
                                                     </select>
                                                 </div>
 
@@ -809,6 +813,7 @@
                     // tls
                     "security": $("#security").val(),
                     "cert": parseInt($("#v2in #cert").val()),
+                    "fingerprint": $("#fingerprint").val(),
                     "xtls": $("#xtls").val()
                 };
                 inb["path"] = '';

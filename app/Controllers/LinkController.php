@@ -1836,7 +1836,7 @@ FINAL,Proxy';
             if (array_key_exists('protocol_param', $item)) { //SS
                 $ss = [
                     "name" => $item['remark'],
-                    "type" => "ss",
+                    "type" => 'ss',
                     "server" => $item['address'],
                     "port" => $item['port'],
                     "cipher" => $item['method'],
@@ -1847,73 +1847,7 @@ FINAL,Proxy';
                 array_push($root_conf['proxy-groups'][0]['proxies'], $ss['name']);
                 continue;
             }
-            $vmess_networks = ['ws'];
-            if (array_key_exists('uuid', $item) && array_key_exists('aid', $item)) { //vmess
-                $vmess = [
-                    "name" => $item['remark'],
-                    "type" => "vmess",
-                    "server" => $item['host'],
-                    "port" => $item['port'],
-                    "uuid" => $item['uuid'],
-                    "alterId" => $item['aid'],
-                    "cipher" => "auto",
-                    "udp" => true,
-                    "tls" => $item['tls'] == 1 ? true : false,
-                    "skip-cert-verify" => false,
-                    "network" => $item['network']
-                ];
-                switch ($vmess['network']) {
-                    case 'ws':
-                        if (!empty($item['wsPath'])) {
-                            $vmess['ws-path'] = $item['wsPath'];
-                        }
-                        if (!empty($item['wsHost'])) {
-                            $vmess['ws-headers'] = [
-                                "Host" => $item['wsHost']
-                            ];
-                        } else {
-                            $vmess['ws-headers'] = [
-                                "Host" => $item['host']
-                            ];
-                        }
-                        $vmess['ws-opts'] = [
-                            "path" => $vmess['ws-path'],
-                            "headers" => $vmess['ws-headers']
-                        ];
-                        break;
-
-                    case 'h2':
-                        $vmess['h2-opts'] = [];
-                        if (!empty($item['h2Path'])) {
-                            $vmess['h2-opts']['path'] = $item['h2Path'];
-                        }
-                        if (!empty($item['h2Host'])) {
-                            $vmess['h2-opts']['headers'] = [ 'Host' => [ $item['h2Host'] ] ];
-                        } else {
-                            $vmess['h2-opts']['headers'] = [ 'Host' => [ $item['host'] ] ];
-                        }
-                        break;
-
-                    case 'http':
-                        $vmess['http-opts'] = [ 'method' => 'GET' ];
-                        if (!empty($item['h2Path'])) {
-                            $vmess['http-opts']['path'] = [ $item['h2Path'] ];
-                        }
-                        if (!empty($item['h2Host'])) {
-                            $vmess['http-opts']['headers'] = [ 'Host' => [ $item['h2Host'] ] ];
-                        } else {
-                            $vmess['http-opts']['headers'] = [ 'Host' => [ $item['host'] ] ];
-                        }
-                        break;
-
-                    default:
-                        break;
-                }
-                array_push($root_conf['proxies'], $vmess);
-                array_push($root_conf['proxy-groups'][0]['proxies'], $vmess['name']);
-                continue;
-            }
-            if (!array_key_exists('uuid', $item) && !array_key_exists('id', $item) && array_key_exists('reuse_session', $item)) { //trojan origin
+            if (!array_key_exists('uuid', $item) && array_key_exists('sni', $item)) { // original trojan
                 $trojan = [
                     "name" => $item['remark'],
                     "type" => "trojan",
@@ -1932,6 +1866,104 @@ FINAL,Proxy';
                 array_push($root_conf['proxy-groups'][0]['proxies'], $trojan['name']);
                 continue;
             }
+            //vmess & vless
+            $ray = [];
+            if (array_key_exists('uuid', $item)) {
+                $ray = [
+                    "name" => $item['remark'],
+                    "type" => $item['protocol'],
+                    "server" => $item['host'],
+                    "port" => $item['port'],
+                    "uuid" => $item['uuid'],
+                    "alterId" => 0,
+                    "cipher" => 'auto',
+                    "udp" => true,
+                    "flow" => 'none',
+                    "tls" => $item['tls'] == 1 ? true : false,
+                    "servername" => $item['host'],
+                    "skip-cert-verify" => false,
+                    "client-fingerprint" => $item['fingerprint'],
+                    "network" => $item['network']
+                ];
+                if (array_key_exists('aid', $item)) {
+                    $ray['alterId'] = $item['aid'];
+                    // $ray['uuid'] = $item['uuid'];
+                    unset($ray['flow']);
+                } else {
+                    unset($ray['alterId']);
+                    unset($ray['cipher']);
+                    // $ray['uuid'] = $item['passwd'];
+                    $ray['flow'] = $item['xtls'];
+                }
+            } else {
+                $ray = [
+                    "name" => $item['remark'],
+                    "type" => $item['protocol'],
+                    "server" => $item['host'],
+                    "port" => $item['port'],
+                    "password" => $item['passwd'],
+                    "flow" => $item['xtls'],
+                    "network" => $item['network'],
+                    "sni" => $item['host'],
+                    "skip-cert-verify" => false,
+                    "client-fingerprint" => $item['fingerprint'],
+                    "udp" => true
+                ];
+            }
+
+            switch ($ray['network']) {
+                case 'ws':
+                    if (!empty($item['wsPath'])) {
+                        $ray['ws-path'] = $item['wsPath'];
+                    }
+                    if (!empty($item['wsHost'])) {
+                        $ray['ws-headers'] = [
+                            "Host" => $item['wsHost']
+                        ];
+                    } else {
+                        $ray['ws-headers'] = [
+                            "Host" => $item['host']
+                        ];
+                    }
+                    $ray['ws-opts'] = [
+                        "path" => $ray['ws-path'],
+                        "headers" => $ray['ws-headers']
+                    ];
+                    break;
+
+                case 'h2':
+                    $ray['h2-opts'] = [];
+                    if (!empty($item['h2Path'])) {
+                        $ray['h2-opts']['path'] = $item['h2Path'];
+                    }
+                    if (!empty($item['h2Host'])) {
+                        $ray['h2-opts']['host'] = explode('\n', $item['h2Host']);
+                    } else {
+                        $ray['h2-opts']['host'] = [ $item['host']  ];
+                    }
+                    break;
+
+                case 'http':
+                    $ray['http-opts'] = [ 'method' => 'GET' ];
+                    if (!empty($item['h2Path'])) {
+                        $ray['http-opts']['path'] = [ $item['h2Path'] ];
+                    }
+                    if (!empty($item['h2Host'])) {
+                        $ray['http-opts']['headers'] = [ 'Host' => [ $item['h2Host'] ] ];
+                    } else {
+                        $ray['http-opts']['headers'] = [ 'Host' => [ $item['host'] ] ];
+                    }
+                    break;
+
+                case 'grpc':
+                    $ray['grpc-opts'] = [ 'grpc-service-name' => $item['servicename'] ];
+                    break;
+
+                default:
+                    break;
+            }
+            array_push($root_conf['proxies'], $ray);
+            array_push($root_conf['proxy-groups'][0]['proxies'], $ray['name']);
         }
         $custom_rules = explode("\n", $user->pac);
         $country_iso_codes = ['AD', 'AE', 'AF', 'AG', 'AI', 'AL', 'AM', 'AO', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AW', 'AX', 'AZ', 'BA', 'BB', 'BD', 'BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BL', 'BM', 'BN', 'BO', 'BQ', 'BR', 'BS', 'BT', 'BV', 'BW', 'BY', 'BZ', 'CA', 'CC', 'CD', 'CF', 'CG', 'CH', 'CI', 'CK', 'CL', 'CM', 'CN', 'CO', 'CR', 'CU', 'CV', 'CW', 'CX', 'CY', 'CZ', 'DE', 'DJ', 'DK', 'DM', 'DO', 'DZ', 'EC', 'EE', 'EG', 'EH', 'ER', 'ES', 'ET', 'FI', 'FJ', 'FK', 'FM', 'FO', 'FR', 'GA', 'GB', 'GD', 'GE', 'GF', 'GG', 'GH', 'GI', 'GL', 'GM', 'GN', 'GP', 'GQ', 'GR', 'GS', 'GT', 'GU', 'GW', 'GY', 'HK', 'HM', 'HN', 'HR', 'HT', 'HU', 'ID', 'IE', 'IL', 'IM', 'IN', 'IO', 'IQ', 'IR', 'IS', 'IT', 'JE', 'JM', 'JO', 'JP', 'KE', 'KG', 'KH', 'KI', 'KM', 'KN', 'KP', 'KR', 'KW', 'KY', 'KZ', 'LA', 'LB', 'LC', 'LI', 'LK', 'LR', 'LS', 'LT', 'LU', 'LV', 'LY', 'MA', 'MC', 'MD', 'ME', 'MF', 'MG', 'MH', 'MK', 'ML', 'MM', 'MN', 'MO', 'MP', 'MQ', 'MR', 'MS', 'MT', 'MU', 'MV', 'MW', 'MX', 'MY', 'MZ', 'NA', 'NC', 'NE', 'NF', 'NG', 'NI', 'NL', 'NO', 'NP', 'NR', 'NU', 'NZ', 'OM', 'PA', 'PE', 'PF', 'PG', 'PH', 'PK', 'PL', 'PM', 'PN', 'PR', 'PS', 'PT', 'PW', 'PY', 'QA', 'RE', 'RO', 'RS', 'RU', 'RW', 'SA', 'SB', 'SC', 'SD', 'SE', 'SG', 'SH', 'SI', 'SJ', 'SK', 'SL', 'SM', 'SN', 'SO', 'SR', 'SS', 'ST', 'SV', 'SX', 'SY', 'SZ', 'TC', 'TD', 'TF', 'TG', 'TH', 'TJ', 'TK', 'TL', 'TM', 'TN', 'TO', 'TR', 'TT', 'TV', 'TW', 'TZ', 'UA', 'UG', 'UM', 'US', 'UY', 'UZ', 'VA', 'VC', 'VE', 'VG', 'VI', 'VN', 'VU', 'WF', 'WS', 'XK', 'YE', 'YT', 'ZA', 'ZM', 'ZW'];
@@ -1982,6 +2014,9 @@ FINAL,Proxy';
         }
         if ($sm == 0) { // 0 for direct 1 for proxy -1 for leave it
             $root_conf['rules'] = array_merge($root_conf['rules'], explode("\n", file_get_contents(BASE_PATH.'/storage/clash-rules-stream-media-direct.yaml')));
+        }
+        if ($sm == 1) {
+            $root_conf['rules'] = array_merge($root_conf['rules'], explode("\n", str_replace(',DIRECT', ',PROXY', file_get_contents(BASE_PATH.'/storage/clash-rules-stream-media-direct.yaml'))));
         }
         if ($cnip == 1) {
             $root_conf['rules'] = array_merge($root_conf['rules'], explode("\n", file_get_contents(BASE_PATH.'/storage/clash_rules_cnip.yaml')));
