@@ -85,11 +85,11 @@
 														</ul>
 													</nav>
 													<div class="tab-pane fade active in" id="all_ss_info">
-                                                        <p> Clash 配置地址(流媒体代理)：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$clash_sub_token}"><code>{$baseUrl}/link/{$clash_sub_token}</code></a></p>
-                                                        <p> Clash 配置地址(国内外分流)：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$clash_sub_token}?cnip=1"><code>{$baseUrl}/link/{$clash_sub_token}?cnip=1</code></a></p>
-                                                        <p> Clash 配置地址(流媒体直连)：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$clash_sub_token}?sm=0"><code>{$baseUrl}/link/{$clash_sub_token}?sm=0</code></a></p>
-                                                        <p> Clash 配置地址(国内外分流+流媒体直连)：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$clash_sub_token}?cnip=1&sm=0"><code>{$baseUrl}/link/{$clash_sub_token}?cnip=1&sm=0</code></a></p>
-                                                        <p> Clash 配置地址(国内外分流+流媒体代理)：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$clash_sub_token}?cnip=1&sm=0"><code>{$baseUrl}/link/{$clash_sub_token}?cnip=1&sm=1</code></a></p>
+                                                        <p> Clash 配置地址(GFW 代理 + 流媒体代理)：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$clash_sub_token}"><code>{$baseUrl}/link/{$clash_sub_token}</code></a></p>
+                                                        <p> Clash 配置地址(GFW 代理 + 流媒体直连)：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$clash_sub_token}?sm=0"><code>{$baseUrl}/link/{$clash_sub_token}?sm=0</code></a></p>
+                                                        <p> Clash 配置地址(国内外分流 + 流媒体任意)：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$clash_sub_token}?cnip=1"><code>{$baseUrl}/link/{$clash_sub_token}?cnip=1</code></a></p>
+                                                        <p> Clash 配置地址(国内外分流 + 流媒体直连)：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$clash_sub_token}?cnip=1&sm=0"><code>{$baseUrl}/link/{$clash_sub_token}?cnip=1&sm=0</code></a></p>
+                                                        <p> Clash 配置地址(国内外分流 + 流媒体代理)：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$clash_sub_token}?cnip=1&sm=0"><code>{$baseUrl}/link/{$clash_sub_token}?cnip=1&sm=1</code></a></p>
 													</div>
 													<div class="tab-pane fade" id="all_clash_windows">
 														<p><a href="/ssr-download/clash-win.exe">下载</a>，安装运行，复制 <a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$clash_sub_token}">订阅链接(点我复制)</a>，
@@ -106,6 +106,7 @@
 													<div class="tab-pane fade" id="all_clash_ios">
 														<p>推荐下载<a href="https://itunes.apple.com/cn/app/shadowrocket/id932747118?mt=8">Shadowrocket</a>，然后在 Safari 中点击<a href="sub://{$shadowrocket_sub}">这个</a>然后点击打开，就可以添加订阅链接了。</p>
 														<p>或者复制 <a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$ssr_sub_token}?v=1">订阅链接(点我复制)</a>，然后在小火箭里面添加订阅，选择一个节点，打开上方的开关，就可以上网了。</p>
+                                                        <p>Shadowrocket 配置文件：<a href="/link/{$ios_token}">{$baseUrl}/link/{$ios_token}</a>，导入到 Shadowrocket 中，然后就可以随意切换服务器上网了。</p>
 													</div>
 													<div class="tab-pane fade" id="all_clash_android">
 														<p><a href="/ssr-download/clash-android.apk">下载</a>，再复制 <a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$ssr_sub_token}?v=1">订阅链接（点我)</a>，然后在小猫里面添加订阅就可以上网了。</p>
@@ -191,6 +192,7 @@
 															普通端口地址：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$ssr_sub_token}?mu=0"><code>{$baseUrl}/link/{$ssr_sub_token}?mu=0</code></a><br>
 															单端口多用户端口地址：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$ssr_sub_token}?mu=1"><code>{$baseUrl}/link/{$ssr_sub_token}?mu=1</code></a>
 														</p>
+                                                        <p>Shadowrocket 配置文件：<a href="/link/{$ios_token}">{$baseUrl}/link/{$ios_token}</a>，导入到 Shadowrocket 中，然后就可以随意切换服务器上网了。</p>
 													</div>
 													<div class="tab-pane fade" id="all_ssr_android">
 														<p><a href="/ssr-download/ssr-android.apk">下载</a>，安装，然后在手机上默认浏览器中点击<a href="{$ssr_url_all}">这个链接（普通端口）</a>或者<a href="{$ssr_url_all_mu}">这个链接（单端口多用户）</a>，然后点击确定，批量添加完节点，然后路由选择绕过大陆，右上角开启就可以上网了。同时提供一个 ACL 地址，<a href="/link/{$acl_token}">长按复制地址</a>到客户端里应用即可。</p>
@@ -270,7 +272,7 @@
 													</div>
 													<div class="tab-pane fade" id="all_ss_ios">
 														<p>推荐下载<a href="https://itunes.apple.com/cn/app/shadowrocket/id932747118?mt=8">Shadowrocket</a>，然后在 Safari 中点击<a href="{$ss_url_all}">这个（普通端口）</a>或者<a href="{$ss_url_all_mu}">这个（单端口多用户）</a>，然后点击确定，就可以批量添加节点。</p>
-														<p>iOS 下载<a href="/link/{$ios_token}?is_ss=1">这个（普通端口）</a>或者<a href="/link/{$ios_token}?is_ss=1&is_mu=1">这个（单端口多用户）</a>，导入到 Surge 中，然后就可以随意切换服务器上网了。</p>
+														<p>iOS 下载<a href="/link/{$ios_token}?is_ss=1">这个（普通端口）</a>或者<a href="/link/{$ios_token}?is_ss=1&is_mu=1">这个（单端口多用户）</a>，导入到 Shadowrocket 中，然后就可以随意切换服务器上网了。</p>
 													</div>
 													<div class="tab-pane fade" id="all_ss_android">
 														<p><a href="/ssr-download/ss-android.apk">下载</a>，再<a href="/ssr-download/ss-android-obfs.apk">下载</a>，然后安装，然后在手机上点击<a class="copy-text" data-clipboard-text="{$ss_url_all}">这个链接（普通端口）</a>或者<a class="copy-text" data-clipboard-text="{$ss_url_all_mu}">这个链接（单端口多用户端口）</a>复制到剪贴板，打开 Shadowsocks 客户端，选择从剪贴板导入，然后选择一个节点，设置一下路由为绕过大陆，点击飞机就可以上网了。</p>
@@ -332,6 +334,7 @@
                                                     </div>
                                                     <div class="tab-pane fade" id="all_v2ray_ios">
                                                         <p>推荐下载<a href="https://itunes.apple.com/us/app/shadowrocket/id932747118">Shadowrocket</a>，需要非大陆Apple ID，然后在 Safari 中点击<a href="{$v2ray_url_all_v1}">这个</a>，然后点击确定，就可以批量添加节点。</p>
+                                                        <p>Shadowrocket 配置文件：<a href="/link/{$ios_token}">{$baseUrl}/link/{$ios_token}</a>，导入到 Shadowrocket 中，然后就可以随意切换服务器上网了。</p>
                                                         <br>
                                                         <p>V2Ray 订阅地址：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$ssr_sub_token}?v=1"><code>{$baseUrl}/link/{$ssr_sub_token}?v=1</code></a></p>
                                                     </div>
@@ -394,6 +397,7 @@
                                                     </div>
                                                     <div class="tab-pane fade" id="all_trojan_ios">
                                                         <p>推荐下载<a href="https://itunes.apple.com/us/app/shadowrocket/id932747118">Shadowrocket</a>，需要非大陆Apple ID，然后在 Safari 中点击<a href="{$trojan_url_all}">这个</a>，然后点击确定，就可以批量添加节点。</p>
+                                                        <p>Shadowrocket 配置文件：<a href="/link/{$ios_token}">{$baseUrl}/link/{$ios_token}</a>，导入到 Shadowrocket 中，然后就可以随意切换服务器上网了。</p>
                                                     </div>
                                                     <div class="tab-pane fade" id="all_trojan_android">
                                                         <p><a href="/ssr-download/trojan-android.apk">下载</a>，安装，然后点击<a class="copy-text" data-clipboard-text="{$trojan_url_all}">这个</a>，右上角点击加号,选择从剪贴板导入，然后设置里的路由模式选择“绕过局域网及大陆地址”，返回，选择一个合适的服务器，右下角开启就可以上网了。
