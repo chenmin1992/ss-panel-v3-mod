@@ -2097,7 +2097,7 @@ FINAL,Proxy';
                 }
 
                 if (preg_match("/(?:[\d\.]+){3}\d+\/\d+/", $custom_rule, $matches)) {
-                    array_push($rules, 'IP-CIDR,'.$matches[0].$method);
+                    array_push($rules, 'IP-CIDR,'.$matches[0].$method.',no-resolve');
                     continue;
                 }
                 if (preg_match("/[a-z0-9.\-]+\.[a-z]+/i", $custom_rule, $matches)) {
@@ -2105,7 +2105,7 @@ FINAL,Proxy';
                     continue;
                 }
                 if (!empty($country_code) && in_array($country_code, $country_iso_codes)) {
-                    array_push($rules, 'GEOIP,'.$country_iso_code.$method);
+                    array_push($rules, 'GEOIP,'.$country_iso_code.$method.',no-resolve');
                     continue;
                 }
                 if (preg_match("/[a-z0-9-]+/i", $custom_rule, $matches)) {
