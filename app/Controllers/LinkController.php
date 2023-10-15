@@ -481,7 +481,7 @@ class LinkController extends BaseController
     public static function GetIosConf($user, $is_mu = 0, $is_ss = 0)
     {
         $dt = date("Y/m/d H:i:s");
-        $custom_rules = LinkController::MakeUserRules($user);
+        [$rules, $rules_ip] = LinkController::MakeUserRules($user);
         return '# jiufuni.klutztech.com: '.$dt.'
 [General]
 bypass-system = true
@@ -502,8 +502,8 @@ dns-direct-fallback-proxy = true
 udp-policy-not-supported-behaviour = REJECT
 
 [Rule]
-# UserDefined
-'.implode("\n", $custom_rules).'
+# User Defined
+'.implode("\n", $rules).'
 # Block HTTP3/QUIC
 # AND,((PROTOCOL,UDP),(DEST-PORT,443)),REJECT-NO-DROP
 # Baidu/iqiyi
@@ -1039,6 +1039,19 @@ DOMAIN-SUFFIX,bing.com,PROXY
 # SoundCloud
 DOMAIN-SUFFIX,soundcloud.com,PROXY
 DOMAIN-SUFFIX,sndcdn.com,PROXY
+# DNS Leak
+DOMAIN-SUFFIX,dnsleaktest.com,PROXY
+DOMAIN-SUFFIX,dnsleak.com,PROXY
+DOMAIN-SUFFIX,expressvpn.com,PROXY
+DOMAIN-SUFFIX,nordvpn.com,PROXY
+DOMAIN-SUFFIX,surfshark.com,PROXY
+DOMAIN-SUFFIX,ipleak.net,PROXY
+DOMAIN-SUFFIX,perfect-privacy.com,PROXY
+DOMAIN-SUFFIX,browserleaks.com,PROXY
+DOMAIN-SUFFIX,browserleaks.org,PROXY
+DOMAIN-SUFFIX,vpnunlimited.com,PROXY
+DOMAIN-SUFFIX,whoer.net,PROXY
+DOMAIN-SUFFIX,whrq.net,PROXY
 # Telegram
 DOMAIN-SUFFIX,t.me,PROXY
 DOMAIN-SUFFIX,tdesktop.com,PROXY
@@ -1056,19 +1069,8 @@ IP-CIDR,149.154.160.0/20,PROXY,no-resolve
 IP-CIDR,2001:B28:F23D::/48,PROXY,no-resolve
 IP-CIDR,2001:B28:F23F::/48,PROXY,no-resolve
 IP-CIDR,2001:67C:4E8::/48,PROXY,no-resolve
-# DNS Leak
-DOMAIN-SUFFIX,dnsleaktest.com,PROXY
-DOMAIN-SUFFIX,dnsleak.com,PROXY
-DOMAIN-SUFFIX,expressvpn.com,PROXY
-DOMAIN-SUFFIX,nordvpn.com,PROXY
-DOMAIN-SUFFIX,surfshark.com,PROXY
-DOMAIN-SUFFIX,ipleak.net,PROXY
-DOMAIN-SUFFIX,perfect-privacy.com,PROXY
-DOMAIN-SUFFIX,browserleaks.com,PROXY
-DOMAIN-SUFFIX,browserleaks.org,PROXY
-DOMAIN-SUFFIX,vpnunlimited.com,PROXY
-DOMAIN-SUFFIX,whoer.net,PROXY
-DOMAIN-SUFFIX,whrq.net,PROXY
+# User Defined IPs
+'.implode("\n", $rules_ip).'
 # LAN
 IP-CIDR,192.168.0.0/16,DIRECT
 IP-CIDR,10.0.0.0/8,DIRECT
@@ -2069,6 +2071,7 @@ FINAL,Proxy';
         $custom_rules = explode("\n", $user->pac);
         $country_iso_codes = ['AD', 'AE', 'AF', 'AG', 'AI', 'AL', 'AM', 'AO', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AW', 'AX', 'AZ', 'BA', 'BB', 'BD', 'BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BL', 'BM', 'BN', 'BO', 'BQ', 'BR', 'BS', 'BT', 'BV', 'BW', 'BY', 'BZ', 'CA', 'CC', 'CD', 'CF', 'CG', 'CH', 'CI', 'CK', 'CL', 'CM', 'CN', 'CO', 'CR', 'CU', 'CV', 'CW', 'CX', 'CY', 'CZ', 'DE', 'DJ', 'DK', 'DM', 'DO', 'DZ', 'EC', 'EE', 'EG', 'EH', 'ER', 'ES', 'ET', 'FI', 'FJ', 'FK', 'FM', 'FO', 'FR', 'GA', 'GB', 'GD', 'GE', 'GF', 'GG', 'GH', 'GI', 'GL', 'GM', 'GN', 'GP', 'GQ', 'GR', 'GS', 'GT', 'GU', 'GW', 'GY', 'HK', 'HM', 'HN', 'HR', 'HT', 'HU', 'ID', 'IE', 'IL', 'IM', 'IN', 'IO', 'IQ', 'IR', 'IS', 'IT', 'JE', 'JM', 'JO', 'JP', 'KE', 'KG', 'KH', 'KI', 'KM', 'KN', 'KP', 'KR', 'KW', 'KY', 'KZ', 'LA', 'LB', 'LC', 'LI', 'LK', 'LR', 'LS', 'LT', 'LU', 'LV', 'LY', 'MA', 'MC', 'MD', 'ME', 'MF', 'MG', 'MH', 'MK', 'ML', 'MM', 'MN', 'MO', 'MP', 'MQ', 'MR', 'MS', 'MT', 'MU', 'MV', 'MW', 'MX', 'MY', 'MZ', 'NA', 'NC', 'NE', 'NF', 'NG', 'NI', 'NL', 'NO', 'NP', 'NR', 'NU', 'NZ', 'OM', 'PA', 'PE', 'PF', 'PG', 'PH', 'PK', 'PL', 'PM', 'PN', 'PR', 'PS', 'PT', 'PW', 'PY', 'QA', 'RE', 'RO', 'RS', 'RU', 'RW', 'SA', 'SB', 'SC', 'SD', 'SE', 'SG', 'SH', 'SI', 'SJ', 'SK', 'SL', 'SM', 'SN', 'SO', 'SR', 'SS', 'ST', 'SV', 'SX', 'SY', 'SZ', 'TC', 'TD', 'TF', 'TG', 'TH', 'TJ', 'TK', 'TL', 'TM', 'TN', 'TO', 'TR', 'TT', 'TV', 'TW', 'TZ', 'UA', 'UG', 'UM', 'US', 'UY', 'UZ', 'VA', 'VC', 'VE', 'VG', 'VI', 'VN', 'VU', 'WF', 'WS', 'XK', 'YE', 'YT', 'ZA', 'ZM', 'ZW'];
         $rules = [];
+        $rules_ip = [];
         foreach ($custom_rules as $index => $custom_rule) {
             if (empty(str_replace(' ', '', $custom_rule))) {
                 continue;
@@ -2097,7 +2100,7 @@ FINAL,Proxy';
                 }
 
                 if (preg_match("/(?:[\d\.]+){3}\d+\/\d+/", $custom_rule, $matches)) {
-                    array_push($rules, 'IP-CIDR,'.$matches[0].$method.',no-resolve');
+                    array_push($rules_ip, 'IP-CIDR,'.$matches[0].$method.',no-resolve');
                     continue;
                 }
                 if (preg_match("/[a-z0-9.\-]+\.[a-z]+/i", $custom_rule, $matches)) {
@@ -2105,7 +2108,7 @@ FINAL,Proxy';
                     continue;
                 }
                 if (!empty($country_code) && in_array($country_code, $country_iso_codes)) {
-                    array_push($rules, 'GEOIP,'.$country_iso_code.$method.',no-resolve');
+                    array_push($rules_ip, 'GEOIP,'.$country_iso_code.$method.',no-resolve');
                     continue;
                 }
                 if (preg_match("/[a-z0-9-]+/i", $custom_rule, $matches)) {
@@ -2114,7 +2117,24 @@ FINAL,Proxy';
                 }
             }
         }
-        return $rules;
+        return [$rules, $rules_ip];
+    }
+
+    public static function ReorderRules($rules)
+    {
+        $domains = [];
+        $ips = [];
+        $match = [];
+        $ip_rules = ['GEOIP', 'IP-CIDR', 'IP-CIDR6', 'SRC-IP-CIDR', 'IPSET'];
+        foreach ($rules as $rule) {
+            $rs = explode(',', $rule);
+            if (in_array($rs[0], $ip_rules) or strtoupper($rs[0]) == 'MATCH') {
+                array_push($ips, $rule);
+                continue;
+            }
+            array_push($domains, $rule);
+        }
+        return array_merge($domains, $ips);
     }
 
     public static function GetClash($user, $mu = 0, $cnip = 0, $sm = -1)
@@ -2131,14 +2151,13 @@ FINAL,Proxy';
             ],
             "dns" => [
                 "default-nameserver" => [
-                    "182.254.116.116",
                     "223.6.6.6",
                     "114.114.115.115"
                 ],
                 "enhanced-mode" => "fake-ip",
                 "use-hosts" => true,
                 "nameserver" => [
-                    "182.254.116.116",
+                    "119.29.29.29",
                     "223.6.6.6",
                     "114.114.115.115"
                 ],
@@ -2306,19 +2325,27 @@ FINAL,Proxy';
             array_push($root_conf['proxies'], $ray);
             array_push($root_conf['proxy-groups'][0]['proxies'], $ray['name']);
         }
-        $root_conf['rules'] = LinkController::MakeUserRules($user);
+        [$rules, $rules_ip] = LinkController::MakeUserRules($user);
+        $root_conf['rules'] = array_merge($rules, $rules_ip);
 
         if ($sm == 0) { // 0 for direct 1 for proxy -1 for leave it
-            $root_conf['rules'] = array_merge($root_conf['rules'], explode("\n", file_get_contents(BASE_PATH.'/storage/clash-rules-stream-media-direct.yaml')));
+            $rs = explode("\n", file_get_contents(BASE_PATH.'/storage/clash-rules-stream-media-direct.yaml'));
+            $root_conf['rules'] = array_merge($rs, $root_conf['rules']);
         }
         if ($sm == 1) {
-            $root_conf['rules'] = array_merge($root_conf['rules'], explode("\n", str_replace(',DIRECT', ',PROXY', file_get_contents(BASE_PATH.'/storage/clash-rules-stream-media-direct.yaml'))));
+            $rs = explode("\n", str_replace(',DIRECT', ',PROXY', file_get_contents(BASE_PATH.'/storage/clash-rules-stream-media-direct.yaml')));
+            $root_conf['rules'] = array_merge($rs, $root_conf['rules']);
         }
+
         if ($cnip == 1) {
-            $root_conf['rules'] = array_merge($root_conf['rules'], explode("\n", file_get_contents(BASE_PATH.'/storage/clash_rules_cnip.yaml')));
+            $rs = explode("\n", file_get_contents(BASE_PATH.'/storage/clash_rules_cnip.yaml'));
+            $root_conf['rules'] = array_merge($root_conf['rules'], $rs);
         } else {
-            $root_conf['rules'] = array_merge($root_conf['rules'], explode("\n", file_get_contents(BASE_PATH.'/storage/clash_rules.yaml')));
+            $rs = explode("\n", file_get_contents(BASE_PATH.'/storage/clash_rules.yaml'));
+            $root_conf['rules'] = array_merge($root_conf['rules'], $rs);
         }
+        $root_conf['rules'] = LinkController::ReorderRules($root_conf['rules']);
+        
         return yaml_emit($root_conf, YAML_UTF8_ENCODING, YAML_CRLN_BREAK);
     }
 }
