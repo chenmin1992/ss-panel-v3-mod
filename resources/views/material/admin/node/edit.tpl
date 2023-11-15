@@ -747,62 +747,62 @@
             var inbs = [];
             $("#inbounds").children().each(function() {
                 var inb = {
-                    "listen": $("#listen").val(),
-                    "port": parseInt($("#port").val()),
-                    "protocol": $("#protocol").val(),
+                    "listen": $(this).find("#listen").val(),
+                    "port": parseInt($(this).find("#port").val()),
+                    "protocol": $(this).find("#protocol").val(),
                     // vmess
-                    "alterid": parseInt($("#alterid").val()),
-                    "disableinsecureencryption": $("#disable_insecure_encryption").is(":checked"),
+                    "alterid": parseInt($(this).find("#alterid").val()),
+                    "disableinsecureencryption": $(this).find("#disable_insecure_encryption").is(":checked"),
                     // trojan
-                    // "fallback": $("#fallback").val(),
-                    "blockbt": $("#block_bt").is(":checked"),
-                    "network": $("#network").val(),
-                    "tcpfastopen": $("#tcpfastopen").val(),
+                    // "fallback": $(this).find("#fallback").val(),
+                    "blockbt": $(this).find("#block_bt").is(":checked"),
+                    "network": $(this).find("#network").val(),
+                    "tcpfastopen": $(this).find("#tcpfastopen").val(),
                     // tcp
-                    "obfs": $("#tcp #obfs").val(),
-                    "httprequest": JSON.parse($("#tcp #http_request").val()),
-                    "httpresponse": JSON.parse($("#tcp #http_response").val()),
+                    "obfs": $(this).find("#tcp #obfs").val(),
+                    "httprequest": JSON.parse($(this).find("#tcp #http_request").val()),
+                    "httpresponse": JSON.parse($(this).find("#tcp #http_response").val()),
                     // kcp
-                    "mtu": parseInt($("#kcp #mtu").val()),
-                    "tti": parseInt($("#kcp #tti").val()),
-                    "uplinkcapacity": parseInt($("#kcp #uplinkcapacity").val()),
-                    "downlinkcapacity": parseInt($("#kcp #downlinkcapacity").val()),
-                    "congestion": $("#kcp #congestion").is(":checked"),
-                    "readbuffersize": parseInt($("#kcp #readbuffersize").val()),
-                    "writebuffersize": parseInt($("#kcp #writebuffersize").val()),
-                    "obfs": $("#kcp #obfs").val(),
-                    "seed": $("#kcp #seed").val(),
+                    "mtu": parseInt($(this).find("#kcp #mtu").val()),
+                    "tti": parseInt($(this).find("#kcp #tti").val()),
+                    "uplinkcapacity": parseInt($(this).find("#kcp #uplinkcapacity").val()),
+                    "downlinkcapacity": parseInt($(this).find("#kcp #downlinkcapacity").val()),
+                    "congestion": $(this).find("#kcp #congestion").is(":checked"),
+                    "readbuffersize": parseInt($(this).find("#kcp #readbuffersize").val()),
+                    "writebuffersize": parseInt($(this).find("#kcp #writebuffersize").val()),
+                    "obfs": $(this).find("#kcp #obfs").val(),
+                    "seed": $(this).find("#kcp #seed").val(),
                     // ws
-                    "path": $("#ws #path").val(),
-                    "headers": JSON.parse($("#ws #headers").val()),
+                    "path": $(this).find("#ws #path").val(),
+                    "headers": JSON.parse($(this).find("#ws #headers").val()),
                     // h2
-                    "host": $("#h2 #host").val(),
-                    "path": $("#h2 #path").val(),
+                    "host": $(this).find("#h2 #host").val(),
+                    "path": $(this).find("#h2 #path").val(),
                     // quic
-                    "encryption": $("#quic #encryption").val(),
-                    "quickey": $("#quic #quic_key").val(),
-                    "obfs": $("#quic #obfs").val(),
+                    "encryption": $(this).find("#quic #encryption").val(),
+                    "quickey": $(this).find("#quic #quic_key").val(),
+                    "obfs": $(this).find("#quic #obfs").val(),
                     // domainsocket
-                    "path": $("#domainsocket #path").val(),
+                    "path": $(this).find("#domainsocket #path").val(),
                     // grpc
-                    "servicename": $("#grpc #servicename").val(),
+                    "servicename": $(this).find("#grpc #servicename").val(),
                     // reverse proxy
-                    "proxyaddr": $("#ws #proxy_addr").val(),
-                    "proxyport": parseInt($("#ws #proxy_port").val()),
-                    "proxysecurity": $("#ws #proxy_security").val(),
+                    "proxyaddr": $(this).find("#ws #proxy_addr").val(),
+                    "proxyport": parseInt($(this).find("#ws #proxy_port").val()),
+                    "proxysecurity": $(this).find("#ws #proxy_security").val(),
                     // tls
-                    "security": $("#security").val(),
-                    "cert": parseInt($("#v2in #cert").val()),
-                    "fingerprint": $("#fingerprint").val(),
-                    "xtls": $("#xtls").val()
+                    "security": $(this).find("#security").val(),
+                    "cert": parseInt($(this).find("#v2in #cert").val()),
+                    "fingerprint": $(this).find("#fingerprint").val(),
+                    "xtls": $(this).find("#xtls").val()
                 };
                 inb["path"] = '';
                 inb["obfs"] = '';
-                if ($("#" + $("#network").val() + " #path").val() != undefined) {
-                	inb["path"] = $("#" + $("#network").val() + " #path").val();
+                if ($(this).find("#" + $(this).find("#network").val() + " #path").val() != undefined) {
+                	inb["path"] = $(this).find("#" + $(this).find("#network").val() + " #path").val();
                 }
-                if ($("#" + $("#network").val() + " #obfs").val() != undefined) {
-                	inb["obfs"] = $("#" + $("#network").val() + " #obfs").val();
+                if ($(this).find("#" + $(this).find("#network").val() + " #obfs").val() != undefined) {
+                	inb["obfs"] = $(this).find("#" + $(this).find("#network").val() + " #obfs").val();
                 }
                 inbs.push(inb);
             });
