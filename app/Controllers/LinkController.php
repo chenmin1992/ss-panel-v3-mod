@@ -2078,6 +2078,7 @@ FINAL,Proxy';
             } else {
                 $domain_suffix = '';
                 $country_code = '';
+                $geosite = '';
                 $method = '';
 
                 if (substr($custom_rule, 0, 2) == '@@') {
@@ -2093,8 +2094,9 @@ FINAL,Proxy';
                 if (substr($custom_rule, 0, 2) == '||') {
                     $domain_suffix = '-SUFFIX';
                 } elseif (substr($custom_rule, 0, 1) == '|') {
-                    $domain_suffix = '';
                     $country_code = strtoupper(substr($custom_rule, 1));
+                } elseif (substr($custom_rule, 0, 1) == '$') {
+                    $geosite = substr($custom_rule, 1);
                 } else {
                     continue;
                 }
@@ -2109,6 +2111,10 @@ FINAL,Proxy';
                 }
                 if (!empty($country_code) && in_array($country_code, $country_iso_codes)) {
                     array_push($rules_ip, 'GEOIP,'.$country_iso_code.$method.',no-resolve');
+                    continue;
+                }
+                if (!empty($geosite)) {
+                    array_push($rules, 'GEOSITE,'.$geosite.$method);
                     continue;
                 }
                 if (preg_match("/[a-z0-9-]+/i", $custom_rule, $matches)) {

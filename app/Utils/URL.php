@@ -680,7 +680,7 @@ class URL
                     default:
                         break;
                 }
-                $return_array["remark"] = str_replace(' ', '', explode(" - ", $node->name)[0]).'-'.explode(".", $return_array["host"])[0].'-'.$return_array["port"];
+                $return_array["remark"] = str_replace(' ', '', explode(" - ", $node->name)[0]).'-'.preg_split('/[.\-]/', $return_array["host"])[0].'-'.$return_array["port"];
                 // for shadowrocket only
                 $return_array["remarks"] = $return_array["remark"];
                 switch ($inbound->network) {

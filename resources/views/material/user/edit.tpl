@@ -375,12 +375,18 @@
 										<p><code>|222.186.0.0/16</code>代理这个IP段</p>
 										<p><code>@@|222.186.0.0/16</code>直连这个IP段</p>
 										<p>以下规则只对Shadowrocket和Clash有效</p>
-										<p><code>|google</code>代理域名中包含google的URL</p>
-										<p><code>@@|google</code>直连域名中包含google的URL</p>
-										<p><code>|US</code>代理美国IP</p>
-										<p><code>@@|US</code>直连美国IP</p>
 										<p><code>!||google.com</code>屏蔽google.com及其子域名</p>
 										<p><code>!|google.com</code>只屏蔽google.com</p>
+										<p><code>!|222.186.0.0/16</code>屏蔽这个IP段</p>
+										<p><code>|google</code>代理域名中包含google的URL</p>
+										<p><code>@@|google</code>直连域名中包含google的URL</p>
+										<p><code>!|google</code>屏蔽域名中包含google的URL</p>
+										<p><code>|US</code>代理美国IP</p>
+										<p><code>@@|US</code>直连美国IP</p>
+										<p><code>!|US</code>屏蔽美国IP</p>
+										<p><code>$google</code>代理google的所有URL</p>
+										<p><code>@@$google</code>直连google的所有URL</p>
+										<p><code>!$google.com</code>屏蔽google的所有URL</p>
 										<p><a href="https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes" target="_blank">国家代码点我查看</a></p>
 										<div class="form-group form-group-label">
 											<label class="floating-label" for="pac">规则书写区</label>
