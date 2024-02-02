@@ -150,7 +150,10 @@ class IpController extends AdminController
             $location=$iplocation->getlocation($data['location']);
             if ( $location['country'] == 'IANA') {
                 $record = $reader->city(Tools::getRealIp($data['location']));
-                return $record->country->names['zh-CN'].$record->city->names['zh-CN'];
+                if ( isset($record->city->names) and array_key_exists('zh-CN', $record->city->names) ) {
+                    return $record->country->names['zh-CN'].$record->city->names['zh-CN'];
+                }
+                return $record->country->names['en'].' '.$record->city->names['en'];
             }
             return iconv('gbk', 'utf-8//IGNORE', $location['country'].$location['area']);
         });
@@ -194,7 +197,10 @@ class IpController extends AdminController
             $location=$iplocation->getlocation(Tools::getRealIp($data['location']));
             if ( $location['country'] == 'IANA') {
                 $record = $reader->city(Tools::getRealIp($data['location']));
-                return $record->country->names['zh-CN'].$record->city->names['zh-CN'];
+                if ( array_key_exists('zh-CN', $record->city->names) ) {
+                    return $record->country->names['zh-CN'].$record->city->names['zh-CN'];
+                }
+                return $record->country->names['en'].' '.$record->city->names['en'];
             }
             return iconv('gbk', 'utf-8//IGNORE', $location['country'].$location['area']);
         });
