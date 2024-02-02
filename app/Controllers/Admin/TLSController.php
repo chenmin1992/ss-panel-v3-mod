@@ -51,11 +51,6 @@ class TLSController extends AdminController
                 $cert_attr = openssl_x509_parse($cert->cert);
                 $cert->type = 0;
             }
-            if(!$cert_attr) {
-                $rs['ret'] = 0;
-                $rs['msg'] = "证书无法解析";
-                return $response->getBody()->write(json_encode($rs));
-            }
         } catch (Exception $e) {
             $rs['ret'] = 0;
             $rs['msg'] = "获取证书失败";
@@ -107,11 +102,6 @@ class TLSController extends AdminController
             } else {
                 $cert_attr = openssl_x509_parse($cert->cert);
                 $cert->type = 0;
-            }
-            if(!$cert_attr) {
-                $rs['ret'] = 0;
-                $rs['msg'] = "证书无法解析";
-                return $response->getBody()->write(json_encode($rs));
             }
         } catch (Exception $e) {
             $rs['ret'] = 0;
