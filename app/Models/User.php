@@ -339,7 +339,15 @@ class User extends Model
     {
         $email = $this->attributes['email'];
         $passwd = $this->attributes['passwd'];
-        $md5 = MD5($email.$passwd);
-        return substr($md5, 0, 8).'-'.substr($md5, 8, 4).'-'.substr($md5, 12, 4).'-'.substr($md5, 16, 4).'-'.substr($md5, 20);
+        // $md5 = md5($email.$passwd, true);
+        // $bin = unpack('C*', $md5);
+        // $bin[7] = ($bin[7] & 0x0f) | (4 << 4); // uuid v4
+        // $bin[9] = ($bin[9] & (0xff >> 2) | (0x02 << 6));
+        // $uuid = bin2hex(join(array_map('chr', $bin)));
+        // return substr($uuid, 0, 8).'-'.substr($uuid, 8, 4).'-'.substr($uuid, 12, 4).'-'.substr($uuid, 16, 4).'-'.substr($uuid, 20, 12);
+        $md5 = md5($email.$passwd);
+        $ver = dechex((hexdec(substr($md5, 12, 2)) & 0x0f) | (4 << 4)); // uuid v4
+        $var = dechex(hexdec(substr($md5, 16, 2)) & (0xff >> 2) | (0x02 << 6));
+        return substr($md5, 0, 8).'-'.substr($md5, 8, 4).'-'.$ver.substr($md5, 14, 2).'-'.$var.substr($md5, 18, 2).'-'.substr($md5, 20, 12);
     }
 }
