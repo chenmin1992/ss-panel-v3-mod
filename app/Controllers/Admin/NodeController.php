@@ -57,7 +57,8 @@ class NodeController extends AdminController
         $node->sort = $request->getParam('sort');
         $node->v2conf = $request->getParam('v2conf');
         $node->trojan_conf = $request->getParam('trojan_conf');
-        if ($node->sort == 0 || $node->sort == 1 || $node->sort == 10 || $node->sort == 11 || $node->sort == 12) {
+        $node->hysteria_conf = $request->getParam('hysteria_conf');
+        if ($node->sort == 0 || $node->sort == 1 || $node->sort == 10 || $node->sort == 11 || $node->sort == 12 || $node->sort == 14) {
             if ($request->getParam('node_ip') != '') {
                 $node->node_ip = $request->getParam('node_ip');
             } else {
@@ -239,8 +240,9 @@ class NodeController extends AdminController
         $node->sort = $request->getParam('sort');
         $node->v2conf = $request->getParam('v2conf');
         $node->trojan_conf = $request->getParam('trojan_conf');
+        $node->hysteria_conf = $request->getParam('hysteria_conf');
 
-        if ($node->sort == 0 || $node->sort == 1 || $node->sort == 10 || $node->sort == 11 || $node->sort == 12) {
+        if ($node->sort == 0 || $node->sort == 1 || $node->sort == 10 || $node->sort == 11 || $node->sort == 12 || $node->sort == 14) {
             if ($request->getParam('node_ip') != '') {
                 $node->node_ip = $request->getParam('node_ip');
             } else {
@@ -256,7 +258,7 @@ class NodeController extends AdminController
             $node->node_ip="";
         }
 
-        if ($node->sort == 0 || $node->sort == 10 || $node->sort == 11 || $node->sort == 12) {
+        if ($node->sort == 0 || $node->sort == 10 || $node->sort == 11 || $node->sort == 12 || $node->sort == 14) {
             Tools::updateRelayRuleIp($node);
         }
 
@@ -519,6 +521,9 @@ class NodeController extends AdminController
                   break;
                 case 13:
                   $sort = 'Trojan 中转';
+                  break;
+                case 14:
+                  $sort = 'Hysteria 2';
                   break;
                 default:
                   $sort = '系统保留';

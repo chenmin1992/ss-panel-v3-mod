@@ -2156,12 +2156,17 @@ FINAL,Proxy';
                 "localhost" => "127.0.0.1"
             ],
             "dns" => [
+                "ipv6" => true,
                 "default-nameserver" => [
                     "119.28.28.28",
                     "223.6.6.6",
                     "114.114.115.115"
                 ],
                 "enhanced-mode" => "fake-ip",
+                "fake-ip-filter" => [
+                    "*.lan",
+                    "localhost.ptlogin2.qq.com"
+                ],                
                 "use-hosts" => true,
                 "nameserver" => [
                     "119.28.28.28",
@@ -2178,10 +2183,58 @@ FINAL,Proxy';
                 ],
                 "fallback-filter" => [
                     "geoip" => true,
+                    "geoip-code" => "CN",
+                    "geosite" => [
+                        "gfw"
+                    ],
                     "ipcidr" => [
                         "240.0.0.0/4"
+                    ],
+                    "domain" => [
+                        "+.google.com",
+                        "+.youtube.com",
+                        "+.appspot.com",
+                        "+.telegram.com",
+                        "+.facebook.com",
+                        "+.twitter.com",
+                        "+.blogger.com",
+                        "+.gmail.com",
+                        "+.gvt1.com"
                     ]
                 ]
+            ],
+            "sniffer" => [
+                "enable" => false,
+                "force-dns-mapping" => true,
+                "parse-pure-ip" => true,
+                "override-destination" => false,
+                "sniff" => [
+                    "HTTP" => [
+                        "ports" => [
+                            80,
+                            "8080-8880",
+                        ],
+                        "override-destination" => true,
+                    ],
+                    "TLS" => [
+                        "ports" => [
+                            443,
+                            8443,
+                        ],
+                    ],
+                    "QUIC" => [
+                        "ports" => [
+                            443,
+                            8443,
+                        ],
+                    ],
+                ],
+                "force-domain" => [
+                    "+.v2ex.com",
+                ],
+                "skip-domain" => [
+                    "Mijia Cloud",
+                ],
             ],
             "proxies" => [],
             "proxy-groups" => [
@@ -2214,7 +2267,34 @@ FINAL,Proxy';
                 array_push($root_conf['proxy-groups'][0]['proxies'], $ss['name']);
                 continue;
             }
-            if (!array_key_exists('uuid', $item) && array_key_exists('sni', $item)) { // original trojan
+            // hysteria 2
+            if (array_key_exists('obfs_password', $item)) {
+                $hysteria = [
+                    "name" => $item['remark'],
+                    "type" => "hysteria2",
+                    "server" => $item['server'],
+                    "port" => intval(preg_split('/[,\-]/', $item['ports'])[0]),
+                    "up" => $item['up'].' Mbps',
+                    "down" => $item['down'].' Mbps',
+                    "password" => $item['auth'],
+                    "obfs" => $item['obfs'],
+                    "obfs_password" => $item['obfs_password'],
+                    "sni" => $item['sni'],
+                    "skip-cert-verify" => false,
+                    "alpn" => [
+                        "h3"
+                    ]
+                ];
+                if ( empty($item['obfs_password']) ) {
+                    unset($hysteria["obfs"]);
+                    unset($hysteria["obfs_password"]);
+                }
+                array_push($root_conf['proxies'], $hysteria);
+                array_push($root_conf['proxy-groups'][0]['proxies'], $hysteria['name']);
+                continue;
+            }
+            // trojan original
+            if (!array_key_exists('uuid', $item) && array_key_exists('sni', $item)) {
                 $trojan = [
                     "name" => $item['remark'],
                     "type" => "trojan",
@@ -2253,16 +2333,19 @@ FINAL,Proxy';
                     "network" => $item['network']
                 ];
                 if (array_key_exists('aid', $item)) {
+                    // vmess
                     $ray['alterId'] = $item['aid'];
                     // $ray['uuid'] = $item['uuid'];
                     unset($ray['flow']);
                 } else {
+                    // vless or xray
                     unset($ray['alterId']);
                     unset($ray['cipher']);
                     // $ray['uuid'] = $item['passwd'];
                     $ray['flow'] = $item['xtls'];
                 }
             } else {
+                // v2ray trojan
                 $ray = [
                     "name" => $item['remark'],
                     "type" => $item['protocol'],

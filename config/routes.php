@@ -316,14 +316,17 @@ $app->group('/mu', function () {
 // mod_mu
 $app->group('/mod_mu', function () {
     $this->get('/nodes/{id}/info', 'App\Controllers\Mod_Mu\NodeController:get_info');
+    $this->post('/nodes/{id}/info', 'App\Controllers\Mod_Mu\NodeController:info');
+    $this->get('/nodes', 'App\Controllers\Mod_Mu\NodeController:get_all_info');
+
+    $this->get('/certs/{id}', 'App\Controllers\Mod_Mu\NodeController:get_cert');
+
     $this->get('/users', 'App\Controllers\Mod_Mu\UserController:index');
     $this->post('/users/traffic', 'App\Controllers\Mod_Mu\UserController:addTraffic');
     $this->post('/users/aliveip', 'App\Controllers\Mod_Mu\UserController:addAliveIp');
     $this->post('/users/detectlog', 'App\Controllers\Mod_Mu\UserController:addDetectLog');
-    $this->post('/nodes/{id}/info', 'App\Controllers\Mod_Mu\NodeController:info');
-    $this->get('/certs/{id}', 'App\Controllers\Mod_Mu\NodeController:get_cert');
 
-    $this->get('/nodes', 'App\Controllers\Mod_Mu\NodeController:get_all_info');
+    $this->post('/hysteria/auth', 'App\Controllers\Mod_Mu\UserController:hysteriaAuth');
 
     $this->get('/func/detect_rules', 'App\Controllers\Mod_Mu\FuncController:get_detect_logs');
     $this->get('/func/relay_rules', 'App\Controllers\Mod_Mu\FuncController:get_relay_rules');

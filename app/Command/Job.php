@@ -38,7 +38,7 @@ class Job
     {
         $nodes = Node::all();
         foreach ($nodes as $node) {
-            if ($node->sort==0 || $node->sort==11 || $node->sort==12) {
+            if ($node->sort==0 || $node->sort==11 || $node->sort==12 || $node->sort==14) {
                 $node->node_ip=Tools::resolveAll($node->server);
                 $node->save();
             }
@@ -125,7 +125,7 @@ class Job
     {
         $nodes = Node::all();
         foreach ($nodes as $node) {
-            if ($node->sort == 0 || $node->sort == 10 || $node->sort == 11 || $node->sort == 12) {
+            if ($node->sort == 0 || $node->sort == 10 || $node->sort == 11 || $node->sort == 12 || $node->sort == 14) {
                 if (date("d")==$node->bandwidthlimit_resetday) {
                     $node->node_bandwidth=0;
                     $node->save();
@@ -464,6 +464,8 @@ class Job
 
     public static function CheckJob()
     {
+        Job::scrapeHysteria2();
+        
         //在线人数检测
         $users = User::where('node_connector', '>', 0)->get();
 
@@ -496,7 +498,7 @@ class Job
                     $ips[$alive_ip->ip]=1;
                     if ($user->node_connector < count($ips)) {
                         //暂时封禁
-                        $isDisconnect = Disconnect::where('id', '=', $alive_ip->ip)->where('userid', '=', $user->id)->first();
+                        $isDisconnect = Disconnect::where('ip', '=', $alive_ip->ip)->where('userid', '=', $user->id)->first();
 
                         if ($isDisconnect == null) {
                             $disconnect = new Disconnect();
@@ -687,7 +689,7 @@ class Job
                         }
                     }
 
-                    if (Config::get('enable_cloudxns')=='true' && ($node->sort==0 || $node->sort==10 || $node->sort==11 || $node->sort==12)) {
+                    if (Config::get('enable_cloudxns')=='true' && ($node->sort==0 || $node->sort==10 || $node->sort==11 || $node->sort==12 || $node->sort==14)) {
                         $api=new Api();
                         $api->setApiKey(Config::get("cloudxns_apikey"));//修改成自己API KEY
                         $api->setSecretKey(Config::get("cloudxns_apisecret"));//修改成自己的SECERET KEY
@@ -737,7 +739,7 @@ class Job
 
 
             foreach ($nodes as $node) {
-                if (time()-$node->node_heartbeat<60&&file_exists(BASE_PATH."/storage/".$node->id.".offline")&&$node->node_heartbeat!=0&&($node->sort==0||$node->sort==7||$node->sort==8||$node->sort==10||$node->sort==11||$node->sort==12)) {
+                if (time()-$node->node_heartbeat<60&&file_exists(BASE_PATH."/storage/".$node->id.".offline")&&$node->node_heartbeat!=0&&($node->sort==0||$node->sort==7||$node->sort==8||$node->sort==10||$node->sort==11||$node->sort==12 || $node->sort==14)) {
                     foreach ($adminUser as $user) {
                         echo "Send offline mail to user: ".$user->id;
                         $subject = Config::get('appName')."-系统提示";
@@ -754,7 +756,7 @@ class Job
                     }
 
 
-                    if (Config::get('enable_cloudxns')=='true'&& ($node->sort==0 || $node->sort==10 || $node->sort==11 || $node->sort==12)) {
+                    if (Config::get('enable_cloudxns')=='true'&& ($node->sort==0 || $node->sort==10 || $node->sort==11 || $node->sort==12 || $node->sort==14)) {
                         $api=new Api();
                         $api->setApiKey(Config::get("cloudxns_apikey"));//修改成自己API KEY
                         $api->setSecretKey(Config::get("cloudxns_apisecret"));//修改成自己的SECERET KEY
@@ -1027,5 +1029,66 @@ class Job
                 }
             }
         }
+    }
+    
+    public static function scrapeHysteria2()
+    {
+        $hysteria_nodes = Node::where('sort', 14)->get();
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        foreach ($hysteria_nodes as $node) {
+            $conf = json_decode($node->hysteria_conf);
+            $stats_address = $conf->stats_address;
+            if ( preg_match('/^\d+$/', $stats_address) ) {
+                $stats_address = 'http://' . $node->server . ':' . $stats_address;
+            }
+            curl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization: '.$conf->stats_secret]);
+            curl_setopt($ch, CURLOPT_URL, $stats_address.'/traffic?clear=1');
+            $resp = curl_exec($ch);
+            if ( $resp ) {
+                $node->node_heartbeat=time();
+                $traffics = json_decode($resp, true);
+                $this_time_total_bandwidth = 0;
+                foreach( $traffics as $user_id => $traffic ) {
+                    $u = $traffic['tx'];
+                    $d = $traffic['rx'];
+
+                    $user = User::find($user_id);
+                    if ( $user == null ) {
+                        continue;
+                    }
+
+                    $user->t = time();
+                    $user->u += $u * $node->traffic_rate;
+                    $user->d += $d * $node->traffic_rate;
+                    $this_time_total_bandwidth += $u + $d;
+                    if (!$user->save()) {
+                        echo 'Scrape hysteria 2 failed';
+                        return;
+                    }
+
+                    // log
+                    $traffic = new TrafficLog();
+                    $traffic->user_id = $user_id;
+                    $traffic->u = $u;
+                    $traffic->d = $d;
+                    $traffic->node_id = $node->id;
+                    $traffic->rate = $node->traffic_rate;
+                    $traffic->traffic = Tools::flowAutoShow(($u + $d) * $node->traffic_rate);
+                    $traffic->log_time = time();
+                    $traffic->save();
+                }
+
+                $node->node_bandwidth += $this_time_total_bandwidth;
+                $node->save();
+
+                $online_log = new NodeOnlineLog();
+                $online_log->node_id = $node->id;
+                $online_log->online_user = count($traffics);
+                $online_log->log_time = time();
+                $online_log->save();
+            }
+        }
+        curl_close($ch);
     }
 }

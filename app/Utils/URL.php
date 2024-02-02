@@ -138,7 +138,7 @@ class URL
     }
 
     public static function getAllItems($user, $is_mu = 0, $is_ss = 0, $v = 2) {
-        return array_merge(URL::getAllSSRItems($user, $is_mu, $is_ss), URL::getAllV2RayItems($user, $v), URL::getAllTrojanItems($user));
+        return array_merge(URL::getAllSSRItems($user, $is_mu, $is_ss), URL::getAllV2RayItems($user, $v), URL::getAllTrojanItems($user), URL::getAllHysteriaItems($user));
     }
 
     public static function getAllSSRItems($user, $is_mu = 0, $is_ss = 0) {
@@ -319,8 +319,40 @@ class URL
         return $return_array;
     }
 
+    public static function getAllHysteriaItems($user) {
+        $return_array = array();
+        if ($user->is_admin) {
+            $nodes=Node::where(
+                function ($query) {
+                    $query->where('sort', 14);
+                }
+            )->where("type", "1")->orderBy("name")->get();
+        } else {
+            $nodes=Node::where(
+                function ($query) {
+                    $query->where('sort', 14);
+                }
+            )->where(
+                function ($query) use ($user){
+                    $query->where("node_group", "=", $user->node_group)
+                        ->orWhere("node_group", "=", 0);
+                }
+            )->where("type", "1")->where("node_class", "<=", $user->class)->orderBy("name")->get();
+        }
+
+        foreach ($nodes as $node) {
+            $conf = json_decode($node->hysteria_conf);
+            $item = URL::getHysteriaItem($user, $node, $conf);
+            if($item != null) {
+                array_push($return_array, $item);
+            }
+        }
+
+        return $return_array;
+    }
+
     public static function getAllUrl($user, $is_mu, $is_ss = 0, $v = 2, $enter = 0) {
-        return URL::getAllSSRUrl($user, $is_mu, $is_ss, $enter).URL::getAllV2RayUrl($user, $v, $enter).URL::getAllTrojanUrl($user, $enter);
+        return URL::getAllSSRUrl($user, $is_mu, $is_ss, $enter).URL::getAllV2RayUrl($user, $v, $enter).URL::getAllTrojanUrl($user, $enter).URL::getAllHysteriaUrl($user, $enter);
     }
 
     public static function getAllSSRUrl($user, $is_mu, $is_ss = 0, $enter = 0) {
@@ -346,6 +378,15 @@ class URL
         $items = URL::getAllTrojanItems($user);
         foreach($items as $item) {
             $return_url .= URL::getTrojanItemUrl($item).($enter == 0 ? ' ' : "\n");
+        }
+        return $return_url;
+    }
+
+    public static function getAllHysteriaUrl($user, $enter = 0) {
+        $return_url = '';
+        $items = URL::getAllHysteriaItems($user);
+        foreach($items as $item) {
+            $return_url .= URL::getHysteriaItemUrl($item).($enter == 0 ? ' ' : "\n");
         }
         return $return_url;
     }
@@ -391,9 +432,9 @@ class URL
         switch ($conf_version) {
             case 1:
                 $parameters = '';
-                $ignore_items = ['security', 'uuid', 'host', 'port', 'id', 'node_class', 'passwd'];
+                $ignore_keys = ['security', 'uuid', 'host', 'port', 'id', 'node_class', 'passwd'];
                 foreach ($item as $key => $value) {
-                    if(in_array($key, $ignore_items)) {
+                    if(in_array($key, $ignore_keys)) {
                         continue;
                     }
                     if ($key == 'xtls') {
@@ -430,6 +471,14 @@ class URL
 
     public static function getTrojanItemUrl($item) {
         return 'trojan://'.$item['passwd'].'@'.$item['address'].':'.$item['port'].'?allowInsecure=0&peer='.$item['sni'].'&tfo='.$item['fast_open'].'&mux=0&alpn=h2#'.rawurlencode($item['remark']);
+    }
+
+    public static function getHysteriaItemUrl($item) {
+        if ( strlen(trim($item['obfs_password'])) > 0 ) {
+            return 'hysteria2://'.$item['auth'].'@'.$item['server'].':'.$item['ports'].'?peer='.$item['sni'].'&insecure=0&alpn=h3&obfs=none&obfs-password='.$item['obfs_password'].'&fastopen='.$item['fast_open'].'&downmbps='.$item['down'].'mbps#'.rawurlencode($item['remark']);
+        } else {
+            return 'hysteria2://'.$item['auth'].'@'.$item['server'].':'.$item['ports'].'?peer='.$item['sni'].'&insecure=0&alpn=h3&fastopen='.$item['fast_open'].'&downmbps='.$item['down'].'mbps#'.rawurlencode($item['remark']);
+        }
     }
 
     public static function getJsonObfs($item) {
@@ -654,9 +703,6 @@ class URL
                         $return_array["wsPath"] = $inbound->path;
                         if(!empty($inbound->headers->Host)) {
                             $return_array["wsHost"] = $inbound->headers->Host;
-                            if($return_array["tls"] == 1) {
-                                $return_array["tlsServer"] = $inbound->headers->Host;
-                            }
                         } else {
                             $return_array["wsHost"] = $return_array["host"];
                         }
@@ -683,6 +729,9 @@ class URL
                 $return_array["remark"] = str_replace(' ', '', explode(" - ", $node->name)[0]).'-'.preg_split('/[.\-]/', $return_array["host"])[0].'-'.$return_array["port"];
                 // for shadowrocket only
                 $return_array["remarks"] = $return_array["remark"];
+                if ($inbound->protocol == 'vmess') {
+                    $return_array["alterId"] = $inbound->alterid;
+                }
                 switch ($inbound->network) {
                     case "tcp":
                         $return_array["peer"] = $return_array["tlsServer"];
@@ -719,10 +768,12 @@ class URL
                         $return_array["obfs"] = $inbound->network;
                         break;
                 }
-                if($inbound->tcpfastopen == "true") {
-                    $return_array["tfo"] = 1;
-                } else {
-                    $return_array["tfo"] = 0;
+                if($inbound->tcpfastopen != "none") {
+                    if($inbound->tcpfastopen == "true") {
+                        $return_array["tfo"] = 1;
+                    } else {
+                        $return_array["tfo"] = 0;
+                    }
                 }
                 break;
             case 2:
@@ -821,6 +872,27 @@ class URL
         $return_array['reuse_port'] = $conf->reuse_port;
         $return_array['fast_open'] = $conf->fast_open;
         $return_array['fast_open_qlen'] = $conf->fast_open_qlen;
+        return $return_array;
+    }
+
+    public static function getHysteriaItem($user, $node, $conf) {
+        // 'trojan://'.$item['passwd'].'@'.$item['address'].':'.$item['port'].'?allowInsecure=0&tfo='.$item['fast_open'].'#'.rawurlencode($item['remark']);
+        $return_array = Array();
+        $return_array['id'] = $node->id;
+        $return_array['node_class'] = $node->node_class;
+        $return_array['remark'] = str_replace(' ', '', explode(" - ", $node->name)[0]);
+        $return_array['server'] = $node->server;
+        $return_array['ports'] = $conf->ports;
+        $return_array['auth'] = $user->passwd;
+        $return_array['sni'] = $node->server;
+        $return_array['insecure'] = false;
+        $return_array['hop_interval'] = 30;
+        $return_array['obfs'] = 'salamander';
+        $return_array['obfs_password'] = $conf->obfs_password;
+        $return_array['up'] = $conf->up;
+        $return_array['down'] = $conf->down;
+        $return_array['fast_open'] = true;
+        $return_array['lazy'] = false;
         return $return_array;
     }
 

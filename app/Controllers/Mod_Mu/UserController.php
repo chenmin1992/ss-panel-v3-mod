@@ -7,6 +7,8 @@ use App\Models\TrafficLog;
 use App\Models\User;
 use App\Models\NodeOnlineLog;
 use App\Models\Ip;
+use App\Models\BlockIp;
+use App\Models\Disconnect;
 use App\Models\DetectLog;
 use App\Controllers\BaseController;
 use App\Utils\Tools;
@@ -223,6 +225,82 @@ class UserController extends BaseController
         $res = [
             "ret" => 1,
             "data" => "ok",
+        ];
+        return $this->echoJson($response, $res);
+    }
+    
+    public function hysteriaAuth($request, $response, $args)
+    {
+        $node_id = $request->getParam('node_id');
+        $node = Node::where("id", "=", $node_id)->first();
+        if ($node == null) {
+            $res = [
+                "ok" => false
+            ];
+            return $this->echoJson($response, $res);
+        }
+        if ($node->node_bandwidth_limit!=0) {
+            if ($node->node_bandwidth_limit <= $node->node_bandwidth) {
+
+                $res = [
+                    "ok" => false
+                ];
+                return $this->echoJson($response, $res);
+            }
+        }
+        $data = json_decode($request->getBody());
+        $data->ip = explode(':', $data->addr)[0];
+        $DIP = Disconnect::where("ip", $data->ip)->first();
+        $BIP = BlockIp::where("ip", $data->ip)->first();
+        if ( $DIP != null || $BIP != null ) {
+            $res = [
+                "ok" => false
+            ];
+            return $response->withJson($res, 403);
+        }
+        
+        if ($node->node_group!=0) {
+            $user = User::where(
+                function ($query) use ($node){
+                    $query->where(
+                      function ($query1) use ($node){
+                          $query1->where("class", ">=", $node->node_class)
+                              ->where("node_group", "=", $node->node_group);
+                      }
+                    )->orwhere('is_admin', 1);
+                }
+            )
+            ->where("enable", 1)->where("expire_in", ">", date("Y-m-d H:i:s"))
+            ->where('passwd', $data->auth)->whereRaw('transfer_enable > u + d')->first();
+        } else {
+            $user = User::where(
+                function ($query) use ($node){
+                    $query->where(
+                      function ($query1) use ($node){
+                          $query1->where("class", ">=", $node->node_class);
+                      }
+                    )->orwhere('is_admin', 1);
+                }
+            )->where("enable", 1)->where("expire_in", ">", date("Y-m-d H:i:s"))
+            ->where('passwd', $data->auth)->whereRaw('transfer_enable > u + d')->first();
+        }
+        if ( $user == null ) {
+            $res = [
+                "ok" => false
+            ];
+            return $response->withJson($res, 401);
+        }
+
+        $ip_log = new Ip();
+        $ip_log->userid = $user->id;
+        $ip_log->nodeid = $node->id;
+        $ip_log->ip = $data->ip;
+        $ip_log->datetime = time();
+        $ip_log->save();
+
+        $res = [
+            "ok" => true,
+            "id" => (string)$user->id
         ];
         return $this->echoJson($response, $res);
     }

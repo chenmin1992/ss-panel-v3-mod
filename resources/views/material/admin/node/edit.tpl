@@ -113,6 +113,7 @@
 													<option value="11" {if $node->sort==11}selected{/if}>V2Ray</option>
 													<option value="12" {if $node->sort==12}selected{/if}>Trojan</option>
 													<option value="13" {if $node->sort==13}selected{/if}>Trojan 中转</option>
+													<option value="14" {if $node->sort==14}selected{/if}>Hysteria 2</option>
 												</select>
 											</div>
 									</div>
@@ -227,13 +228,13 @@
                                                     </select>
                                                 </div>
 
-			                                    <div class="form-group form-group-label">
-			                                        <div class="checkbox switch">
-			                                            <label for="block_bt">
-			                                                <input {if $inbound->blockbt}checked{/if} class="access-hide" id="block_bt" type="checkbox" name="block_bt"><span class="switch-toggle"></span>禁止BT下载
-			                                            </label>
-			                                        </div>
-			                                    </div>
+                                                <div class="form-group form-group-label">
+                                                    <div class="checkbox switch">
+                                                        <label for="block_bt">
+                                                            <input {if $inbound->blockbt}checked{/if} class="access-hide" id="block_bt" type="checkbox" name="block_bt"><span class="switch-toggle"></span>禁止BT下载
+                                                        </label>
+                                                    </div>
+                                                </div>
 
                                                 <div class="form-group form-group-label">
                                                     <label class="floating-label" for="security">TLS</label>
@@ -568,6 +569,44 @@
 							</div>
 						</div>
 
+						<div class="card {if $node->sort!=14}access-hide{/if}" id="hysteria">
+							<div class="card-main">
+								<div class="card-inner">
+									{$hysteria_conf=$node->hysteria_conf|json_decode}
+									<div class="form-group form-group-label">
+										<label class="floating-label" for="ports">单个端口/端口范围</label>
+										<input class="form-control" id="ports" type="text" name="ports" value="{$hysteria_conf->ports}">
+									</div>
+									
+									<div class="form-group form-group-label">
+										<label class="floating-label" for="stats_address">流量统计地址</label>
+										<input class="form-control" id="stats_address" type="text" name="stats_address" value="{$hysteria_conf->stats_address}">
+									</div>
+									
+									<div class="form-group form-group-label">
+										<label class="floating-label" for="stats_secret">流量统计密钥</label>
+										<input class="form-control" id="stats_secret" type="text" name="stats_secret" value="{$hysteria_conf->stats_secret}">
+									</div>
+									
+									<div class="form-group form-group-label">
+										<label class="floating-label" for="up">上传带宽（对于客户端/Mbps）</label>
+										<input class="form-control" id="up" type="number" name="up" value="{$hysteria_conf->up}">
+									</div>
+									
+									<div class="form-group form-group-label">
+										<label class="floating-label" for="down">下载带宽（对于客户端/Mbps）</label>
+										<input class="form-control" id="down" type="number" name="down" value="{$hysteria_conf->down}">
+									</div>
+									
+									<div class="form-group form-group-label">
+										<label class="floating-label" for="obfs_password">混淆密码</label>
+										<input class="form-control" id="obfs_password" type="text" name="obfs_password" value="{$hysteria_conf->obfs_password}">
+									</div>
+
+								</div>
+							</div>
+						</div>
+
 						<div class="card">
 							<div class="card-main">
 								<div class="card-inner">
@@ -610,12 +649,16 @@
     $('#sort').change(function() {
         $('.card#v2in').addClass('access-hide');
         $('.card#trojan').addClass('access-hide');
+        $('.card#hysteria').addClass('access-hide');
         switch(this.value) {
             case '11':
                 $('.card#v2in').removeClass('access-hide');
                 break;
             case '12':
                 $('.card#trojan').removeClass('access-hide');
+                break;
+            case '14':
+                $('.card#hysteria').removeClass('access-hide');
                 break;
             default:
         }
@@ -792,7 +835,7 @@
                     "proxysecurity": $(this).find("#ws #proxy_security").val(),
                     // tls
                     "security": $(this).find("#security").val(),
-                    "cert": parseInt($(this).find("#v2in #cert").val()),
+                    "cert": parseInt($(this).find("#cert").val()),
                     "fingerprint": $(this).find("#fingerprint").val(),
                     "xtls": $(this).find("#xtls").val()
                 };
@@ -822,6 +865,15 @@
                     "fast_open": $("#trojan #fast_open").is(":checked"),
                     "fast_open_qlen": parseInt($("#trojan #fast_open_qlen").val())
                 };
+
+            var hysteria_conf = {
+                    "ports": $("#hysteria #ports").val(),
+                    "stats_address": $("#hysteria #stats_address").val(),
+                    "stats_secret": $("#hysteria #stats_secret").val(),
+                    "up": parseInt($("#hysteria #up").val()),
+                    "down": parseInt($("#hysteria #down").val()),
+                    "obfs_password": $("#hysteria #obfs_password").val()
+                };
 {/literal}
             $.ajax({
                 type: "PUT",
@@ -846,7 +898,8 @@
                     custom_rss: custom_rss,
                     mu_only: $("#mu_only").val(),
                     v2conf: JSON.stringify(inbs),
-                    trojan_conf: JSON.stringify(trojan_conf)
+                    trojan_conf: JSON.stringify(trojan_conf),
+                    hysteria_conf: JSON.stringify(hysteria_conf)
                 },
                 success: function (data) {
                     if (data.ret) {
