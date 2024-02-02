@@ -386,7 +386,7 @@
 										<p><code>!|US</code>屏蔽美国IP</p>
 										<p><code>$google</code>代理google的所有URL</p>
 										<p><code>@@$google</code>直连google的所有URL</p>
-										<p><code>!$google.com</code>屏蔽google的所有URL</p>
+										<p><code>!$google</code>屏蔽google的所有URL</p>
 										<p><a href="https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes" target="_blank">国家代码点我查看</a></p>
 										<div class="form-group form-group-label">
 											<label class="floating-label" for="pac">规则书写区</label>

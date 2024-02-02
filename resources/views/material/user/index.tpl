@@ -84,7 +84,7 @@
 															</li>
 														</ul>
 													</nav>
-													<div class="tab-pane fade active in" id="all_ss_info">
+													<div class="tab-pane fade active in" id="all_clash_info">
                                                         <p> Clash 配置地址(GFW 代理 + 流媒体代理)：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$clash_sub_token}"><code>{$baseUrl}/link/{$clash_sub_token}</code></a></p>
                                                         <p> Clash 配置地址(GFW 代理 + 流媒体直连)：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$clash_sub_token}?sm=0"><code>{$baseUrl}/link/{$clash_sub_token}?sm=0</code></a></p>
                                                         <p> Clash 配置地址(国内外分流 + 流媒体任意)：<a class="copy-text" data-clipboard-text="{$baseUrl}/link/{$clash_sub_token}?cnip=1"><code>{$baseUrl}/link/{$clash_sub_token}?cnip=1</code></a></p>

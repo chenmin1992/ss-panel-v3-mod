@@ -13,10 +13,10 @@ class TelegramProcess
             switch ($command) {
                 case 'traffic':
                     $bot->sendMessage($message->getChat()->getId(), "您当前的流量状况：
-																	今日已使用 ".$user->TodayusedTraffic()." ".number_format(($user->u+$user->d-$user->last_day_t)/$user->transfer_enable*100, 2)."%
-																	今日之前已使用 ".$user->LastusedTraffic()." ".number_format($user->last_day_t/$user->transfer_enable*100, 2)."%
-																	未使用 ".$user->unusedTraffic()." ".number_format(($user->transfer_enable-($user->u+$user->d))/$user->transfer_enable*100, 2)."%
-					                        ", $parseMode = null, $disablePreview = false, $replyToMessageId = $reply_to);
+今日已使用 ".$user->TodayusedTraffic()." ".number_format(($user->u+$user->d-$user->last_day_t)/$user->transfer_enable*100, 2)."%
+今日之前已使用 ".$user->LastusedTraffic()." ".number_format($user->last_day_t/$user->transfer_enable*100, 2)."%
+未使用 ".$user->unusedTraffic()." ".number_format(($user->transfer_enable-($user->u+$user->d))/$user->transfer_enable*100, 2)."%
+", $parseMode = null, $disablePreview = false, $replyToMessageId = $reply_to);
                     break;
                 case 'checkin':
                     if (!$user->isAbleToCheckin()) {
@@ -61,14 +61,13 @@ class TelegramProcess
                     break;
                 case 'help':
                     $help_list = "命令列表：
-						/ping  获取群组ID
-						/chat 唠嗑
-						/traffic 查询流量
-						/checkin 签到续命
-						/help 获取帮助信息
+/ping    - 获取群组ID
+/chat    - 唠嗑
+/traffic - 查询流量
+/checkin - 签到续命
+/help    - 获取帮助信息
 
-						您可以在面板里点击 资料编辑 ，滑到页面最下方，就可以看到 Telegram 绑定指示了，绑定您的账号，更多精彩功能等着您去发掘。
-					          ";
+您可以在面板里点击 资料编辑 ，滑到页面最下方，就可以看到 Telegram 绑定指示了，绑定您的账号，更多精彩功能等着您去发掘。";
                     $bot->sendMessage($message->getChat()->getId(), $help_list);
                     break;
                 default:
@@ -188,14 +187,13 @@ class TelegramProcess
                     break;
                 case 'help':
                     $help_list_group = "命令列表：
-						/ping  获取群组ID
-						/chat 唠嗑
-						/traffic 查询流量
-						/checkin 签到续命
-						/help 获取帮助信息
+/ping    - 获取群组ID
+/chat    - 唠嗑
+/traffic - 查询流量
+/checkin - 签到续命
+/help    - 获取帮助信息
 
-						您可以在面板里点击 资料编辑 ，滑到页面最下方，就可以看到 Telegram 绑定指示了，绑定您的账号，更多精彩功能等着您去发掘。
-					";
+您可以在面板里点击 资料编辑 ，滑到页面最下方，就可以看到 Telegram 绑定指示了，绑定您的账号，更多精彩功能等着您去发掘。";
                     $bot->sendMessage($message->getChat()->getId(), $help_list_group, $parseMode = null, $disablePreview = false, $replyToMessageId = $message->getMessageId());
                     break;
                 default:
