@@ -675,11 +675,17 @@ class URL
                     default:
                         break;
                 }
-                $return_array["tls"] = $inbound->security == "tls" ? 1 : 0;
+                $return_array["mux"] = 0;
+                $return_array["muxConcurrency"] = 8;
+                $return_array["tls"] = $inbound->security == "none" ? 0 : 1;
                 $return_array["allowInsecure"] = 0;
                 $return_array["tlsServer"] = $node->server;
-                // $return_array["mux"] = 1;
-                // $return_array["muxConcurrency"] = 8;
+                if($inbound->security == "reality") {
+                    $servernames = explode("\n", $inbound->servernames);
+                    $return_array["tlsServer"] = $servernames[mt_rand(0, count($servernames)-1)];
+                    $return_array["publickey"] = $inbound->publickey;
+                    $return_array["shortid"] = $user->get_shortId();
+                }
                 if($inbound->network == "ws" or $inbound->network == "h2") {
                     if(!empty($inbound->proxyaddr) and !empty($inbound->proxyport)) {
                         $return_array["host"] = $inbound->proxyaddr;
@@ -692,12 +698,11 @@ class URL
                 }
                 switch ($inbound->network) {
                     case "tcp":
-                        break;
-                    case "kcp":
-                        $return_array["kcpHeader"] = $inbound->obfs;
-                        $return_array["uplinkCapacity"] = $inbound->uplinkcapacity;
-                        $return_array["downlinkCapacity"] = $inbound->downlinkcapacity;
-                        $return_array["kcpSeed"] = $inbound->seed;
+                        if($inbound->obfs == 'http') {
+                            $return_array["obfs"] = $inbound->obfs;
+                            $return_array["request"] = $inbound->httprequest;
+                            $return_array["response"] = $inbound->httpresponse;
+                        }
                         break;
                     case "ws":
                         $return_array["wsPath"] = $inbound->path;
@@ -713,7 +718,15 @@ class URL
                         } else {
                             $return_array["h2Host"] = $return_array["host"];
                         }
-                        $return_array["h2Path"] = $inbound->path;
+                        $return_array["h2Host"] = preg_replace("/\s+/m", "", $return_array["h2Host"]);
+                        $return_array["h2Path"] = preg_replace("/\s+/m", "", $inbound->path);
+                        break;
+                    case "kcp":
+                        $return_array["kcpHeader"] = $inbound->obfs;
+                        $return_array["uplinkCapacity"] = $inbound->uplinkcapacity;
+                        $return_array["downlinkCapacity"] = $inbound->downlinkcapacity;
+                        $return_array["congestion"] = $inbound->congestion;
+                        $return_array["kcpSeed"] = $inbound->seed;
                         break;
                     case "quic":
                         $return_array["quicSecurity"] = $inbound->encryption;
@@ -726,11 +739,18 @@ class URL
                     default:
                         break;
                 }
+                if($inbound->tcpfastopen != 'none') {
+                    $return_array["tfo"] = $inbound->tcpfastopen == 'true' ? 1 : 0;
+                }
                 $return_array["remark"] = str_replace(' ', '', explode(" - ", $node->name)[0]).'-'.preg_split('/[.\-]/', $return_array["host"])[0].'-'.$return_array["port"];
                 // for shadowrocket only
                 $return_array["remarks"] = $return_array["remark"];
-                if ($inbound->protocol == 'vmess') {
+                if($inbound->protocol == 'vmess') {
                     $return_array["alterId"] = $inbound->alterid;
+                }
+                if($inbound->security == "reality") {
+                    $return_array["pbk"] = $return_array["publickey"];
+                    $return_array["sid"] = $return_array["shortid"];
                 }
                 switch ($inbound->network) {
                     case "tcp":
@@ -768,13 +788,6 @@ class URL
                         $return_array["obfs"] = $inbound->network;
                         break;
                 }
-                if($inbound->tcpfastopen != "none") {
-                    if($inbound->tcpfastopen == "true") {
-                        $return_array["tfo"] = 1;
-                    } else {
-                        $return_array["tfo"] = 0;
-                    }
-                }
                 break;
             case 2:
                 $return_array["v"] = 2;
@@ -782,6 +795,7 @@ class URL
                 $return_array["add"] = $node->server;
                 $return_array["port"] = $inbound->port;
                 $return_array["uuid"] = $uuid;
+                $return_array["type"] = $inbound->protocol;
                 switch ($inbound->protocol) {
                     case 'vmess':
                         $return_array["aid"] = $inbound->alterid;
@@ -796,16 +810,22 @@ class URL
                         break;
                 }
                 $return_array["net"] = $inbound->network;
-                $return_array["type"] = "";
                 $return_array["host"] = "";
                 $return_array["path"] = "";
                 $return_array["tls"] = $inbound->security;
+                if($inbound->security == "reality") {
+                    $servernames = explode("\n", $inbound->servernames);
+                    $return_array["tlsServer"] = $servernames[mt_rand(0, count($servernames)-1)];
+                    $return_array["publickey"] = $inbound->publickey;
+                    $return_array["shortid"] = $user->get_shortId();
+                }
                 if($inbound->network == "ws" or $inbound->network == "h2") {
                     if(!empty($inbound->proxyaddr) and !empty($inbound->proxyport)) {
                         $return_array["add"] = $inbound->proxyaddr;
                         $return_array["port"] = $inbound->proxyport;
                         if($inbound->security == "none" and $inbound->proxysecurity == "tls") {
                             $return_array["tls"] = "tls";
+                            $return_array["tlsServer"] = $return_array["host"];
                         }
                     }
                 }
@@ -846,6 +866,9 @@ class URL
                     default:
                         break;
                 }
+                if($inbound->tcpfastopen != 'none') {
+                    $return_array["tfo"] = $inbound->tcpfastopen == 'true' ? 1 : 0;
+                }
                 $return_array["ps"] = str_replace(' ', '', explode(" - ", $node->name)[0]);
                 break;
             default:
@@ -863,7 +886,6 @@ class URL
         $return_array['address'] = $node->server;
         $return_array['port'] = $conf->local_port;
         $return_array['sni'] = $node->server;
-        $return_array['fast_open'] = $conf->fast_open;
         $return_array['remark'] = str_replace(' ', '', explode(" - ", $node->name)[0]);
         $return_array['reuse_session'] = $conf->reuse_session;
         $return_array['session_ticket'] = $conf->session_ticket;
@@ -876,7 +898,6 @@ class URL
     }
 
     public static function getHysteriaItem($user, $node, $conf) {
-        // 'trojan://'.$item['passwd'].'@'.$item['address'].':'.$item['port'].'?allowInsecure=0&tfo='.$item['fast_open'].'#'.rawurlencode($item['remark']);
         $return_array = Array();
         $return_array['id'] = $node->id;
         $return_array['node_class'] = $node->node_class;
@@ -891,7 +912,7 @@ class URL
         $return_array['obfs_password'] = $conf->obfs_password;
         $return_array['up'] = $conf->up;
         $return_array['down'] = $conf->down;
-        $return_array['fast_open'] = true;
+        $return_array['fast_open'] = $conf->fast_open;
         $return_array['lazy'] = false;
         return $return_array;
     }
@@ -903,9 +924,12 @@ class URL
                 "loglevel" => "warning"
             ],
             "dns" => [
+                "hosts" => [
+                    "localhost" => "127.0.0.1"
+                ],
                 "servers" => [
                     [
-                        "address" => "182.254.116.116",
+                        "address" => "tcp+local://119.28.28.28",
                         "domains" => [
                             "geosite:cn"
                         ],
@@ -914,13 +938,13 @@ class URL
                         ]
                     ],
                     [
-                        "address" => "1.0.0.1",
+                        "address" => "https://1.1.1.1/dns-query",
                         "domains" => [
                             "geosite:geolocation-!cn",
                             "geosite:speedtest",
                         ]
                     ],
-                    "182.254.116.116",
+                    "119.28.28.28",
                     "223.6.6.6",
                     "localhost"
                 ]
@@ -931,7 +955,9 @@ class URL
                     "protocol" => "socks",
                     "port" => "1079",
                     "settings" => [
-                        "udp" => true
+                        "auth" => "noauth",
+                        "udp" => true,
+                        "ip" => "127.0.0.1"
                     ]
                 ],
                 [
@@ -984,29 +1010,68 @@ class URL
         ];
         // out bound
         $out = [
-            "protocol" => "vmess",
+            "protocol" => $item['protocol'],
             "settings" => [
-                    "vnext" => [
+                "vnext" => [
                     [
                         "address" => $item['host'],
                         "port" => $item['port'],
                         "users" => [
                             [
                                 "id" => $item['uuid'],
-                                "alterId" => $item['aid'],
-                                "security" => "auto"
+                                "alterId" => '',
+                                "security" => 'auto',
+                                "encryption" => 'none',
+                                "flow" => 'xtls-rprx-vision'
                             ]
                         ]
                     ]
                 ]
             ],
             "streamSettings" => [
-                "network" => $item['network']
+                "network" => $item['network'],
+                "security" => 'none'
             ]
         ];
+        if (array_key_exists('aid', $item)) { // vmess
+            $out['settings']['vnext'][0]['users'][0]['alterId'] = $item['aid'];
+            unset($out['settings']['vnext'][0]['users'][0]['encryption']);
+            unset($out['settings']['vnext'][0]['users'][0]['flow']);
+        } else {                             // vless or xray
+            unset($out['settings']['vnext'][0]['users'][0]['alterId']);
+            unset($out['settings']['vnext'][0]['users'][0]['security']);
+            $out['settings']['vnext'][0]['users'][0]['flow'] = $item['xtls'];
+        }
+        // tls
+        if(isset($item['publickey'])) {
+            $out['streamSettings']['security'] = 'reality';
+            $out['streamSettings']['realitySettings'] = [
+                'fingerprint' => $item['fingerprint'],
+                'serverName' => $item['tlsServer'],
+                'shortID' => $item['shortid'],
+                'publicKey' => $item['publickey']
+            ];
+        } elseif($item['tls'] == 1) {
+            $out['streamSettings']['security'] = 'tls';
+            $out['streamSettings']['tlsSettings'] = [
+                "allowInsecure" => $item['allowInsecure'] == 1 ? true : false
+            ];
+        }
         // network
         switch ($item['network']) {
             case "tcp":
+                $tcps = [
+                    "acceptProxyProtocol" => false,
+                    "header" => [
+                        "type" => "none"
+                    ]
+                ];
+                if($item['obfs'] == 'http') {
+                    $tcps['header']['type'] = $item['obfs'];
+                    $tcps['header']['request'] = $item["request"];
+                    $tcps['header']['response'] = $item["response"];
+                }
+                $out['streamSettings']['tcpSettings'] = $tcps;
                 break;
             case "ws":
                 $wss = [
@@ -1019,67 +1084,70 @@ class URL
                 }
                 $out['streamSettings']['wsSettings'] = $wss;
                 break;
+            case "h2":
+                $h2s = [
+                    "path" => $item['h2Path']
+                ];
+                if(!empty($item['h2Host'])) {
+                    $h2s["host"] = explode(",", $item['h2Host']);
+                }
+                $out['streamSettings']['httpSettings'] = $h2s;
+                break;
             case "kcp":
                 $kcps = [
                         "mtu" => 1350,
                         "tti" => 20,
                         "uplinkCapacity" => $item['uplinkCapacity'],
                         "downlinkCapacity" => $item['downlinkCapacity'],
-                        "congestion" => false,
+                        "congestion" => $item['congestion'],
                         "readBufferSize" => 1,
                         "writeBufferSize" => 1,
                         "header" => [
                             "type" => $item['kcpHeader']
                         ]
                 ];
+                if($item['kcpHeader'] == 'dns') {
+                    $kcps['header']['domain'] = 'baidu.com';
+                }
                 if(!empty($item['kcpSeed'])) {
                     $kcps['seed'] = $item['kcpSeed'];
                 }
                 $out['streamSettings']['kcpSettings'] = $kcps;
                 break;
-            case "h2":
-                $h2s = [
-                    "path" => $item['h2Path']
-                ];
-                if(preg_replace("/\s+/m", "", $item['h2Host']) != "") {
-                    $h2s["host"] = explode(",", preg_replace("/\s+/m", "", $item['h2Host']));
-                }
-                $out['streamSettings']['httpSettings'] = $h2s;
-                break;
             case "quic":
                 $quics = [
                     "security" => $item['quicSecurity'],
+                    "key" => $item['quitKey'],
                     "header" => [
                         "type" => $item['quicHeader']
                     ]
                 ];
-                if($item['quicSecurity'] != "none") {
-                    $quics["key"] = $item['quitKey'];
+                if($item['quicSecurity'] == "none") {
+                    unset($quics["key"]);
                 }
                 $out['streamSettings']['quicSettings'] = $quics;
                 break;
             default:
                 break;
         }
-        // tls
-        $out['streamSettings']['security'] = $item['tls'] == 1 ? "tls" : "none";
-        if($item['tls'] == 1) {
-            $out['streamSettings']['tlsSettings'] = [
-                "allowInsecure" => $item['allowInsecure'] == 1 ? true : false
-            ];
-        }
         // tcp fast open
-        if($item['tfo'] == 1) {
-            $out['streamSettings']['sockopt'] = [
-                "tcpFastOpen" => true
-            ];
+        if(isset($item['tfo'])) {
+            if($item['tfo'] == 1) {
+                $out['streamSettings']['sockopt'] = [
+                    "tcpFastOpen" => true
+                ];
+            } else {
+                $out['streamSettings']['sockopt'] = [
+                    "tcpFastOpen" => false
+                ];
+            }
         }
         // mux
+        $out['mux'] = [
+            "enabled" => $item['mux'] == 1 ? true : false
+        ];
         if($item['mux'] == 1) {
-            $out['mux'] = [
-                "enabled" => true,
-                "concurrency" => $item['muxConcurrency']
-            ];
+            $out['mux']["concurrency"] = $item['muxConcurrency'];
         }
         $out['tag'] = 'proxy';
         array_push($root_conf["outbounds"], $out);

@@ -350,4 +350,11 @@ class User extends Model
         $var = dechex(hexdec(substr($md5, 16, 2)) & (0xff >> 2) | (0x02 << 6));
         return substr($md5, 0, 8).'-'.substr($md5, 8, 4).'-'.$ver.substr($md5, 14, 2).'-'.$var.substr($md5, 18, 2).'-'.substr($md5, 20, 12);
     }
+
+    public function get_shortId()
+    {
+        $passwd = $this->attributes['passwd'];
+        $md5 = md5($passwd);
+        return substr($md5, 0, 16);
+    }
 }

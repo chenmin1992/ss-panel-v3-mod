@@ -86,8 +86,9 @@ class NodeController extends AdminController
                 // vmess
                 "alterid" => 32,
                 "disableinsecureencryption" => true,
-                // trojan
-                // "fallbackendpoint" => 80,
+                // vless & trojan
+                "fallbackdest" => '80',
+                "xtls" => "none",
                 "blockbt" => (bool)$v2conf['blockbt'],
                 "network" => $v2conf['network'],
                 "tcpfastopen" => (string)$v2conf['tcpfastopen'],
@@ -125,9 +126,15 @@ class NodeController extends AdminController
                 "proxysecurity" => $v2conf['proxysecurity'],
                 // tls
                 "security" => $v2conf['security'],
-                "cert" => (int)$v2conf['cert'],
                 "fingerprint" => $v2conf['fingerprint'],
-                "xtls" => 'none'
+                "cert" => (int)$v2conf['cert'],
+                // reality
+                "dest" => $v2conf['dest'],
+                "servernames" => $v2conf['servernames'],
+                "privatekey" => $v2conf['privatekey'],
+                "publickey" => $v2conf['publickey'],
+                "minclientver" => $v2conf['minclientver'],
+                "maxclientver" => $v2conf['maxclientver']
             ];
             switch ($v2conf['protocol']) {
                 case 'vmess':
@@ -135,9 +142,11 @@ class NodeController extends AdminController
                     $inb['disableinsecureencryption'] = (bool)$v2conf['disableinsecureencryption'];
                     break;
                 case 'vless':
+                    $inb['fallbackdest'] = $v2conf['fallbackdest'];
                     $inb['xtls'] = $v2conf['xtls'];
                     break;
                 case 'trojan':
+                    $inb['fallbackdest'] = $v2conf['fallbackdest'];
                     if (strpos($v2conf['xtls'], 'xtls') == 0) {
                         $inb['xtls'] = str_replace('vision', 'direct', $v2conf['xtls']);
                     }
@@ -278,6 +287,8 @@ class NodeController extends AdminController
         $node->node_bandwidth_limit=$request->getParam('node_bandwidth_limit')*1024*1024*1024;
         $node->bandwidthlimit_resetday=$request->getParam('bandwidthlimit_resetday');
 
+        // select id,name,JSON_INSERT(v2conf, '$.0.fallbackdest', '80')v2conf from ss_node where id=5\G
+        // select id,name,JSON_MERGE(v2conf, '{"0":{"fallbackdest":"80"}}')v2conf from ss_node where id=3\G
         // v2ray
         $v2confs = json_decode($node->v2conf, true);
         $inbs = [];
@@ -289,8 +300,9 @@ class NodeController extends AdminController
                 // vmess
                 "alterid" => 32,
                 "disableinsecureencryption" => true,
-                // trojan
-                // "fallbackendpoint" => 80,
+                // vless & trojan
+                "fallbackdest" => '80',
+                "xtls" => "none",
                 "blockbt" => (bool)$v2conf['blockbt'],
                 "network" => $v2conf['network'],
                 "tcpfastopen" => (string)$v2conf['tcpfastopen'],
@@ -328,9 +340,15 @@ class NodeController extends AdminController
                 "proxysecurity" => $v2conf['proxysecurity'],
                 // tls
                 "security" => $v2conf['security'],
-                "cert" => (int)$v2conf['cert'],
                 "fingerprint" => $v2conf['fingerprint'],
-                "xtls" => 'none'
+                "cert" => (int)$v2conf['cert'],
+                // reality
+                "dest" => $v2conf['dest'],
+                "servernames" => $v2conf['servernames'],
+                "privatekey" => $v2conf['privatekey'],
+                "publickey" => $v2conf['publickey'],
+                "minclientver" => $v2conf['minclientver'],
+                "maxclientver" => $v2conf['maxclientver']
             ];
             switch ($v2conf['protocol']) {
                 case 'vmess':
@@ -338,9 +356,11 @@ class NodeController extends AdminController
                     $inb['disableinsecureencryption'] = (bool)$v2conf['disableinsecureencryption'];
                     break;
                 case 'vless':
+                    $inb['fallbackdest'] = $v2conf['fallbackdest'];
                     $inb['xtls'] = $v2conf['xtls'];
                     break;
                 case 'trojan':
+                    $inb['fallbackdest'] = $v2conf['fallbackdest'];
                     if (strpos($v2conf['xtls'], 'xtls') == 0) {
                         $inb['xtls'] = str_replace('vision', 'direct', $v2conf['xtls']);
                     }

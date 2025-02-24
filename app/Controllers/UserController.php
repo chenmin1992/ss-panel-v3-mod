@@ -599,8 +599,14 @@ class UserController extends BaseController
                 break;
 
             case 12:
+            case 13:
                 if ((($user->class>=$node->node_class&&($user->node_group==$node->node_group||$node->node_group==0))||$user->is_admin)&&($node->node_bandwidth_limit==0||$node->node_bandwidth<$node->node_bandwidth_limit)) {
                     return $this->view()->assign('node', $node)->assign('user', $user)->registerClass("URL", "App\Utils\URL")->display('user/nodeinfotrojan.tpl');
+                }
+                break;
+            case 14:
+                if ((($user->class>=$node->node_class&&($user->node_group==$node->node_group||$node->node_group==0))||$user->is_admin)&&($node->node_bandwidth_limit==0||$node->node_bandwidth<$node->node_bandwidth_limit)) {
+                    return $this->view()->assign('node', $node)->assign('user', $user)->registerClass("URL", "App\Utils\URL")->display('user/nodeinfohysteria.tpl');
                 }
                 break;
             default:

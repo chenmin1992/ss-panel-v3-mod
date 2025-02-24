@@ -2080,6 +2080,7 @@ FINAL,Proxy';
                 $country_code = '';
                 $geosite = '';
                 $method = '';
+                $no_resolve = '';
 
                 if (substr($custom_rule, 0, 2) == '@@') {
                     $method = ',DIRECT';
@@ -2093,6 +2094,7 @@ FINAL,Proxy';
 
                 if (substr($custom_rule, 0, 2) == '||') {
                     $domain_suffix = '-SUFFIX';
+                    $no_resolve = ',no-resolve';
                 } elseif (substr($custom_rule, 0, 1) == '|') {
                     $country_code = strtoupper(substr($custom_rule, 1));
                 } elseif (substr($custom_rule, 0, 1) == '$') {
@@ -2102,7 +2104,7 @@ FINAL,Proxy';
                 }
 
                 if (preg_match("/(?:[\d\.]+){3}\d+\/\d+/", $custom_rule, $matches)) {
-                    array_push($rules_ip, 'IP-CIDR,'.$matches[0].$method.',no-resolve');
+                    array_push($rules_ip, 'IP-CIDR,'.$matches[0].$method.$no_resolve);
                     continue;
                 }
                 if (preg_match("/[a-z0-9.\-]+\.[a-z]+/i", $custom_rule, $matches)) {
@@ -2110,7 +2112,7 @@ FINAL,Proxy';
                     continue;
                 }
                 if (!empty($country_code) && in_array($country_code, $country_iso_codes)) {
-                    array_push($rules_ip, 'GEOIP,'.$country_iso_code.$method.',no-resolve');
+                    array_push($rules_ip, 'GEOIP,'.$country_iso_code.$method.$no_resolve);
                     continue;
                 }
                 if (!empty($geosite)) {
@@ -2146,8 +2148,7 @@ FINAL,Proxy';
     public static function GetClash($user, $mu = 0, $cnip = 0, $sm = -1)
     {
         $root_conf = [
-            "port" => 7890,
-            "socks-port" => 7891,
+            "mixed-port" => 7890,
             "allow-lan" => false,
             "mode" => "rule",
             "log-level" => "info",
@@ -2156,6 +2157,9 @@ FINAL,Proxy';
                 "localhost" => "127.0.0.1"
             ],
             "dns" => [
+                "enable" => false,
+                "prefer-h3" => false,
+                "listen" => "0.0.0.0:53",
                 "ipv6" => true,
                 "default-nameserver" => [
                     "119.28.28.28",
@@ -2164,7 +2168,8 @@ FINAL,Proxy';
                 ],
                 "enhanced-mode" => "fake-ip",
                 "fake-ip-filter" => [
-                    "*.lan",
+                    "+.lan",
+                    "+.local",
                     "localhost.ptlogin2.qq.com"
                 ],                
                 "use-hosts" => true,
@@ -2207,14 +2212,13 @@ FINAL,Proxy';
                 "enable" => false,
                 "force-dns-mapping" => true,
                 "parse-pure-ip" => true,
-                "override-destination" => false,
+                "override-destination" => true,
                 "sniff" => [
                     "HTTP" => [
                         "ports" => [
                             80,
                             "8080-8880",
                         ],
-                        "override-destination" => true,
                     ],
                     "TLS" => [
                         "ports" => [
@@ -2243,7 +2247,9 @@ FINAL,Proxy';
                     "type" => "url-test",
                     "proxies" => [],
                     "url" => "https://www.google.com/gen_204",
-                    "interval" => 10
+                    "interval" => 30,
+                    "lazy" => true,
+                    "timeout" => 3000
                 ]
             ],
             "rules" => []
@@ -2274,6 +2280,7 @@ FINAL,Proxy';
                     "type" => "hysteria2",
                     "server" => $item['server'],
                     "port" => intval(preg_split('/[,\-]/', $item['ports'])[0]),
+                    "tfo" => $item['fast_open'],
                     "up" => $item['up'].' Mbps',
                     "down" => $item['down'].' Mbps',
                     "password" => $item['auth'],
@@ -2293,7 +2300,7 @@ FINAL,Proxy';
                 array_push($root_conf['proxy-groups'][0]['proxies'], $hysteria['name']);
                 continue;
             }
-            // trojan original
+            // original trojan
             if (!array_key_exists('uuid', $item) && array_key_exists('sni', $item)) {
                 $trojan = [
                     "name" => $item['remark'],
@@ -2302,6 +2309,7 @@ FINAL,Proxy';
                     "port" => $item['port'],
                     "password" => $item['passwd'],
                     "udp" => true,
+                    "tfo" => $item['fast_open'],
                     "sni" => $item['sni'],
                     "alpn" => [
                         "h2",
@@ -2324,25 +2332,30 @@ FINAL,Proxy';
                     "uuid" => $item['uuid'],
                     "alterId" => 0,
                     "cipher" => 'auto',
-                    "udp" => true,
-                    "flow" => 'none',
+                    "network" => $item['network'],
                     "tls" => $item['tls'] == 1 ? true : false,
-                    "servername" => $item['host'],
-                    "skip-cert-verify" => false,
+                    "udp" => true,
+                    "tfo" => "",
+                    "flow" => 'none',
                     "client-fingerprint" => $item['fingerprint'],
-                    "network" => $item['network']
+                    "skip-cert-verify" => false,
+                    "servername" => $item['host']
                 ];
-                if (array_key_exists('aid', $item)) {
-                    // vmess
+                if (array_key_exists('aid', $item)) { // vmess
                     $ray['alterId'] = $item['aid'];
-                    // $ray['uuid'] = $item['uuid'];
                     unset($ray['flow']);
-                } else {
-                    // vless or xray
+                } else {                             // vless or xray
                     unset($ray['alterId']);
                     unset($ray['cipher']);
-                    // $ray['uuid'] = $item['passwd'];
+                    unset($ray['fingerprint']);
                     $ray['flow'] = $item['xtls'];
+                    if (isset($item['publickey'])) {
+                        $ray['servername'] = $item['tlsServer'];
+                        $ray['reality-opts'] = [
+                            'public-key' => $item['publickey'],
+                            'short-id' => $item['shortid']
+                        ];
+                    }
                 }
             } else {
                 // v2ray trojan
@@ -2357,28 +2370,34 @@ FINAL,Proxy';
                     "sni" => $item['host'],
                     "skip-cert-verify" => false,
                     "client-fingerprint" => $item['fingerprint'],
-                    "udp" => true
+                    "udp" => true,
+                    "tfo" => ""
                 ];
+            }
+            if (array_key_exists('tfo', $item)) {
+                $ray['tfo'] = $item['tfo'] == 1 ? true : false;
+            } else {
+                unset($ray['tfo']);
             }
 
             switch ($ray['network']) {
                 case 'ws':
+                    $ray['ws-opts'] = [
+                        "path" => '',
+                        "headers" => ''
+                    ];
                     if (!empty($item['wsPath'])) {
-                        $ray['ws-path'] = $item['wsPath'];
+                        $ray['ws-opts']['path'] = $item['wsPath'];
                     }
                     if (!empty($item['wsHost'])) {
-                        $ray['ws-headers'] = [
+                        $ray['ws-opts']['headers'] = [
                             "Host" => $item['wsHost']
                         ];
                     } else {
-                        $ray['ws-headers'] = [
+                        $ray['ws-opts']['headers'] = [
                             "Host" => $item['host']
                         ];
                     }
-                    $ray['ws-opts'] = [
-                        "path" => $ray['ws-path'],
-                        "headers" => $ray['ws-headers']
-                    ];
                     break;
 
                 case 'h2':

@@ -52,7 +52,7 @@
                                                     <p>服务器地址：{$v2ray_item['add']}<br>
                                                     服务器端口：{$v2ray_item['port']}<br>
                                                     UUID：{$v2ray_item['id']}<br>
-                                                    额外ID：{$v2ray_item['aid']}<br>
+                                                    协议：{$v2ray_item['protocol']}<br>
                                                     传输类型：{$v2ray_item['net']}<br>
                                                     TLS：{$v2ray_item['tls']}<br></p>
                                                 </div>

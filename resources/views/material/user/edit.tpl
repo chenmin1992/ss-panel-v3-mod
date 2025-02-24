@@ -368,25 +368,31 @@
 										<p>您可以在此处追加 Gfwlist 规则。</p>
 										<p>格式参看<a href="https://adblockplus.org/filter-cheatsheet#options" target="_blank">https://adblockplus.org/filter-cheatsheet#options</a></p>
 										<p>说明：</p>
-										<p><code>||google.com</code>代理google.com及其子域名</p>
-										<p><code>|google.com</code>只代理google.com</p>
-										<p><code>@@||google.com</code>直连google.com及其子域名</p>
-										<p><code>@@|google.com</code>只直连google.com</p>
-										<p><code>|222.186.0.0/16</code>代理这个IP段</p>
-										<p><code>@@|222.186.0.0/16</code>直连这个IP段</p>
-										<p>以下规则只对Shadowrocket和Clash有效</p>
-										<p><code>!||google.com</code>屏蔽google.com及其子域名</p>
-										<p><code>!|google.com</code>只屏蔽google.com</p>
-										<p><code>!|222.186.0.0/16</code>屏蔽这个IP段</p>
-										<p><code>|google</code>代理域名中包含google的URL</p>
-										<p><code>@@|google</code>直连域名中包含google的URL</p>
-										<p><code>!|google</code>屏蔽域名中包含google的URL</p>
-										<p><code>|US</code>代理美国IP</p>
-										<p><code>@@|US</code>直连美国IP</p>
-										<p><code>!|US</code>屏蔽美国IP</p>
-										<p><code>$google</code>代理google的所有URL</p>
-										<p><code>@@$google</code>直连google的所有URL</p>
-										<p><code>!$google</code>屏蔽google的所有URL</p>
+										<p><code>||google.com</code>代理 google.com 及其子域名</p>
+										<p><code>|google.com</code>只代理 google.com</p>
+										<p><code>@@||google.com</code>直连 google.com 及其子域名</p>
+										<p><code>@@|google.com</code>只直连 google.com</p>
+										<p><code>|222.186.0.0/16</code>代理这个 IP 段</p>
+										<p><code>@@|222.186.0.0/16</code>直连这个 IP 段</p>
+										<p>以下规则只对 Shadowrocket 和 Clash 有效</p>
+										<p><code>!||google.com</code>屏蔽 google.com 及其子域名</p>
+										<p><code>!|google.com</code>只屏蔽 google.com</p>
+										<p><code>||222.186.0.0/16</code>代理这个 IP 段并跳过解析</p>
+										<p><code>@@||222.186.0.0/16</code>直连这个 IP 段并跳过解析</p>
+										<p><code>!|222.186.0.0/16</code>屏蔽这个 IP 段</p>
+										<p><code>!||222.186.0.0/16</code>屏蔽这个 IP 段并跳过解析</p>
+										<p><code>|google</code>代理域名中包含 google 的 URL</p>
+										<p><code>@@|google</code>直连域名中包含 google 的 URL</p>
+										<p><code>!|google</code>屏蔽域名中包含 google 的 URL</p>
+										<p><code>|US</code>代理美国 IP</p>
+										<p><code>||US</code>代理美国 IP 并跳过解析</p>
+										<p><code>@@|US</code>直连美国 IP</p>
+										<p><code>@@||US</code>直连美国 IP 并跳过解析</p>
+										<p><code>!|US</code>屏蔽美国 IP</p>
+										<p><code>!||US</code>屏蔽美国 IP 并跳过解析</p>
+										<p><code>$google</code>代理 google 的所有 URL</p>
+										<p><code>@@$google</code>直连 google 的所有 URL</p>
+										<p><code>!$google</code>屏蔽 google 的所有 URL</p>
 										<p><a href="https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes" target="_blank">国家代码点我查看</a></p>
 										<div class="form-group form-group-label">
 											<label class="floating-label" for="pac">规则书写区</label>

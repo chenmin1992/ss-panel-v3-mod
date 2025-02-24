@@ -203,7 +203,7 @@
                                                     <div class="tab-pane fade active in" id="vmess">
                                                         <div class="form-group form-group-label">
                                                             <label class="floating-label" for="alterid">AlterId</label>
-                                                            <input class="form-control" id="alterid" type="number" name="alterid" value="32">
+                                                            <input class="form-control" id="alterid" type="number" name="alterid" value="0">
                                                         </div>
 
                                                         <div class="form-group form-group-label">
@@ -214,16 +214,23 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
 
-                                                <div class="form-group form-group-label">
-                                                    <label class="floating-label" for="xtls">XTLS</label>
-                                                    <select id="xtls" class="form-control" name="xtls">
-                                                        <option value="none" selected>none</option>
-                                                        <option value="xtls-rprx-direct">xtls-rprx-direct</option>
-                                                        <option value="xtls-rprx-origin">xtls-rprx-origin</option>
-                                                        <option value="xtls-rprx-vision">xtls-rprx-vision</option>
-                                                    </select>
+                                                    <div class="tab-pane fade" id="vless">
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="fallbackdest">回落地址(Fallback Dest)</label>
+                                                            <input class="form-control" id="fallbackdest" type="text" name="fallbackdest" value="80">
+                                                        </div>
+
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="xtls">XTLS</label>
+                                                            <select id="xtls" class="form-control" name="xtls">
+                                                                <option value="none" selected>none</option>
+                                                                <option value="xtls-rprx-direct">xtls-rprx-direct</option>
+                                                                <option value="xtls-rprx-origin">xtls-rprx-origin</option>
+                                                                <option value="xtls-rprx-vision">xtls-rprx-vision</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
                                                 </div>
 
 			                                    <div class="form-group form-group-label">
@@ -239,16 +246,7 @@
                                                     <select id="security" class="form-control" name="security">
                                                         <option value="none" selected>none</option>
                                                         <option value="tls">TLS</option>
-                                                    </select>
-                                                </div>
-
-                                                <div class="form-group form-group-label">
-                                                    <label class="floating-label" for="cert">证书/cert</label>
-                                                    <select id="cert" class="form-control" name="cert">
-                                                        <option value="0" selected>none</option>
-                                                        {foreach $certs as $cert}
-                                                        <option value="{$cert->id}">{$cert->name}</option>
-                                                        {/foreach}
+                                                        <option value="reality">Reality</option>
                                                     </select>
                                                 </div>
 
@@ -261,6 +259,52 @@
                                                         <option value="random">random</option>
                                                         <option value="none" selected>none</option>
                                                     </select>
+                                                </div>
+
+                                                <div class="tab-content" id="securities">
+                                                    <div class="tab-pane fade" id="tls">
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="cert">证书/cert</label>
+                                                            <select id="cert" class="form-control" name="cert">
+                                                                <option value="0" selected>none</option>
+                                                                {foreach $certs as $cert}
+                                                                <option value="{$cert->id}">{$cert->name}</option>
+                                                                {/foreach}
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="tab-pane fade" id="reality">
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="dest">伪装网站(Dest)</label>
+                                                            <input class="form-control" id="dest" type="text" name="dest">
+                                                        </div>
+
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="servernames">Server Names(一行一个，客户端随机取一个)</label>
+                                                            <textarea class="form-control" id="servernames" rows="5" name="servernames"></textarea>
+                                                        </div>
+
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="privatekey">私钥(Private Key)</label>
+                                                            <input class="form-control" id="privatekey" type="text" name="privatekey">
+                                                        </div>
+
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="publickey">公钥(Public Key)</label>
+                                                            <input class="form-control" id="publickey" type="text" name="publickey">
+                                                        </div>
+
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="minclientver">客户端最低版本(minClientVer)</label>
+                                                            <input class="form-control" id="minclientver" type="text" name="minclientver" value="1.8.4">
+                                                        </div>
+
+                                                        <div class="form-group form-group-label">
+                                                            <label class="floating-label" for="maxclientver">客户端最高版本(maxClientVer)</label>
+                                                            <input class="form-control" id="maxclientver" type="text" name="maxclientver">
+                                                        </div>
+                                                    </div>
                                                 </div>
 
                                                 <div class="form-group form-group-label">
@@ -329,15 +373,15 @@
                                                         </div>
 
                                                         <div class="form-group form-group-label">
-                                                            <label class="floating-label" for="proxy_addr">代理地址，不使用Nginx/Caddy/CDN请留空</label>
+                                                            <label class="floating-label" for="proxy_addr">代理地址，不使用 Nginx/Caddy/CDN 请留空</label>
                                                             <input class="form-control" id="proxy_addr" type="text" name="proxy_addr">
                                                         </div>
                                                         <div class="form-group form-group-label">
-                                                            <label class="floating-label" for="proxy_port">代理端口，不使用Nginx/Caddy/CDN请留空</label>
+                                                            <label class="floating-label" for="proxy_port">代理端口，不使用 Nginx/Caddy/CDN 请留空 </label>
                                                             <input class="form-control" id="proxy_port" type="number" name="proxy_port">
                                                         </div>
                                                         <div class="form-group form-group-label">
-                                                            <label class="floating-label" for="proxy_security">代理TLS，不使用Nginx/Caddy/CDN请选择none</label>
+                                                            <label class="floating-label" for="proxy_security">代理TLS，不使用 Nginx/Caddy/CDN 请选择 none</label>
                                                             <select id="proxy_security" class="form-control" name="proxy_security">
                                                                 <option value="none" selected>none</option>
                                                                 <option value="tls">tls</option>
@@ -386,6 +430,7 @@
                                                                 <option value="wechat-video" selected>wechat-video</option>
                                                                 <option value="dtls">dtls</option>
                                                                 <option value="wireguard">wireguard</option>
+                                                                <option value="dns">dns</option>
                                                             </select>
                                                         </div>
 		                                                <div class="form-group form-group-label">
@@ -432,15 +477,15 @@
                                                         </div>
 
                                                         <div class="form-group form-group-label">
-                                                            <label class="floating-label" for="proxy_addr">代理地址，不使用 Caddy/CDN 请留空 </label>
+                                                            <label class="floating-label" for="proxy_addr">代理地址，不使用 Nginx/Caddy/CDN 请留空</label>
                                                             <input class="form-control" id="proxy_addr" type="text" name="proxy_addr">
                                                         </div>
                                                         <div class="form-group form-group-label">
-                                                            <label class="floating-label" for="proxy_port">代理端口，不使用 Caddy/CDN 请留空 </label>
+                                                            <label class="floating-label" for="proxy_port">代理端口，不使用 Nginx/Caddy/CDN 请留空 </label>
                                                             <input class="form-control" id="proxy_port" type="number" name="proxy_port">
                                                         </div>
                                                         <div class="form-group form-group-label">
-                                                            <label class="floating-label" for="proxy_security">代理TLS，不使用 Caddy/CDN请选择 none</label>
+                                                            <label class="floating-label" for="proxy_security">代理TLS，不使用 Nginx/Caddy/CDN 请选择 none</label>
                                                             <select id="proxy_security" class="form-control" name="proxy_security">
                                                                 <option value="none" selected>none</option>
                                                                 <option value="tls">tls</option>
@@ -575,8 +620,8 @@
                                     </div>
                                     <div class="form-group form-group-label">
                                         <div class="checkbox switch">
-                                            <label for="fast_open">
-                                                <input checked class="access-hide" id="fast_open" type="checkbox" name="fast_open"><span class="switch-toggle"></span>快速打开/fast_open
+                                            <label for="tro_tfo">
+                                                <input checked class="access-hide" id="tro_tfo" type="checkbox" name="tro_tfo"><span class="switch-toggle"></span>快速打开/fast_open
                                             </label>
                                         </div>
                                     </div>
@@ -621,6 +666,14 @@
 										<label class="floating-label" for="obfs_password">混淆密码</label>
 										<input class="form-control" id="obfs_password" type="text" name="obfs_password" value="cry_me_a_r1ver">
 									</div>
+
+                  <div class="form-group form-group-label">
+                    <div class="checkbox switch">
+                      <label for="hys_tfo">
+                        <input checked class="access-hide" id="hys_tfo" type="checkbox" name="hys_tfo"><span class="switch-toggle"></span>快速打开
+                      </label>
+                    </div>
+                  </div>
 
 								</div>
 							</div>
@@ -721,6 +774,10 @@
             $(this).parent().siblings('#protocols').children('div.active.in').removeClass('active in');
             $(this).parent().siblings('#protocols').children('div#' + this.value ).addClass('active in');
         });
+        inb.find('#security').change(function() {
+            $(this).parent().siblings('#securities').children('div.active.in').removeClass('active in');
+            $(this).parent().siblings('#securities').children('div#' + this.value ).addClass('active in');
+        });
         inb.find('#network').change(function() {
             $(this).parent().siblings('#networks').children('div.active.in').removeClass('active in');
             $(this).parent().siblings('#networks').children('div#' + this.value ).addClass('active in');
@@ -749,6 +806,10 @@
         $(this).find('#protocol').change(function() {
             $(this).parent().siblings('#protocols').children('div.active.in').removeClass('active in');
             $(this).parent().siblings('#protocols').children('div#' + this.value ).addClass('active in');
+        });
+        $(this).find('#security').change(function() {
+            $(this).parent().siblings('#securities').children('div.active.in').removeClass('active in');
+            $(this).parent().siblings('#securities').children('div#' + this.value ).addClass('active in');
         });
         $(this).find('#network').change(function() {
             $(this).parent().siblings('#networks').children('div.active.in').removeClass('active in');
@@ -815,8 +876,9 @@
                     // vmess
                     "alterid": parseInt($(this).find("#alterid").val()),
                     "disableinsecureencryption": $(this).find("#disable_insecure_encryption").is(":checked"),
-                    // trojan
-                    // "fallback": $(this).find("#fallback").val(),
+                    // vless & trojan
+                    "fallbackdest": $(this).find("#fallbackdest").val(),
+                    "xtls": $(this).find("#xtls").val(),
                     "blockbt": $(this).find("#block_bt").is(":checked"),
                     "network": $(this).find("#network").val(),
                     "tcpfastopen": $(this).find("#tcpfastopen").val(),
@@ -854,9 +916,15 @@
                     "proxysecurity": $(this).find("#ws #proxy_security").val(),
                     // tls
                     "security": $(this).find("#security").val(),
-                    "cert": parseInt($(this).find("#cert").val()),
                     "fingerprint": $(this).find("#fingerprint").val(),
-                    "xtls": $(this).find("#xtls").val()
+                    "cert": parseInt($(this).find("#tls #cert").val()),
+                    // reality
+                    "dest": $(this).find("#reality #dest").val(),
+                    "servernames": $(this).find("#reality #servernames").val(),
+                    "privatekey": $(this).find("#reality #privatekey").val(),
+                    "publickey": $(this).find("#reality #publickey").val(),
+                    "minclientver": $(this).find("#reality #minclientver").val(),
+                    "maxclientver": $(this).find("#reality #maxclientver").val()
                 };
                 inb["path"] = '';
                 inb["obfs"] = '';
@@ -881,7 +949,7 @@
                     "no_delay": $("#trojan #no_delay").is(":checked"),
                     "keep_alive": $("#trojan #keep_alive").is(":checked"),
                     "reuse_port": $("#trojan #reuse_port").is(":checked"),
-                    "fast_open": $("#trojan #fast_open").is(":checked"),
+                    "fast_open": $("#trojan #tro_tfo").is(":checked"),
                     "fast_open_qlen": parseInt($("#trojan #fast_open_qlen").val())
                 };
 
@@ -891,7 +959,8 @@
                     "stats_secret": $("#hysteria #stats_secret").val(),
                     "up": parseInt($("#hysteria #up").val()),
                     "down": parseInt($("#hysteria #down").val()),
-                    "obfs_password": $("#hysteria #obfs_password").val()
+                    "obfs_password": $("#hysteria #obfs_password").val(),
+                    "fast_open": $("#hysteria #hys_tfo").is(":checked")
                 };
 {/literal}
             $.ajax({
