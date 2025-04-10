@@ -86,7 +86,7 @@ class XCat
 
     public function defaultAction()
     {
-        Job::scrapeHysteria2();
+        Job::updateClashRulesGFW();
     }
 
     public function cleanRelayRule()

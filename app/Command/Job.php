@@ -125,7 +125,7 @@ class Job
     {
         $nodes = Node::all();
         foreach ($nodes as $node) {
-            if ($node->sort == 0 || $node->sort == 10 || $node->sort == 11 || $node->sort == 12 || $node->sort == 14) {
+            if ($node->sort == 0 || $node->sort == 10 || $node->sort == 11 || $node->sort == 12) {
                 if (date("d")==$node->bandwidthlimit_resetday) {
                     $node->node_bandwidth=0;
                     $node->save();
@@ -224,6 +224,8 @@ class Job
         // Job::updateQQWry();
 
         // Job::updateClashRules();
+        
+        Job::updateClashRulesGFW();
     }
 
     public static function updateQQWry()
@@ -367,6 +369,51 @@ class Job
         }
         
         file_put_contents(BASE_PATH.'/storage/clash-rules-stream-media-direct.yaml', file_get_contents('https://github.com/chenmin1992/qqwry-download/raw/cm/clash-rules-stream-media-direct.yaml'));
+    }
+
+    public static function updateClashRulesGFW()
+    {
+        $rules_url = 'https://github.com/gfwlist/gfwlist/raw/refs/heads/master/gfwlist.txt';
+        $rules_ori = explode("\n", base64_decode(implode("", explode("\n", file_get_contents($rules_url)))));
+        $started = false;
+        $rules = [];
+        $rules_ip = [];
+        foreach ($rules_ori as $index => $line) {
+            $rule = str_replace(' ', '', $line);
+            if (substr($rule, 0, 1) == '!' or empty($rule)) {
+                continue;
+            }
+            $method = ',PROXY';
+            $domain_suffix = '';
+            if (substr($rule, 0, 2) == '@@') {
+                $method = ',DIRECT';
+                $rule = substr($rule, 2);
+            }
+            if (substr($rule, 0, 2) == '||') {
+                $domain_suffix = '-SUFFIX';
+            }
+
+            if (preg_match("/((?:\d{1,3}\.){3}\d+)(\/\d+)?/", $rule, $matches)) {
+                if (count($matches) < 3) {
+                    $matches[0] = $matches[0].'/32';
+                }
+                array_push($rules_ip, 'IP-CIDR,'.$matches[0].$method);
+                continue;
+            }
+            if (preg_match("/[a-z0-9.\-]+\.[a-z]+/i", $rule, $matches)) {
+                if (substr($matches[0], 0, 1) == '.') {
+                    $matches[0] = substr($matches[0], 1);
+                }
+                array_push($rules, 'DOMAIN'.$domain_suffix.','.strtolower($matches[0]).$method);
+                continue;
+            }
+        }
+        $rules = array_merge($rules, $rules_ip, ['MATCH,PROXY']);
+        $rules = array_unique($rules);
+        $data = implode("\n", $rules);
+        if(strlen($data) > 0) {
+            file_put_contents(BASE_PATH.'/storage/clash_rules.yaml', $data);
+        }
     }
 
     public static function expandRuleSetURL($url, $policy)
