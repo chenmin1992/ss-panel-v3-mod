@@ -408,7 +408,7 @@ class Job
                 continue;
             }
         }
-        $rules = array_merge($rules, $rules_ip, ['MATCH,PROXY']);
+        $rules = array_merge($rules, $rules_ip, ['MATCH,DIRECT']);
         $rules = array_unique($rules);
         $data = implode("\n", $rules);
         if(strlen($data) > 0) {
