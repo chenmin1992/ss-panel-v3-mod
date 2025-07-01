@@ -742,7 +742,7 @@ class URL
                 if($inbound->tcpfastopen != 'none') {
                     $return_array["tfo"] = $inbound->tcpfastopen == 'true' ? 1 : 0;
                 }
-                $return_array["remark"] = str_replace(' ', '', explode(" - ", $node->name)[0]).'-'.preg_split('/[.\-]/', $return_array["host"])[0].'-'.$return_array["port"];
+                $return_array["remark"] = str_replace(' ', '', explode(" - ", $node->name)[0]).'-'.preg_split('/[.\-]/', $return_array["host"])[0].'-'.$return_array["port"].'-'.$return_array["protocol"];
                 // for shadowrocket only
                 $return_array["remarks"] = $return_array["remark"];
                 if($inbound->protocol == 'vmess') {
@@ -869,7 +869,7 @@ class URL
                 if($inbound->tcpfastopen != 'none') {
                     $return_array["tfo"] = $inbound->tcpfastopen == 'true' ? 1 : 0;
                 }
-                $return_array["ps"] = str_replace(' ', '', explode(" - ", $node->name)[0]);
+                $return_array["ps"] = str_replace(' ', '', explode(" - ", $node->name)[0]).'-'.preg_split('/[.\-]/', $return_array["host"])[0].'-'.$return_array["port"].'-'.$return_array["type"];
                 break;
             default:
                 break;
