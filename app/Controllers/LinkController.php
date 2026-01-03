@@ -2157,10 +2157,12 @@ FINAL,Proxy';
                 "localhost" => "127.0.0.1"
             ],
             "dns" => [
-                "enable" => false,
+                "enable" => true,
                 "prefer-h3" => false,
-                "listen" => "0.0.0.0:53",
+                "listen" => ":53",
                 "ipv6" => true,
+                "use-hosts" => true,
+                "use-system-hosts" => true,
                 "default-nameserver" => [
                     "119.28.28.28",
                     "223.6.6.6",
@@ -2171,20 +2173,29 @@ FINAL,Proxy';
                     "+.lan",
                     "+.local",
                     "localhost.ptlogin2.qq.com"
-                ],                
-                "use-hosts" => true,
-                "nameserver" => [
+                ],
+                "proxy-server-nameserver" => [
+                    "8.8.4.4",
+                    "1.0.0.1",
+                    "208.67.220.220"
+                ],
+                "direct-nameserver" => [
                     "119.28.28.28",
                     "223.6.6.6",
                     "114.114.115.115"
                 ],
+                "nameserver" => [
+                    "8.8.4.4",
+                    "1.0.0.1",
+                    "208.67.220.220"
+                ],
                 "fallback" => [
-                    "tls://dns.google:853",
-                    "tls://1.0.0.1:853",
-                    "tls://dns.adguard.com:853",
+                    "tls://dns.google",
+                    "tls://one.one.one.one",
+                    "tls://dns.opendns.com",
                     "https://dns.google/dns-query",
-                    "https://cloudflare-dns.com/dns-query",
-                    "https://dns.adguard.com/dns-query"
+                    "https://dns.cloudflare.com/dns-query",
+                    "https://doh.opendns.com/dns-query"
                 ],
                 "fallback-filter" => [
                     "geoip" => true,
@@ -2193,7 +2204,8 @@ FINAL,Proxy';
                         "gfw"
                     ],
                     "ipcidr" => [
-                        "240.0.0.0/4"
+                        "240.0.0.0/4",
+                        "0.0.0.0/32"
                     ],
                     "domain" => [
                         "+.google.com",
@@ -2202,6 +2214,8 @@ FINAL,Proxy';
                         "+.telegram.com",
                         "+.facebook.com",
                         "+.twitter.com",
+                        "+.x.com",
+                        "+.github.com",
                         "+.blogger.com",
                         "+.gmail.com",
                         "+.gvt1.com"
