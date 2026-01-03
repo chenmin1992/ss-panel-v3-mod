@@ -38,8 +38,15 @@ class Mod_Mu
             return $response;
         }
 
-        $node = Node::where("node_ip", "LIKE", '%'.$_SERVER["REMOTE_ADDR"].'%')->first();
-        if ($node==null && $_SERVER["REMOTE_ADDR"] != '127.0.0.1') {
+        $cip = $_SERVER["REMOTE_ADDR"];
+        $cipc = substr($cip, 0, strrpos($cip, '.')+1);
+        $node = Node::where("node_ip", "LIKE", '%'.$cip.'%')->orWhere(
+                function ($query) use ($cipc){
+                    $query->where("name", "LIKE", "%Claw%")
+                        ->where("node_ip", "LIKE", '%'.$cipc.'%');
+                }
+        )->first();
+        if ($node==null && $cip != '127.0.0.1') {
             $res['ret'] = 0;
             $res['data'] = "token or source is invalid";
             $response->getBody()->write(json_encode($res));
